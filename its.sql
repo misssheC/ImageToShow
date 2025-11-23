@@ -32605,6 +32605,10 @@ INSERT INTO `device_models` VALUES (32554, '中兴远航 3D', 'Z9101');
 INSERT INTO `device_models` VALUES (32555, '中兴 V70', 'ZTE 9041N');
 INSERT INTO `device_models` VALUES (32556, '中兴 V70 Pro', 'ZTE 9043N');
 INSERT INTO `device_models` VALUES (32557, '中兴 Axon Pad', 'ZTE PA01');
+INSERT INTO `device_models` VALUES (32557, 'Windows11/10/7', 'Win64');
+INSERT INTO `device_models` VALUES (32557, 'Mac OS', 'Macintosh');
+INSERT INTO `device_models` VALUES (32557, 'iPhone', 'iPhone');
+INSERT INTO `device_models` VALUES (32557, 'iPad', 'iPad');
 
 -- ----------------------------
 -- Table structure for folder_info
