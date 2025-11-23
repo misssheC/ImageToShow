@@ -2181,7 +2181,6 @@
                 message.innerHTML = `<span style="color: var(--warning);">注册失败: ${error.message}</span>`;
             })
             .finally(() => {
-                // 恢复按钮状态
                 confirmBtn.innerHTML = originalText;
                 confirmBtn.disabled = false;
             });

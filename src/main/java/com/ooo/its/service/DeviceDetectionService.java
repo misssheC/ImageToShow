@@ -21,8 +21,7 @@ public class DeviceDetectionService {
     private static final String[] EXCLUDE_KEYWORDS = {
             "Linux", "Android", "Build", "AppleWebKit", "Version", "Mobile",
             "Safari", "Chrome", "Firefox", "Edge", "OPR", "Opera", "UBrowser",
-            "QQBrowser", "Wechat", "MicroMessenger", "Windows", "iPhone",
-            "iPad", "CPU", "API", "Device", "Model", "Browser", "WebKit",
+            "QQBrowser", "Wechat", "MicroMessenger", "Windows", "CPU", "API", "Device", "Model", "Browser", "WebKit",
             "KHTML", "like", "Gecko", "Mozilla", "WOW64", "x64"
     };
 

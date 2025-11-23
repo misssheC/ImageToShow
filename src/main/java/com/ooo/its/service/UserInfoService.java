@@ -54,15 +54,19 @@ public class UserInfoService {
     }
 
     public boolean RegisterUserInfo(String qq){
-        UserInfo userInfo = new UserInfo();
-        userInfo.setqqNumber(qq);
-        userInfo.setRegTime(new Date());
-        userInfo.setModel("no");
-        userInfo.setIpAddress("0.0.0.0");
-        userInfo.setDevice("unknown");
-        userInfo.setRegion("unknown");
-        userInfoRep.save(userInfo);
-        return true;
+        UserInfo verification = userInfoRep.findByQqNumber(qq).orElse(null);
+        if(verification == null) {
+            UserInfo userInfo = new UserInfo();
+            userInfo.setqqNumber(qq);
+            userInfo.setRegTime(new Date());
+            userInfo.setModel("no");
+            userInfo.setIpAddress("0.0.0.0");
+            userInfo.setDevice("unknown");
+            userInfo.setRegion("unknown");
+            userInfoRep.save(userInfo);
+            return true;
+        }
+        return false;
     }
 
     public List<Map<String, String>> AllandAll() {

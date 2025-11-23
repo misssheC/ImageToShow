@@ -52,9 +52,13 @@ public class UserService {
     }
 
     public boolean RegisterUser(String qq){
-        User user = new User();
-        user.setQqnumber(qq);
-        userRepository.save(user);
-        return true;
+        User verification = userRepository.findByQqNumber(qq).orElse(null);
+        if (verification == null) {
+            User user = new User();
+            user.setQqnumber(qq);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
     }
 }
