@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>预览图</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 10px;
+            font-family: Arial, sans-serif;
+        }
+
+        /* 图片容器 */
+        .image-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        /* 小图：宽度自动适配屏幕 */
+        .image-item {
+            width: 100%;
+            height: auto;
+            max-height: 250px;
+            object-fit: cover;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .image-item:hover {
+            transform: scale(1.03);
+        }
+
+        /* 小屏幕：单列布局 + 更大图片 */
+        @media (max-width: 600px) {
+            .image-container {
+                grid-template-columns: 1fr;
+            }
+            .image-item {
+                max-height: none;
+            }
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-image {
+            width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+            background-color: #000;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-add { background-color: #4CAF50; color: white; }
+        .btn-remove { background-color: #f44336; color: white; }
+        .btn-close { background-color: #555; color: white; }
+
+        .btn-add:hover { background-color: #45a049; }
+        .btn-remove:hover { background-color: #d32f2f; }
+        .btn-close:hover { background-color: #333; }
+
+        .cart-notice {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>预览图</h1>
+
+<div class="cart-notice" id="cartNotice">购物车为空</div>
+
+<div class="image-container" id="imageContainer"></div>
+
+<!-- 模态框 -->
+<div class="modal" id="imageModal">
+    <div class="modal-content">
+        <img class="modal-image" id="modalImage" src="" alt=""/>
+        <div class="modal-actions">
+            <button class="btn btn-add" id="addToCart">加入购物车</button>
+            <button class="btn btn-remove" id="removeFromCart">移除购物车</button>
+            <button class="btn btn-close" id="closeModal">关闭</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const folderType = urlParams.get('type');
+    let cartItems = [];
+
+    function loadImages() {
+        fetch(`/user/showimages?type=${folderType}`)
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('imageContainer');
+                container.innerHTML = '';
+
+                data.forEach(goods => {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = goods.url;
+                    imgElement.alt = goods.name;
+                    imgElement.classList.add('image-item');
+                    imgElement.dataset.id = goods.id;
+
+                    imgElement.addEventListener('click', () => {
+                        recordGoodsClick(goods.id);
+                        openModal(goods);
+                    });
+
+                    container.appendChild(imgElement);
+                });
+            })
+            .catch(error => {
+                console.error('获取图片失败:', error);
+                document.getElementById('imageContainer').innerHTML =
+                    '<p>无法加载图片，请检查网络连接或稍后再试。</p>';
+            });
+    }
+
+    function recordGoodsClick(goodsId) {
+        fetch(`/user/goodsclick?goodsId=${goodsId}`, { method: 'GET', credentials: 'same-origin' });
+    }
+
+    function openModal(goods) {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+
+        modalImage.src = goods.url;
+        modalImage.alt = goods.name;
+        modal.dataset.currentId = goods.id;
+
+        const isInCart = cartItems.some(item => item.id === goods.id);
+        document.getElementById('addToCart').style.display = isInCart ? 'none' : 'block';
+        document.getElementById('removeFromCart').style.display = isInCart ? 'block' : 'none';
+
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('imageModal').style.display = 'none';
+    }
+
+    function addToCart() {
+        const modal = document.getElementById('imageModal');
+        const currentId = parseInt(modal.dataset.currentId);
+        const goodsName = document.getElementById('modalImage').alt;
+
+        fetch(`/user/add?goodsID=${currentId}`, { method: 'GET', credentials: 'same-origin' })
+            .then(response => {
+                if (response.ok) {
+                    cartItems.push({ id: currentId, name: goodsName });
+                    updateCartNotice();
+                    document.getElementById('addToCart').style.display = 'none';
+                    document.getElementById('removeFromCart').style.display = 'block';
+                } else {
+                    alert('加入购物车失败，请先登录');
+                }
+            })
+            .catch(error => {
+                console.error('添加到购物车失败:', error);
+                alert('添加到购物车失败，请稍后再试');
+            });
+    }
+
+    function removeFromCart() {
+        const modal = document.getElementById('imageModal');
+        const currentId = parseInt(modal.dataset.currentId);
+        const goodsName = document.getElementById('modalImage').alt;
+
+        fetch(`/user/remove?goodsID=${currentId}`, { method: 'GET', credentials: 'same-origin' })
+            .then(response => {
+                if (response.ok) {
+                    const index = cartItems.findIndex(item => item.id === currentId);
+                    if (index !== -1) {
+                        cartItems.splice(index, 1);
+                        updateCartNotice();
+                        document.getElementById('addToCart').style.display = 'block';
+                        document.getElementById('removeFromCart').style.display = 'none';
+                        alert(`"${goodsName}" 已从购物车移除`);
+                    }
+                } else {
+                    alert('从购物车移除失败，请先登录');
+                }
+            })
+            .catch(error => {
+                console.error('移除购物车失败:', error);
+                alert('移除购物车失败，请稍后再试');
+            });
+    }
+
+    function updateCartNotice() {
+        const cartNotice = document.getElementById('cartNotice');
+        cartNotice.textContent = cartItems.length === 0
+            ? '购物车为空'
+            : `购物车中有 ${cartItems.length} 个`;
+    }
+
+    window.onload = function() {
+        loadImages();
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+        document.getElementById('addToCart').addEventListener('click', addToCart);
+        document.getElementById('removeFromCart').addEventListener('click', removeFromCart);
+
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    };
+</script>
+
+</body>
+</html>

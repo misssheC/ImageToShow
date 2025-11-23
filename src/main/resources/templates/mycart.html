@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的购物车</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .cart-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            padding: 15px 20px;
+            background-color: #f9f9f9;
+            font-weight: 600;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .cart-item.removing {
+            opacity: 0.5;
+            background-color: #f9f9f9;
+        }
+
+        .item-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .item-image {
+            width: 80px;
+            height: 80px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .item-image:hover {
+            transform: scale(1.05);
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-details h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .item-details p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .price {
+            font-weight: 600;
+            color: #e74c3c;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: #f5f5f5;
+        }
+
+        .delete-btn {
+            color: #e74c3c;
+            border-color: #e74c3c;
+        }
+
+        .delete-btn:hover {
+            background-color: #ffeaea;
+        }
+
+        .delete-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .cart-footer {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+
+        .total-price {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .total-price span {
+            color: #e74c3c;
+            font-size: 24px;
+            margin-left: 10px;
+        }
+
+        .checkout-btn {
+            padding: 12px 30px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .checkout-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .checkout-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* 新增：去支付按钮样式 */
+        .checkout-btn.pay {
+            background-color: #1abc9c;
+        }
+
+        .checkout-btn.pay:hover {
+            background-color: #16a085;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-cart p {
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 40px;
+            color: #e74c3c;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background-color: #2ecc71;
+        }
+
+        .notification.error {
+            background-color: #e74c3c;
+        }
+
+        /* 图片预览模态框样式 */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 8px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            color: #e74c3c;
+        }
+
+        .modal-navigation {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            padding: 0 20px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .image-counter {
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .cart-header {
+                display: none;
+            }
+
+            .cart-item {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .item-info {
+                grid-column: 1;
+            }
+
+            .goods-id, .state, .time, .actions {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 5px 0;
+            }
+
+            .goods-id::before {
+                content: "ID：";
+                color: #666;
+            }
+
+            .state::before {
+                content: "状态：";
+                color: #666;
+            }
+
+            .time::before {
+                content: "添加时间：";
+                color: #666;
+            }
+
+            .actions::before {
+                content: "操作：";
+                color: #666;
+            }
+
+            .cart-footer {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            /* 移动端模态框调整 */
+            .close-modal {
+                top: 10px;
+                right: 10px;
+            }
+
+            .modal-navigation {
+                padding: 0 10px;
+            }
+
+            .nav-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>我的购物车</h1>
+        <div class="user-info">
+            <span>QQ号：</span>
+            <span id="qq-number">加载中...</span>
+        </div>
+    </div>
+
+    <div class="cart-container">
+        <div class="cart-header">
+            <div>信息</div>
+            <div>ID</div>
+            <div>状态</div>
+            <div>添加时间</div>
+            <div>操作</div>
+        </div>
+
+        <div id="cart-items">
+            <div class="loading">正在加载购物车数据...</div>
+        </div>
+
+        <div class="cart-footer">
+            <div class="total-price">
+                购物车中数量：<span id="total-count">0</span>
+            </div>
+            <button class="checkout-btn" id="checkout-btn">去结算</button>
+        </div>
+    </div>
+</div>
+
+<!-- 图片预览模态框 -->
+<div id="image-modal" class="image-modal">
+    <div class="modal-content">
+        <button class="close-modal">&times;</button>
+        <img id="modal-image" src="" alt="大图">
+        <div class="modal-navigation">
+            <button class="nav-btn prev-btn">&lt;</button>
+            <button class="nav-btn next-btn">&gt;</button>
+        </div>
+        <div class="image-counter">
+            <span id="current-image">1</span> / <span id="total-images">1</span>
+        </div>
+    </div>
+</div>
+
+<!-- 通知提示 -->
+<div id="notification" class="notification"></div>
+
+<script>
+    // 显示通知
+    function showNotification(message, type) {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.classList.add('show');
+
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    // 从后端API获取购物车数据
+    async function fetchCartData() {
+        try {
+            const response = await fetch('/user/showme', {
+                method: 'GET',
+                credentials: 'include' // 确保发送session信息
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const cartData = await response.json();
+            return cartData;
+        } catch (error) {
+            console.error('获取购物车数据失败:', error);
+            throw error;
+        }
+    }
+
+    // 结算购物车
+    async function checkoutCart() {
+        const checkoutBtn = document.getElementById('checkout-btn');
+
+        // 检查购物车是否为空
+        if (currentCartItems.length === 0) {
+            showNotification('购物车为空，无法结算', 'error');
+            return;
+        }
+
+        // 检查是否有可以结算的（状态为0的）
+        const canCheckoutItems = currentCartItems.filter(item => item.cart.state === 0);
+        if (canCheckoutItems.length === 0) {
+            showNotification('没有可以结算的', 'error');
+            return;
+        }
+
+        // 禁用结算按钮并显示加载状态
+        checkoutBtn.disabled = true;
+        checkoutBtn.textContent = '结算中...';
+
+        try {
+            const response = await fetch('/user/Settlement', {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                // 结算成功，重新加载购物车数据
+                const cartData = await fetchCartData();
+                renderCartItems(cartData);
+                showNotification('结算成功！订单已生成', 'success');
+            } else {
+                const errorText = await response.text();
+                console.error('结算失败:', errorText);
+
+                if (response.status === 401) {
+                    showNotification('用户未登录，请重新登录', 'error');
+                } else {
+                    showNotification('结算失败，请重试', 'error');
+                }
+            }
+        } catch (error) {
+            console.error('结算请求失败:', error);
+            showNotification('网络错误，请检查连接后重试', 'error');
+        } finally {
+            // 恢复结算按钮状态
+            checkoutBtn.disabled = false;
+            checkoutBtn.textContent = '去结算';
+        }
+    }
+
+    // 跳转到支付页面
+    function goToPayPage() {
+        // 检查购物车是否为空
+        if (currentCartItems.length === 0) {
+            showNotification('购物车为空，无法支付', 'error');
+            return;
+        }
+
+        // 检查是否有可以支付的（状态为1的）
+        const canPayItems = currentCartItems.filter(item => item.cart.state === 1);
+        if (canPayItems.length === 0) {
+            showNotification('没有可以支付的', 'error');
+            return;
+        }
+
+        // 跳转到支付页面
+        window.location.href = '/user/pay';
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('zh-CN') + ' ' + date.toLocaleTimeString('zh-CN', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    // 根据状态码获取状态文本
+    function getStateText(state) {
+        switch(state) {
+            case 0: return '预备';
+            case 1: return '待处理';
+            case 2: return '待付款';
+        }
+    }
+
+    // 全局变量用于图片预览
+    let currentCartItems = [];
+    let currentImageIndex = 0;
+
+    // 打开图片预览
+    function openImageModal(imageUrl, goodsId, index) {
+        const modal = document.getElementById('image-modal');
+        const modalImage = document.getElementById('modal-image');
+        const currentImageSpan = document.getElementById('current-image');
+        const totalImagesSpan = document.getElementById('total-images');
+
+        modalImage.src = imageUrl;
+        modalImage.alt = ` ${goodsId} 的大图`;
+
+        currentImageIndex = index;
+        currentImageSpan.textContent = currentImageIndex + 1;
+        totalImagesSpan.textContent = currentCartItems.length;
+
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden'; // 防止背景滚动
+    }
+
+    // 关闭图片预览
+    function closeImageModal() {
+        const modal = document.getElementById('image-modal');
+        modal.classList.remove('show');
+        document.body.style.overflow = ''; // 恢复背景滚动
+    }
+
+    // 切换到上一张图片
+    function prevImage() {
+        if (currentCartItems.length <= 1) return;
+
+        currentImageIndex = (currentImageIndex - 1 + currentCartItems.length) % currentCartItems.length;
+        const item = currentCartItems[currentImageIndex];
+        const modalImage = document.getElementById('modal-image');
+        const currentImageSpan = document.getElementById('current-image');
+
+        modalImage.src = item.goodsImageUrl;
+        modalImage.alt = ` ${item.cart.goodsId} 的大图`;
+        currentImageSpan.textContent = currentImageIndex + 1;
+    }
+
+    // 切换到下一张图片
+    function nextImage() {
+        if (currentCartItems.length <= 1) return;
+
+        currentImageIndex = (currentImageIndex + 1) % currentCartItems.length;
+        const item = currentCartItems[currentImageIndex];
+        const modalImage = document.getElementById('modal-image');
+        const currentImageSpan = document.getElementById('current-image');
+
+        modalImage.src = item.goodsImageUrl;
+        modalImage.alt = ` ${item.cart.goodsId} 的大图`;
+        currentImageSpan.textContent = currentImageIndex + 1;
+    }
+
+    // 渲染购物车
+    function renderCartItems(cartData) {
+        const cartItemsContainer = document.getElementById('cart-items');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        currentCartItems = cartData.cartItems || [];
+
+        // 更新结算/支付按钮状态
+        if (currentCartItems.length === 0) {
+            checkoutBtn.disabled = true;
+            checkoutBtn.textContent = '去结算';
+            checkoutBtn.classList.remove('pay');
+        } else {
+            checkoutBtn.disabled = false;
+
+            // 检查是否所有状态都是1
+            const allState1 = currentCartItems.every(item => item.cart.state === 1);
+
+            if (allState1) {
+                checkoutBtn.textContent = '去支付';
+                checkoutBtn.classList.add('pay');
+            } else {
+                checkoutBtn.textContent = '去结算';
+                checkoutBtn.classList.remove('pay');
+            }
+        }
+
+        if (currentCartItems.length === 0) {
+            cartItemsContainer.innerHTML = `
+                    <div class="empty-cart">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 18C5.9 18 5.01 18.9 5.01 20C5.01 21.1 5.9 22 7 22C8.1 22 9 21.1 9 20C9 18.9 8.1 18 7 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5.48C20.96 5.34 21 5.17 21 5C21 4.45 20.55 4 20 4H5.21L4.27 2H1ZM17 18C15.9 18 15.01 18.9 15.01 20C15.01 21.1 15.9 22 17 22C18.1 22 19 21.1 19 20C19 18.9 18.1 18 17 18Z" fill="#CCCCCC"/>
+                        </svg>
+                        <p>购物车是空的，快去添加吧！</p>
+                    </div>
+                `;
+            return;
+        }
+
+        let itemsHTML = '';
+
+        currentCartItems.forEach((item, index) => {
+            const cart = item.cart;
+            const goodsImageUrl = item.goodsImageUrl || '';
+            const goodsName = item.goodsName || '';
+
+            itemsHTML += `
+                    <div class="cart-item" data-cart-id="${cart.id}" data-goods-id="${cart.goodsId}">
+                        <div class="item-info">
+                            <div class="item-image" onclick="openImageModal('${goodsImageUrl}', ${cart.goodsId}, ${index})">
+                                ${goodsImageUrl ?
+                `<img src="${goodsImageUrl}" alt="图片" onerror="this.style.display='none'; this.parentNode.innerHTML='图片加载失败';">` :
+                '暂无图片'
+            }
+                            </div>
+                            <div class="item-details">
+                                <h3>${goodsName}</h3>
+                                <p>ID: ${cart.goodsId}</p>
+                            </div>
+                        </div>
+                        <div class="goods-id">${cart.goodsId}</div>
+                        <div class="state">${getStateText(cart.state)}</div>
+                        <div class="time">${formatDate(cart.time)}</div>
+                        <div class="actions">
+                            <button class="action-btn delete-btn" onclick="removeFromCart(${cart.id}, ${cart.goodsId})">删除</button>
+                        </div>
+                    </div>
+                `;
+        });
+
+        cartItemsContainer.innerHTML = itemsHTML;
+
+        // 更新购物车数量
+        document.getElementById('total-count').textContent = cartData.totalCount || currentCartItems.length;
+    }
+
+    // 删除购物车
+    async function removeFromCart(cartId, goodsId) {
+        if (!confirm('确定要从购物车中删除此吗？')) {
+            return;
+        }
+
+        const cartItem = document.querySelector(`[data-cart-id="${cartId}"]`);
+        if (!cartItem) return;
+
+        // 禁用删除按钮
+        const deleteBtn = cartItem.querySelector('.delete-btn');
+        deleteBtn.disabled = true;
+        deleteBtn.textContent = '删除中...';
+
+        // 添加删除中样式
+        cartItem.classList.add('removing');
+
+        try {
+            const response = await fetch(`/user/remove?goodsID=${goodsId}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                // 重新加载购物车数据
+                const cartData = await fetchCartData();
+                renderCartItems(cartData);
+
+                showNotification('已成功从购物车中删除', 'success');
+            } else {
+                const errorText = await response.text();
+                console.error('删除失败:', errorText);
+
+                // 恢复按钮状态
+                deleteBtn.disabled = false;
+                deleteBtn.textContent = '删除';
+                cartItem.classList.remove('removing');
+
+                if (response.status === 401) {
+                    showNotification('用户未登录，请重新登录', 'error');
+                } else {
+                    showNotification('删除失败，请重试', 'error');
+                }
+            }
+        } catch (error) {
+            console.error('删除失败:', error);
+
+            // 恢复按钮状态
+            deleteBtn.disabled = false;
+            deleteBtn.textContent = '删除';
+            cartItem.classList.remove('removing');
+
+            showNotification('网络错误，请检查连接后重试', 'error');
+        }
+    }
+
+    // 处理结算/支付按钮点击
+    function handleCheckout() {
+        const checkoutBtn = document.getElementById('checkout-btn');
+
+        // 根据按钮的类名判断是结算还是支付
+        if (checkoutBtn.classList.contains('pay')) {
+            goToPayPage();
+        } else {
+            checkoutCart();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            const cartData = await fetchCartData();
+
+            // 设置QQ号显示
+            if (cartData.cartItems && cartData.cartItems.length > 0) {
+                document.getElementById('qq-number').textContent = cartData.cartItems[0].cart.qqNumber;
+            } else {
+                document.getElementById('qq-number').textContent = '未登录';
+            }
+
+            renderCartItems(cartData);
+        } catch (error) {
+            document.getElementById('cart-items').innerHTML = `
+                    <div class="error-message">
+                        加载购物车数据失败，请刷新页面重试
+                    </div>
+                `;
+            console.error('加载购物车数据失败:', error);
+        }
+
+        // 绑定结算按钮事件
+        const checkoutBtn = document.getElementById('checkout-btn');
+        checkoutBtn.addEventListener('click', handleCheckout);
+
+        // 绑定模态框事件
+        const modal = document.getElementById('image-modal');
+        const closeBtn = document.querySelector('.close-modal');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+
+        // 点击关闭按钮关闭模态框
+        closeBtn.addEventListener('click', closeImageModal);
+
+        // 点击模态框背景关闭模态框
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeImageModal();
+            }
+        });
+
+        // 绑定导航按钮事件
+        prevBtn.addEventListener('click', prevImage);
+        nextBtn.addEventListener('click', nextImage);
+
+        // 键盘导航
+        document.addEventListener('keydown', function(e) {
+            if (modal.classList.contains('show')) {
+                if (e.key === 'Escape') {
+                    closeImageModal();
+                } else if (e.key === 'ArrowLeft') {
+                    prevImage();
+                } else if (e.key === 'ArrowRight') {
+                    nextImage();
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

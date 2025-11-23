@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单支付</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        .order-info {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .order-info h2 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .goods-list {
+            margin-bottom: 15px;
+        }
+
+        .goods-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .goods-item:last-child {
+            border-bottom: none;
+        }
+
+        .payment-amount {
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-top: 15px;
+        }
+
+        .payment-method {
+            margin-bottom: 30px;
+        }
+
+        .payment-method h2 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .method-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #3498db;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .qrcode-container {
+            text-align: center;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qrcode {
+            max-width: 250px;
+            margin-bottom: 15px;
+        }
+
+        .qrcode img {
+            width: 100%;
+            height: auto;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+
+        .payment-tip {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #e74c3c;
+        }
+
+        .waiting-pricing {
+            text-align: center;
+            padding: 40px;
+            background-color: #fff8e1;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .waiting-pricing h3 {
+            color: #ff9800;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .waiting-pricing p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            .qrcode {
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>订单支付</h1>
+    </div>
+
+    <div id="waitingPricing" class="waiting-pricing hidden">
+        <h3>等待管理员定价</h3>
+        <p>请在QQ上联系管理员完成定价</p><br>
+        <p>(,,・ω・,,)</p>
+    </div>
+
+    <div id="orderInfo" class="order-info">
+        <!-- 订单信息将通过JavaScript动态填充 -->
+    </div>
+
+    <div id="paymentMethod" class="payment-method">
+        <h2>选择支付方式</h2>
+        <div class="method-tabs">
+            <div class="tab active" data-method="wxpay">微信支付</div>
+            <div class="tab" data-method="alipay">支付宝支付</div>
+        </div>
+
+        <div class="qrcode-container">
+            <div class="qrcode" id="wxpayQRcode">
+                <!-- 微信支付码将通过JavaScript动态填充 -->
+            </div>
+            <div class="qrcode" id="alipayQRcode" style="display: none;">
+                <!-- 支付宝支付码将通过JavaScript动态填充 -->
+            </div>
+            <p class="payment-tip">请使用手机扫描二维码完成支付</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 获取后端数据
+        fetch('/user/topay')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('网络响应不正常');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 根据Go的值决定显示内容
+                if (data.Go === 0) {
+                    showWaitingPricing();
+                } else {
+                    // 更新订单信息
+                    updateOrderInfo(data);
+                    // 更新支付码
+                    updateQRcodes(data);
+                    // 设置支付方式切换事件
+                    setupPaymentTabs();
+                    // 显示支付区域
+                    showPaymentArea();
+                }
+            })
+            .catch(error => {
+                console.error('获取支付数据失败:', error);
+                showError('获取支付信息失败，请刷新页面重试');
+            });
+    });
+
+    function showWaitingPricing() {
+        document.getElementById('waitingPricing').classList.remove('hidden');
+        document.getElementById('orderInfo').classList.add('hidden');
+        document.getElementById('paymentMethod').classList.add('hidden');
+    }
+
+    function showPaymentArea() {
+        document.getElementById('waitingPricing').classList.add('hidden');
+        document.getElementById('orderInfo').classList.remove('hidden');
+        document.getElementById('paymentMethod').classList.remove('hidden');
+    }
+
+    function updateOrderInfo(data) {
+        const orderInfoDiv = document.getElementById('orderInfo');
+
+        let goodsListHTML = '';
+        if (data.goodsNames && data.goodsNames.length > 0) {
+            data.goodsNames.forEach(goodsName => {
+                goodsListHTML += `
+                        <div class="goods-item">
+                            <span>${goodsName}</span>
+                            <span>×1</span>
+                        </div>
+                    `;
+            });
+        }
+
+        orderInfoDiv.innerHTML = `
+                <h2>订单信息</h2>
+                <div class="goods-list">
+                    ${goodsListHTML}
+                </div>
+                <div class="payment-amount">
+                    总计: ¥${data.money || 0}
+                </div>
+            `;
+    }
+
+    function updateQRcodes(data) {
+        const wxQRcodeDiv = document.getElementById('wxpayQRcode');
+        const aliQRcodeDiv = document.getElementById('alipayQRcode');
+
+        if (data.wxpayQRcode) {
+            wxQRcodeDiv.innerHTML = `<img src="${data.wxpayQRcode}" alt="微信支付二维码">`;
+        }
+
+        if (data.alipayQRcode) {
+            aliQRcodeDiv.innerHTML = `<img src="${data.alipayQRcode}" alt="支付宝支付二维码">`;
+        }
+    }
+
+    function setupPaymentTabs() {
+        const tabs = document.querySelectorAll('.tab');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // 移除所有tab的active类
+                tabs.forEach(t => t.classList.remove('active'));
+
+                // 为当前点击的tab添加active类
+                this.classList.add('active');
+
+                // 显示对应的支付码
+                const method = this.getAttribute('data-method');
+                if (method === 'wxpay') {
+                    document.getElementById('wxpayQRcode').style.display = 'block';
+                    document.getElementById('alipayQRcode').style.display = 'none';
+                } else if (method === 'alipay') {
+                    document.getElementById('wxpayQRcode').style.display = 'none';
+                    document.getElementById('alipayQRcode').style.display = 'block';
+                }
+            });
+        });
+    }
+
+    function showError(message) {
+        const container = document.querySelector('.container');
+        container.innerHTML = `
+                <div class="error">
+                    <h2>加载失败</h2>
+                    <p>${message}</p>
+                    <button onclick="location.reload()" style="margin-top: 20px; padding: 8px 16px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">刷新页面</button>
+                </div>
+            `;
+    }
+</script>
+</body>
+</html>

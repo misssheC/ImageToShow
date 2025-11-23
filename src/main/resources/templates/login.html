@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 液态玻璃背景效果 */
+        .liquid-bg {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            filter: blur(60px);
+            animation: liquidMove 15s infinite alternate;
+            z-index: -1;
+        }
+
+        .liquid-bg:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 218, 185, 0.3);
+            animation-delay: 0s;
+        }
+
+        .liquid-bg:nth-child(2) {
+            top: 60%;
+            left: 70%;
+            width: 250px;
+            height: 250px;
+            background: rgba(255, 182, 193, 0.3);
+            animation-delay: 3s;
+        }
+
+        .liquid-bg:nth-child(3) {
+            top: 30%;
+            left: 60%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 160, 122, 0.3);
+            animation-delay: 6s;
+        }
+
+        .liquid-bg:nth-child(4) {
+            top: 70%;
+            left: 20%;
+            width: 280px;
+            height: 280px;
+            background: rgba(255, 215, 0, 0.2);
+            animation-delay: 9s;
+        }
+
+        @keyframes liquidMove {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(50px, 30px) scale(1.1);
+            }
+            50% {
+                transform: translate(20px, 70px) scale(0.9);
+            }
+            75% {
+                transform: translate(-30px, 40px) scale(1.05);
+            }
+            100% {
+                transform: translate(-20px, -20px) scale(1);
+            }
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 420px;
+            padding: 40px 35px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-weight: 600;
+            font-size: 28px;
+            letter-spacing: -0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        input:focus {
+            border-color: rgba(255, 140, 0, 0.7);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.2);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+            color: #333;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 154, 158, 0.4);
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(255, 154, 158, 0.5);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            background-color: rgba(255, 235, 238, 0.8);
+            color: #c62828;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 192, 203, 0.5);
+        }
+
+        .footer-links {
+            margin-top: 24px;
+            text-align: center;
+            color: #666;
+            font-size: 15px;
+        }
+
+        .footer-links a {
+            color: #ff7e5f;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #ff5722;
+            text-decoration: underline;
+        }
+
+        .hidden-input {
+            display: none;
+        }
+
+        /* 苹果风格的细节 */
+        .apple-style {
+            position: relative;
+        }
+
+        .apple-style::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            border-radius: 20px;
+            pointer-events: none;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .login-container {
+                width: 90%;
+                padding: 30px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 液态玻璃背景元素 -->
+<div class="liquid-bg"></div>
+<div class="liquid-bg"></div>
+<div class="liquid-bg"></div>
+<div class="liquid-bg"></div>
+
+<div class="login-container apple-style">
+    <h1>用户登录</h1>
+    <div id="errorMessage" class="error-message"></div>
+
+    <form id="loginForm" action="/login" method="post">
+        <div class="form-group">
+            <label for="qqNumber">QQ号码</label>
+            <input type="text" id="qqNumber" name="qqNumber" required placeholder="请输入QQ号码">
+        </div>
+
+        <div class="form-group">
+            <label for="password">密码</label>
+            <input type="password" id="password" name="password" required placeholder="请输入密码">
+        </div>
+        <input type="hidden" id="deviceInfo" name="deviceInfo">
+        <input type="hidden" id="ipAddress" name="ipAddress">
+
+        <button type="submit" class="btn-login">登录</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        if (error) {
+            document.getElementById('errorMessage').textContent = decodeURIComponent(error);
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+        autoFillDeviceInfo();
+        autoFillIPAddress();
+    });
+
+    function autoFillDeviceInfo() {
+        const deviceInfo = navigator.userAgent;
+        document.getElementById('deviceInfo').value = deviceInfo;
+    }
+
+    async function autoFillIPAddress() {
+        try {
+            const response = await fetch('https://api.vore.top/api/IPdata?ip=');
+            const data = await response.json();
+            if (data.code === 200 && data.ipinfo && data.ipinfo.text) {
+                document.getElementById('ipAddress').value = data.ipinfo.text;
+            } else {
+            }
+        } catch (error) {
+            try {
+                const backupResponse = await fetch('https://ipapi.co/json');
+                const backupData = await backupResponse.json();
+                if (backupData && backupData.ip) {
+                    document.getElementById('ipAddress').value = backupData.ip;
+                } else {
+                }
+            } catch (backupError) {
+                document.getElementById('ipAddress').value = '未知';
+            }
+        }
+    }
+</script>
+</body>
+</html>
