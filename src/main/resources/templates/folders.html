@@ -75,15 +75,28 @@
 
         /* 新添加的"最近更新"按钮样式 */
         .update-link {
-            background: #3498db; /* 中度蓝色 */
+            background: #3498db;
             border-color: #3498db;
             color: white;
         }
 
         .update-link:hover {
-            background: #2980b9; /* 悬停时稍深的蓝色 */
+            background: #2980b9;
             border-color: #2980b9;
             box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        /* 新添加的"用户须知"按钮样式 */
+        .notice-link {
+            background: #f39c12; /* 橙色 */
+            border-color: #f39c12;
+            color: white;
+        }
+
+        .notice-link:hover {
+            background: #e67e22; /* 悬停时稍深的橙色 */
+            border-color: #e67e22;
+            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
         }
 
         header {
@@ -291,6 +304,7 @@
     <p class="subtitle">点击分类查看详细内容</p>
 </header>
 <div class="top-nav">
+    <a href="/user/instructions" class="nav-link notice-link">📋 客官须知</a>
     <a href="/user/recommend" class="nav-link recommend-link">⭐ 推荐</a>
     <a href="/user/update" class="nav-link update-link">🔄 最近更新</a>
     <a href="/user/mycart" class="nav-link cart-link">🛒 购物车</a>

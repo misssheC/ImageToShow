@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品购买用户须知</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eaeaea;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+
+        .notice-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .notice-card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .notice-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .price-icon {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+        }
+
+        .shipping-icon {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+
+        .other-icon {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+        }
+
+        .content {
+            font-size: 1.1rem;
+            color: #555;
+            padding-left: 10px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 10px;
+        }
+
+        li {
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        li:before {
+            content: "•";
+            color: #3498db;
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+
+        .highlight {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .important-note {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #eaeaea;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .notice-card {
+                padding: 20px;
+            }
+
+            .card-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .icon {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>客官须知</h1>
+        <p class="subtitle">请在购买前仔细阅读以下内容，以确保您了解相关条款和条件</p>
+    </header>
+
+    <div class="notice-container">
+        <div class="notice-card">
+            <div class="card-header">
+                <div class="icon price-icon">
+                    <i class="fas fa-tag"></i>
+                </div>
+                <h2>一、视频价格说明</h2>
+            </div>
+            <div class="content">
+                <ul>
+                    <li>网站上视频大部分(60%)视频价位<strong class="highlight">¥8~12</strong>(一般不会超过10，极少数是12)，小部分视频价位<strong class="highlight">¥4~6</strong></li>
+                    <li>价位依据：视频内容、时长、质量</li>
+                    <li>不买没关系，看看也欢迎</li>
+                    <li>ʕ ᵔᴥᵔ ʔ</li>
+                    <li>如果您有较多的TK群，可以通过宣传我们获取折扣哦</li>
+                </ul>
+            </div>
+        </div>
+        <div class="notice-card">
+            <div class="card-header">
+                <div class="icon shipping-icon">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
+                <h2>二、发货方式说明</h2>
+            </div>
+            <div class="content">
+                <ul>
+                    <li>相比其他网站用百度网盘那种龟速下载(100kb/s)的方式我们采用不限速的方式</li>
+                    <li>所以我们采用<strong class="highlight">QQ压缩打包发送</strong>的方式发送给您处理</li>
+                    <li>不知道解压可以qq询问</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 其他事项部分 -->
+        <div class="notice-card">
+            <div class="card-header">
+                <div class="icon other-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h2>三、其他事项说明</h2>
+            </div>
+            <div class="content">
+                <ul>
+                    <li><strong class="highlight">其他：</strong>为了人与人之间基本的信任，我们先发货给您，您支付完成后可获取解压密码。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    // 触发API函数
+    function triggerInstructionAPI() {
+        // 定义API端点
+        const apiEndpoint = '/user/read';
+
+        console.log('正在调用API:', apiEndpoint);
+
+        // 使用fetch API发送GET请求
+        fetch(apiEndpoint, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                // 如果需要认证，可以添加token等
+                // 'Authorization': 'Bearer ' + token
+            },
+            mode: 'same-origin', // 默认值，确保同源请求
+            credentials: 'include' // 如果需要携带cookies等凭证
+        })
+            .then(response => {
+                console.log('API响应状态:', response.status);
+
+                // 根据HTTP状态码判断是否成功
+                if (response.ok) {
+                    return response.json().catch(() => {
+                        // 如果响应不是JSON，直接返回文本或空对象
+                        console.log('API调用成功，但响应可能不是JSON格式');
+                        return {};
+                    });
+                } else {
+                    throw new Error(`API请求失败，状态码: ${response.status}`);
+                }
+            })
+            .then(data => {
+                console.log('API响应数据:', data);
+
+                // 这里可以根据API返回的数据进行相应处理
+                // 例如：更新页面内容、显示通知等
+                if (data.message) {
+                    console.log('API消息:', data.message);
+                }
+
+                // 可选：在控制台显示成功消息
+                console.log('用户须知API调用成功');
+            })
+            .catch(error => {
+                console.error('API调用失败:', error);
+
+                // 可以根据需要处理错误，比如显示错误提示
+                // 注意：这里不显示给用户，因为API调用失败不应该影响页面显示
+            });
+    }
+
+    // 为卡片添加点击效果
+    document.querySelectorAll('.notice-card').forEach(card => {
+        card.addEventListener('click', function() {
+            // 移除其他卡片的激活状态
+            document.querySelectorAll('.notice-card').forEach(c => {
+                if (c !== this) c.style.transform = 'translateY(0)';
+            });
+
+            // 切换当前卡片的激活状态
+            if (this.style.transform === 'translateY(-10px)') {
+                this.style.transform = 'translateY(-5px)';
+            } else {
+                this.style.transform = 'translateY(-10px)';
+            }
+        });
+    });
+
+    // 模拟页面加载效果
+    window.addEventListener('load', function() {
+        document.body.style.opacity = '0';
+        document.body.style.transition = 'opacity 0.5s';
+
+        setTimeout(() => {
+            document.body.style.opacity = '1';
+        }, 100);
+
+        // 卡片逐个出现效果
+        const cards = document.querySelectorAll('.notice-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s, transform 0.5s';
+
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 300 + index * 200);
+        });
+
+        // 页面加载完成后触发API调用
+        // 可以设置一个小的延迟，确保页面完全加载
+        setTimeout(() => {
+            triggerInstructionAPI();
+        }, 500);
+    });
+
+    // 可选：添加一个备用的事件监听器，确保API被调用
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM已加载完成');
+    });
+</script>
+</body>
+</html>

@@ -103,6 +103,18 @@ public class GoodsShowController {
         return result;
     }
 
+    @GetMapping("/user/instructions")
+    public String Instructions(){
+
+        return "instructions.html";
+    }
+
+    @GetMapping("/user/read")
+    public void Read(HttpSession session){
+        String qq = (String) session.getAttribute("qqNumber");
+        logService.SaveLog(qq,"阅读了 <span style='color:blue'>用户须知</span>",9);
+    }
+
     @GetMapping("/user/update")
     public String UpdatePage(){
         return "update.html";
