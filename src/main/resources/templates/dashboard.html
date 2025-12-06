@@ -31,7 +31,6 @@
             min-height: 100vh;
         }
 
-        /* 侧边栏样式 */
         .sidebar {
             width: 250px;
             background: linear-gradient(180deg, var(--primary), var(--secondary));
@@ -84,14 +83,12 @@
             background-color: rgba(255, 255, 255, 0.1);
         }
 
-        /* 主内容区样式 */
         .main-content {
             flex: 1;
             display: flex;
             flex-direction: column;
         }
 
-        /* 顶部栏样式 */
         .top-bar {
             background-color: white;
             padding: 15px 30px;
@@ -159,7 +156,6 @@
             object-fit: cover;
         }
 
-        /* 内容区样式 */
         .content {
             padding: 30px;
             flex: 1;
@@ -194,7 +190,6 @@
             color: var(--gray);
         }
 
-        /* 卡片样式 */
         .card {
             background-color: white;
             border-radius: 10px;
@@ -239,7 +234,14 @@
             background-color: #3ab0d6;
         }
 
-        /* 表格样式 */
+        .btn-warning {
+            background-color: var(--warning);
+        }
+
+        .btn-warning:hover {
+            background-color: #e1156d;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -302,7 +304,6 @@
             color: var(--success);
         }
 
-        /* 图片样式 */
         .product-image {
             width: 50px;
             height: 50px;
@@ -317,7 +318,6 @@
             transform: scale(1.1);
         }
 
-        /* 图片放大模态框样式 */
         .image-modal-overlay {
             position: fixed;
             top: 0;
@@ -380,7 +380,6 @@
             background: rgba(0, 0, 0, 0.9);
         }
 
-        /* 加载状态 */
         .loading {
             text-align: center;
             padding: 20px;
@@ -392,7 +391,6 @@
             margin-bottom: 10px;
         }
 
-        /* 错误状态 */
         .error {
             text-align: center;
             padding: 20px;
@@ -404,7 +402,6 @@
             margin-bottom: 10px;
         }
 
-        /* 排名列表样式 */
         .ranking-list {
             list-style: none;
         }
@@ -472,7 +469,6 @@
             color: var(--primary);
         }
 
-        /* 用户列表样式 - 修改为每页显示50个用户 */
         .users-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -557,7 +553,6 @@
             text-align: right;
         }
 
-        /* 分页 */
         .pagination {
             display: flex;
             justify-content: center;
@@ -584,7 +579,6 @@
             background-color: var(--light);
         }
 
-        /* 模态框样式 */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -678,7 +672,6 @@
             gap: 10px;
         }
 
-        /* 打印订单列表样式 */
         .print-list {
             max-height: 400px;
             overflow-y: auto;
@@ -697,11 +690,10 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
         .warning-text {
-            color: #ff4d4f; /* 警告红色 */
+            color: #ff4d4f;
             font-weight: bold;
         }
 
-        /* 自动刷新控件样式 */
         .auto-refresh-controls {
             display: flex;
             align-items: center;
@@ -738,7 +730,6 @@
             font-size: 0.7rem;
         }
 
-        /* 注册用户按钮样式 */
         .register-user-btn {
             margin-top: auto;
             margin-bottom: 20px;
@@ -751,7 +742,6 @@
             font-size: 1rem;
         }
 
-        /* 响应式设计 */
         @media (max-width: 992px) {
             .sidebar {
                 width: 80px;
@@ -832,7 +822,6 @@
     </style>
 </head>
 <body>
-<!-- 侧边导航栏 -->
 <div class="sidebar">
     <div class="logo">
         <h2>用户管理系统</h2>
@@ -858,7 +847,6 @@
         </li>
     </ul>
 
-    <!-- 注册用户按钮 -->
     <div class="register-user-btn">
         <button class="btn" id="register-user-btn">
             <i class="fas fa-user-plus"></i> <span>注册新用户</span>
@@ -866,16 +854,13 @@
     </div>
 </div>
 
-<!-- 主内容区 -->
 <div class="main-content">
-    <!-- 顶部栏 -->
     <div class="top-bar">
         <div class="search-bar">
             <i class="fas fa-search"></i>
             <input type="text" placeholder="搜索用户、订单或...">
         </div>
 
-        <!-- 销量和销售额信息 -->
         <div class="sales-info">
             <div class="sales-item">
                 <div class="sales-label">总销售额</div>
@@ -888,9 +873,7 @@
         </div>
     </div>
 
-    <!-- 内容区域 -->
     <div class="content">
-        <!-- 用户订单 -->
         <div class="content-section active" id="user-orders">
             <div class="section-header">
                 <h2>用户订单管理</h2>
@@ -916,14 +899,12 @@
                         </tr>
                         </thead>
                         <tbody id="orders-table-body">
-                        <!-- 动态内容将在这里加载 -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- 用户购物车 -->
         <div class="content-section" id="user-carts">
             <div class="section-header">
                 <h2>用户购物车</h2>
@@ -947,14 +928,12 @@
                         </tr>
                         </thead>
                         <tbody id="carts-table-body">
-                        <!-- 动态内容将在这里加载 -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- 用户行为日志 -->
         <div class="content-section" id="user-logs">
             <div class="section-header">
                 <h2>用户行为日志</h2>
@@ -988,14 +967,12 @@
                         </tr>
                         </thead>
                         <tbody id="logs-table-body">
-                        <!-- 动态内容将在这里加载 -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- 用户消费排名 -->
         <div class="content-section" id="user-ranking">
             <div class="section-header">
                 <h2>用户消费排名</h2>
@@ -1007,12 +984,10 @@
                     <button class="btn" id="refresh-ranking">刷新排名</button>
                 </div>
                 <div id="ranking-container">
-                    <!-- 动态内容将在这里加载 -->
                 </div>
             </div>
         </div>
 
-        <!-- 用户历史消费记录 -->
         <div class="content-section" id="user-history">
             <div class="section-header">
                 <h2>用户历史消费记录</h2>
@@ -1037,14 +1012,12 @@
                         </tr>
                         </thead>
                         <tbody id="history-table-body">
-                        <!-- 动态内容将在这里加载 -->
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- 用户详细信息 -->
         <div class="content-section" id="user-details">
             <div class="section-header">
                 <h2>用户详细信息</h2>
@@ -1056,23 +1029,20 @@
                     <h3>用户列表</h3>
                     <div style="display: flex; gap: 10px;">
                         <button class="btn" id="refresh-users">刷新数据</button>
-                        <button class="btn">导出用户</button>
+                        <button class="btn btn-warning" id="clear-users">清除无效用户</button>
                     </div>
                 </div>
 
                 <div class="users-list" id="users-list-container">
-                    <!-- 用户卡片将在这里动态生成 -->
                 </div>
 
                 <div class="pagination" id="pagination-container">
-                    <!-- 分页按钮将在这里动态生成 -->
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 定价模态框 -->
 <div class="modal-overlay" id="price-modal">
     <div class="modal">
         <div class="modal-header">
@@ -1096,7 +1066,6 @@
     </div>
 </div>
 
-<!-- 打印订单模态框 -->
 <div class="modal-overlay" id="print-modal">
     <div class="modal">
         <div class="modal-header">
@@ -1115,7 +1084,6 @@
             <div class="form-group">
                 <label>名称列表</label>
                 <div class="print-list" id="print-list-container">
-                    <!-- 列表将在这里动态加载 -->
                 </div>
             </div>
         </div>
@@ -1125,7 +1093,6 @@
     </div>
 </div>
 
-<!-- 注册用户模态框 -->
 <div class="modal-overlay" id="register-modal">
     <div class="modal">
         <div class="modal-header">
@@ -1146,7 +1113,6 @@
     </div>
 </div>
 
-<!-- 图片放大模态框 -->
 <div class="image-modal-overlay" id="image-modal">
     <div class="image-modal">
         <button class="close-image-modal" id="close-image-modal">&times;</button>
@@ -1155,28 +1121,23 @@
 </div>
 
 <script>
-    // 自动刷新相关变量
     let logRefreshInterval = 0;
     let logRefreshTimer = null;
     let isLogsActive = false;
 
-    // 导航切换功能
     document.addEventListener('DOMContentLoaded', function() {
         const navLinks = document.querySelectorAll('.nav-links li');
         const contentSections = document.querySelectorAll('.content-section');
 
         navLinks.forEach(link => {
             link.addEventListener('click', function() {
-                // 移除所有active类
                 navLinks.forEach(item => item.classList.remove('active'));
                 contentSections.forEach(section => section.classList.remove('active'));
 
-                // 添加active类到当前点击的链接和对应的内容区域
                 this.classList.add('active');
                 const targetId = this.getAttribute('data-target');
                 document.getElementById(targetId).classList.add('active');
 
-                // 处理自动刷新逻辑
                 if (targetId === 'user-logs') {
                     isLogsActive = true;
                     setupLogAutoRefresh();
@@ -1185,40 +1146,31 @@
                     clearLogAutoRefresh();
                 }
 
-                // 如果是购物车页面，则加载购物车数据
                 if (targetId === 'user-carts') {
                     loadCarts();
                 }
 
-                // 如果是用户详情页面，则加载用户数据
                 if (targetId === 'user-details') {
                     loadUsers();
                 }
 
-                // 如果是用户消费排名页面，则加载排名数据
                 if (targetId === 'user-ranking') {
                     loadRanking();
                 }
 
-                // 如果是用户行为日志页面，则加载日志数据
                 if (targetId === 'user-logs') {
                     loadLogs();
                 }
 
-                // 如果是用户历史消费页面，则加载历史消费数据
                 if (targetId === 'user-history') {
                     loadHistory();
                 }
             });
         });
 
-        // 加载订单数据
         loadOrders();
-
-        // 加载销售数据
         loadSalesData();
 
-        // 添加刷新按钮事件监听
         document.getElementById('refresh-orders').addEventListener('click', loadOrders);
         document.getElementById('refresh-carts').addEventListener('click', loadCarts);
         document.getElementById('refresh-users').addEventListener('click', loadUsers);
@@ -1226,22 +1178,18 @@
         document.getElementById('refresh-logs').addEventListener('click', loadLogs);
         document.getElementById('refresh-history').addEventListener('click', loadHistory);
 
-        // 定价模态框事件监听
         document.getElementById('close-price-modal').addEventListener('click', closePriceModal);
         document.getElementById('cancel-pricing').addEventListener('click', closePriceModal);
         document.getElementById('confirm-pricing').addEventListener('click', confirmPricing);
 
-        // 打印订单模态框事件监听
         document.getElementById('close-print-modal').addEventListener('click', closePrintModal);
         document.getElementById('close-print').addEventListener('click', closePrintModal);
 
-        // 注册用户功能事件监听
         document.getElementById('register-user-btn').addEventListener('click', showRegisterModal);
         document.getElementById('close-register-modal').addEventListener('click', closeRegisterModal);
         document.getElementById('cancel-register').addEventListener('click', closeRegisterModal);
         document.getElementById('confirm-register').addEventListener('click', confirmRegister);
 
-        // 图片放大模态框事件监听
         document.getElementById('close-image-modal').addEventListener('click', closeImageModal);
         document.getElementById('image-modal').addEventListener('click', function(e) {
             if (e.target === this) {
@@ -1249,14 +1197,14 @@
             }
         });
 
-        // 自动刷新下拉框事件监听
         document.getElementById('log-refresh-interval').addEventListener('change', function() {
             logRefreshInterval = parseInt(this.value);
             updateRefreshStatus();
             setupLogAutoRefresh();
         });
 
-        // 添加ESC键关闭图片模态框
+        document.getElementById('clear-users').addEventListener('click', clearInvalidUsers);
+
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeImageModal();
@@ -1264,7 +1212,6 @@
         });
     });
 
-    // 更新刷新状态显示
     function updateRefreshStatus() {
         const refreshStatus = document.getElementById('refresh-status');
         if (logRefreshInterval > 0) {
@@ -1277,7 +1224,6 @@
         }
     }
 
-    // 设置日志自动刷新
     function setupLogAutoRefresh() {
         clearLogAutoRefresh();
 
@@ -1288,7 +1234,6 @@
         }
     }
 
-    // 清除日志自动刷新
     function clearLogAutoRefresh() {
         if (logRefreshTimer) {
             clearInterval(logRefreshTimer);
@@ -1296,7 +1241,6 @@
         }
     }
 
-    // 加载销售数据
     function loadSalesData() {
         fetch('/admin/allandall')
             .then(response => {
@@ -1306,36 +1250,30 @@
                 return response.json();
             })
             .then(data => {
-                // 解析返回的数据
                 if (data && data.length > 0) {
                     const salesData = data[0];
                     const totalLumpSum = salesData.totalLumpSum || 0;
                     const totalPurchaseQuantity = salesData.totalPurchaseQuantity || 0;
 
-                    // 更新页面显示
                     document.getElementById('total-sales-amount').textContent = '¥' + parseInt(totalLumpSum).toLocaleString();
                     document.getElementById('total-sales-quantity').textContent = parseInt(totalPurchaseQuantity).toLocaleString();
                 }
             })
             .catch(error => {
                 console.error('获取销售数据失败:', error);
-                // 显示错误信息
                 document.getElementById('total-sales-amount').textContent = '加载失败';
                 document.getElementById('total-sales-quantity').textContent = '加载失败';
             });
     }
 
-    // 格式化日期函数
     function formatDate(dateString) {
         const date = new Date(dateString);
         return date.toLocaleDateString('zh-CN') + ' ' + date.toLocaleTimeString('zh-CN', {hour12: false});
     }
 
-    // 加载订单数据
     function loadOrders() {
         const tableBody = document.getElementById('orders-table-body');
 
-        // 显示加载状态
         tableBody.innerHTML = `
             <tr>
                 <td colspan="8" class="loading">
@@ -1345,7 +1283,6 @@
             </tr>
         `;
 
-        // 获取订单数据
         fetch('/admin/allOrders')
             .then(response => {
                 if (!response.ok) {
@@ -1354,10 +1291,8 @@
                 return response.json();
             })
             .then(orders => {
-                // 清空表格
                 tableBody.innerHTML = '';
 
-                // 如果没有订单数据
                 if (orders.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
@@ -1421,7 +1356,6 @@
                     tableBody.appendChild(row);
                 });
 
-                // 刷新销售数据
                 loadSalesData();
             })
             .catch(error => {
@@ -1438,7 +1372,6 @@
             });
     }
 
-    // 显示放大图片
     function showEnlargedImage(imageUrl) {
         const modal = document.getElementById('image-modal');
         const enlargedImage = document.getElementById('enlarged-image');
@@ -1446,24 +1379,19 @@
         enlargedImage.src = imageUrl;
         modal.classList.add('active');
 
-        // 阻止背景滚动
         document.body.style.overflow = 'hidden';
     }
 
-    // 关闭放大图片模态框
     function closeImageModal() {
         const modal = document.getElementById('image-modal');
         modal.classList.remove('active');
 
-        // 恢复背景滚动
         document.body.style.overflow = '';
     }
 
-    // 加载消费排名数据
     function loadRanking() {
         const rankingContainer = document.getElementById('ranking-container');
 
-        // 显示加载状态
         rankingContainer.innerHTML = `
             <div class="loading">
                 <i class="fas fa-spinner fa-spin"></i>
@@ -1471,7 +1399,6 @@
             </div>
         `;
 
-        // 获取消费排名数据
         fetch('/admin/ranking')
             .then(response => {
                 if (!response.ok) {
@@ -1480,10 +1407,8 @@
                 return response.json();
             })
             .then(users => {
-                // 清空容器
                 rankingContainer.innerHTML = '';
 
-                // 如果没有用户数据
                 if (users.length === 0) {
                     rankingContainer.innerHTML = `
                         <div class="loading">
@@ -1494,23 +1419,19 @@
                     return;
                 }
 
-                // 创建排名列表
                 const rankingList = document.createElement('ul');
                 rankingList.className = 'ranking-list';
 
-                // 遍历用户数据并创建排名项
                 users.forEach((user, index) => {
                     const rank = index + 1;
                     const rankingItem = document.createElement('li');
                     rankingItem.className = 'ranking-item';
 
-                    // 根据排名设置不同的样式
                     let rankClass = 'rank-other';
                     if (rank === 1) rankClass = 'rank-1';
                     else if (rank === 2) rankClass = 'rank-2';
                     else if (rank === 3) rankClass = 'rank-3';
 
-                    // 生成随机头像（基于QQ号码的哈希）
                     const avatarUrl = `img/qqava.png`;
 
                     rankingItem.innerHTML = `
@@ -1540,11 +1461,9 @@
             });
     }
 
-    // 加载用户行为日志数据
     function loadLogs() {
         const tableBody = document.getElementById('logs-table-body');
 
-        // 显示加载状态
         tableBody.innerHTML = `
             <tr>
                 <td colspan="4" class="loading">
@@ -1554,7 +1473,6 @@
             </tr>
         `;
 
-        // 获取用户行为日志数据
         fetch('/admin/log')
             .then(response => {
                 if (!response.ok) {
@@ -1563,10 +1481,8 @@
                 return response.json();
             })
             .then(logs => {
-                // 清空表格
                 tableBody.innerHTML = '';
 
-                // 如果没有日志数据
                 if (logs.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
@@ -1579,13 +1495,11 @@
                     return;
                 }
 
-                // 遍历日志数据并创建表格行
                 logs.forEach(log => {
                     const row = document.createElement('tr');
                     const logTime = new Date(log.time);
                     const formattedTime = logTime.toLocaleString('zh-CN');
 
-                    // 根据type字段确定行为类型
                     let eventType = '';
                     switch(log.type) {
                         case 0:
@@ -1646,11 +1560,9 @@
             });
     }
 
-    // 加载用户历史消费数据
     function loadHistory() {
         const tableBody = document.getElementById('history-table-body');
 
-        // 显示加载状态
         tableBody.innerHTML = `
             <tr>
                 <td colspan="7" class="loading">
@@ -1660,7 +1572,6 @@
             </tr>
         `;
 
-        // 获取历史消费数据
         fetch('/admin/history')
             .then(response => {
                 if (!response.ok) {
@@ -1669,10 +1580,8 @@
                 return response.json();
             })
             .then(records => {
-                // 清空表格
                 tableBody.innerHTML = '';
 
-                // 如果没有历史消费数据
                 if (records.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
@@ -1685,13 +1594,11 @@
                     return;
                 }
 
-                // 遍历历史消费数据并创建表格行
                 records.forEach(record => {
                     const row = document.createElement('tr');
                     const recordTime = new Date(record.time);
                     const formattedTime = recordTime.toLocaleString('zh-CN');
 
-                    // 根据isPay字段确定支付状态
                     let payStatusText, payStatusClass;
                     if (record.isPay === 1) {
                         payStatusText = '已支付';
@@ -1728,7 +1635,6 @@
             });
     }
 
-    // 显示定价模态框
     function showPriceModal(qqNumber) {
         const modal = document.getElementById('price-modal');
         const qqInput = document.getElementById('qq-number');
@@ -1741,13 +1647,11 @@
         amountInput.focus();
     }
 
-    // 关闭定价模态框
     function closePriceModal() {
         const modal = document.getElementById('price-modal');
         modal.classList.remove('active');
     }
 
-    // 确认定价下单
     function confirmPricing() {
         const qqNumber = document.getElementById('qq-number').value;
         const amount = document.getElementById('price-amount').value;
@@ -1757,13 +1661,11 @@
             return;
         }
 
-        // 显示加载状态
         const confirmBtn = document.getElementById('confirm-pricing');
         const originalText = confirmBtn.innerHTML;
         confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 处理中...';
         confirmBtn.disabled = true;
 
-        // 调用后端接口
         fetch(`/admin/clinch?qqNumber=${qqNumber}&amount=${amount}`)
             .then(response => {
                 if (response.ok) {
@@ -1776,7 +1678,6 @@
                 if (result === 'ok') {
                     alert('下单成功！');
                     closePriceModal();
-                    // 刷新订单数据
                     loadOrders();
                 } else {
                     throw new Error('下单失败');
@@ -1787,13 +1688,11 @@
                 alert('下单失败: ' + error.message);
             })
             .finally(() => {
-                // 恢复按钮状态
                 confirmBtn.innerHTML = originalText;
                 confirmBtn.disabled = false;
             });
     }
 
-    // 打印订单
     function printOrder(qqNumber, batch) {
         const modal = document.getElementById('print-modal');
         const qqInput = document.getElementById('print-qq-number');
@@ -1803,7 +1702,6 @@
         qqInput.value = qqNumber;
         batchInput.value = batch;
 
-        // 显示加载状态
         printListContainer.innerHTML = `
             <div class="loading">
                 <i class="fas fa-spinner fa-spin"></i>
@@ -1811,10 +1709,8 @@
             </div>
         `;
 
-        // 显示模态框
         modal.classList.add('active');
 
-        // 调用后端打印接口
         fetch(`/admin/print?qqNumber=${qqNumber}&batch=${batch}`)
             .then(response => {
                 if (!response.ok) {
@@ -1823,10 +1719,8 @@
                 return response.json();
             })
             .then(goodsNames => {
-                // 清空容器
                 printListContainer.innerHTML = '';
 
-                // 如果没有数据
                 if (goodsNames.length === 0) {
                     printListContainer.innerHTML = `
                         <div class="loading">
@@ -1837,7 +1731,6 @@
                     return;
                 }
 
-                // 遍历名称并创建列表项
                 goodsNames.forEach((name, index) => {
                     const item = document.createElement('div');
                     item.className = 'print-item';
@@ -1859,24 +1752,20 @@
             });
     }
 
-    // 关闭打印模态框
     function closePrintModal() {
         const modal = document.getElementById('print-modal');
         modal.classList.remove('active');
     }
 
-    // 完成订单
     function completeOrder(qqNumber, batch) {
         if (!confirm(`确定要完成QQ号码为${qqNumber}，批次为${batch}的订单吗？`)) {
             return;
         }
 
-        // 显示加载状态
         const targetButton = event.target;
         const originalClass = targetButton.className;
         targetButton.className = 'fas fa-spinner fa-spin';
 
-        // 调用后端接口
         fetch(`/admin/complete?qqNumber=${qqNumber}&batch=${batch}`)
             .then(response => {
                 if (response.ok) {
@@ -1888,7 +1777,6 @@
             .then(result => {
                 if (result === 'ok') {
                     alert('订单已完成！');
-                    // 刷新订单数据
                     loadOrders();
                 } else {
                     throw new Error('完成订单失败');
@@ -1897,12 +1785,10 @@
             .catch(error => {
                 console.error('完成订单失败:', error);
                 alert('完成订单失败: ' + error.message);
-                // 恢复按钮状态
                 targetButton.className = originalClass;
             });
     }
 
-    // 加载购物车数据
     function loadCarts() {
         const tableBody = document.getElementById('carts-table-body');
         tableBody.innerHTML = `
@@ -1981,9 +1867,8 @@
             });
     }
 
-    // 用户数据和分页功能 - 修改为每页显示50个用户
     let usersData = [];
-    const usersPerPage = 50; // 修改为每页显示50个用户
+    const usersPerPage = 50;
     let currentPage = 1;
 
     function loadUsers() {
@@ -2123,7 +2008,6 @@
         container.appendChild(nextButton);
     }
 
-    // 注册用户功能
     function showRegisterModal() {
         const modal = document.getElementById('register-modal');
         const qqInput = document.getElementById('register-qq');
@@ -2150,14 +2034,12 @@
             return;
         }
 
-        // 显示加载状态
         const confirmBtn = document.getElementById('confirm-register');
         const originalText = confirmBtn.innerHTML;
         confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 注册中...';
         confirmBtn.disabled = true;
         message.innerHTML = '';
 
-        // 调用后端注册接口
         fetch(`/admin/reg?qqNumber=${qqNumber}`)
             .then(response => {
                 if (response.ok) {
@@ -2169,10 +2051,8 @@
             .then(result => {
                 if (result === 'ok') {
                     message.innerHTML = '<span style="color: var(--success);">用户注册成功！</span>';
-                    // 延迟关闭模态框
                     setTimeout(() => {
                         closeRegisterModal();
-                        // 刷新用户数据
                         loadUsers();
                     }, 1500);
                 } else {
@@ -2186,6 +2066,42 @@
             .finally(() => {
                 confirmBtn.innerHTML = originalText;
                 confirmBtn.disabled = false;
+            });
+    }
+
+    function clearInvalidUsers() {
+        if (!confirm('确定要清除无效用户吗？此操作不可恢复。')) {
+            return;
+        }
+
+        const clearBtn = document.getElementById('clear-users');
+        const originalText = clearBtn.innerHTML;
+        clearBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 清除中...';
+        clearBtn.disabled = true;
+
+        fetch('/admin/clearuser')
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('清除失败');
+                }
+            })
+            .then(result => {
+                if (result === 'ok') {
+                    alert('清除无效用户成功！');
+                    loadUsers();
+                } else {
+                    throw new Error('清除失败');
+                }
+            })
+            .catch(error => {
+                console.error('清除无效用户失败:', error);
+                alert('清除无效用户失败: ' + error.message);
+            })
+            .finally(() => {
+                clearBtn.innerHTML = originalText;
+                clearBtn.disabled = false;
             });
     }
 </script>

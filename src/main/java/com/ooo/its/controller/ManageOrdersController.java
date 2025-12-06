@@ -153,4 +153,15 @@ public class ManageOrdersController {
     public List<Map<String,String>> AllandAll(){
         return userInfoService.AllandAll();
     }
+
+    @GetMapping("/admin/clearuser")
+    public ResponseEntity<?>ClearUser(){
+        if(userInfoService.DeleteUserInfo()){
+            return ResponseEntity.ok().body("ok");
+        }
+        else {
+            return ResponseEntity.status(401).body("no");
+        }
+    }
+
 }
