@@ -40,14 +40,14 @@ public class LoginController {
             Model model,
             HttpSession session) {
         String region = getRegionFromIP(ipAddress);
+        String device = deviceDetectionService.detectDeviceModel(deviceInfo);
         if (userService.validateUser(qqNumber, password,region)) {
             session.setAttribute("qqNumber", qqNumber);
-            String device = deviceDetectionService.detectDeviceModel(deviceInfo);
             userInfoService.SaveLoginInfo(qqNumber,deviceInfo,ipAddress,device,region);
-            logService.SaveLog(qqNumber,"成功登录 "+"IP:"+ipAddress+" 地区:"+region,1);
+            logService.SaveLog(qqNumber,"成功登录 "+"IP:"+ipAddress+" 地区:"+region+" 设备:"+device,1);
             return "redirect:/folders";
         } else {
-            logService.SaveLog(qqNumber,"登录失败 "+"IP:"+ipAddress+" 地区:"+region,0);
+            logService.SaveLog(qqNumber,"登录失败 "+"IP:"+ipAddress+" 地区:"+region+" 设备:"+device,0);
             return "login";
         }
     }
