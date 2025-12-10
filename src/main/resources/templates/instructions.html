@@ -194,7 +194,7 @@
             <div class="content">
                 <ul>
                     <li>网站上视频大部分(60%)视频价位<strong class="highlight">¥8~12</strong>(一般不会超过10，极少数是12)，小部分视频价位<strong class="highlight">¥4~6</strong></li>
-                    <li>价位依据：视频内容、时长、质量</li>
+                    <li>价位依据：视频内容、时长、质量(视频画质、时长、大小在图片左上角有标注)</li>
                     <li>不买没关系，看看也欢迎</li>
                     <li>ʕ ᵔᴥᵔ ʔ</li>
                     <li>如果您有较多的TK群，可以通过宣传我们获取折扣哦</li>
@@ -234,31 +234,23 @@
     </div>
 </div>
 <script>
-    // 触发API函数
     function triggerInstructionAPI() {
-        // 定义API端点
         const apiEndpoint = '/user/read';
 
         console.log('正在调用API:', apiEndpoint);
-
-        // 使用fetch API发送GET请求
         fetch(apiEndpoint, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                // 如果需要认证，可以添加token等
-                // 'Authorization': 'Bearer ' + token
             },
-            mode: 'same-origin', // 默认值，确保同源请求
-            credentials: 'include' // 如果需要携带cookies等凭证
+            mode: 'same-origin',
+            credentials: 'include'
         })
             .then(response => {
                 console.log('API响应状态:', response.status);
 
-                // 根据HTTP状态码判断是否成功
                 if (response.ok) {
                     return response.json().catch(() => {
-                        // 如果响应不是JSON，直接返回文本或空对象
                         console.log('API调用成功，但响应可能不是JSON格式');
                         return {};
                     });
@@ -268,33 +260,22 @@
             })
             .then(data => {
                 console.log('API响应数据:', data);
-
-                // 这里可以根据API返回的数据进行相应处理
-                // 例如：更新页面内容、显示通知等
                 if (data.message) {
                     console.log('API消息:', data.message);
                 }
 
-                // 可选：在控制台显示成功消息
                 console.log('用户须知API调用成功');
             })
             .catch(error => {
                 console.error('API调用失败:', error);
-
-                // 可以根据需要处理错误，比如显示错误提示
-                // 注意：这里不显示给用户，因为API调用失败不应该影响页面显示
             });
     }
 
-    // 为卡片添加点击效果
     document.querySelectorAll('.notice-card').forEach(card => {
         card.addEventListener('click', function() {
-            // 移除其他卡片的激活状态
             document.querySelectorAll('.notice-card').forEach(c => {
                 if (c !== this) c.style.transform = 'translateY(0)';
             });
-
-            // 切换当前卡片的激活状态
             if (this.style.transform === 'translateY(-10px)') {
                 this.style.transform = 'translateY(-5px)';
             } else {
@@ -302,8 +283,6 @@
             }
         });
     });
-
-    // 模拟页面加载效果
     window.addEventListener('load', function() {
         document.body.style.opacity = '0';
         document.body.style.transition = 'opacity 0.5s';
@@ -311,8 +290,6 @@
         setTimeout(() => {
             document.body.style.opacity = '1';
         }, 100);
-
-        // 卡片逐个出现效果
         const cards = document.querySelectorAll('.notice-card');
         cards.forEach((card, index) => {
             card.style.opacity = '0';
@@ -324,15 +301,11 @@
                 card.style.transform = 'translateY(0)';
             }, 300 + index * 200);
         });
-
-        // 页面加载完成后触发API调用
-        // 可以设置一个小的延迟，确保页面完全加载
         setTimeout(() => {
             triggerInstructionAPI();
         }, 500);
     });
 
-    // 可选：添加一个备用的事件监听器，确保API被调用
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM已加载完成');
     });
