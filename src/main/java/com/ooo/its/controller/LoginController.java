@@ -14,11 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-
 @Controller
 public class LoginController {
 
@@ -44,25 +39,16 @@ public class LoginController {
             @RequestParam String ipAddress,
             Model model,
             HttpSession session) {
-
         String region = getRegionFromIP(ipAddress);
-        boolean accountValid = userService.validateUser(qqNumber, password, region);
-        boolean regionValid = isRegionValid(region);
-
-        if (accountValid) {
-            if (regionValid) {
-                session.setAttribute("qqNumber", qqNumber);
-                String device = deviceDetectionService.detectDeviceModel(deviceInfo);
-                userInfoService.SaveLoginInfo(qqNumber, deviceInfo, ipAddress, device, region);
-                logService.SaveLog(qqNumber, "成功登录 " + "IP:" + ipAddress + " 地区:" + region, 1);
-                return "redirect:/folders";
-            } else {
-                logService.SaveLog(qqNumber, "登录失败：地区不符合要求 " + "IP:" + ipAddress + " 地区:" + region, 0);
-                return "redirect:/login?error=" + URLEncoder.encode("请关闭VPN", StandardCharsets.UTF_8);
-            }
+        if (userService.validateUser(qqNumber, password,region)) {
+            session.setAttribute("qqNumber", qqNumber);
+            String device = deviceDetectionService.detectDeviceModel(deviceInfo);
+            userInfoService.SaveLoginInfo(qqNumber,deviceInfo,ipAddress,device,region);
+            logService.SaveLog(qqNumber,"成功登录 "+"IP:"+ipAddress+" 地区:"+region,1);
+            return "redirect:/folders";
         } else {
-            logService.SaveLog(qqNumber, "登录失败：账号或密码错误 " + "IP:" + ipAddress + " 地区:" + region, 0);
-            return "redirect:/login?error=" + URLEncoder.encode("账号或密码错误", StandardCharsets.UTF_8);
+            logService.SaveLog(qqNumber,"登录失败 "+"IP:"+ipAddress+" 地区:"+region,0);
+            return "login";
         }
     }
 
@@ -97,6 +83,7 @@ public class LoginController {
                 String city = ipdata.path("info2").asText("");
                 String district = ipdata.path("info3").asText("");
                 String isp = ipdata.path("isp").asText("");
+                // 构建位置字符串：省-市-区
                 StringBuilder location = new StringBuilder();
                 if (!province.isEmpty()) {
                     location.append(province);
@@ -124,20 +111,5 @@ public class LoginController {
         }
 
         return "未知";
-    }
-    private boolean isRegionValid(String region) {
-        if (region.contains("省") && region.contains("市")) {
-            return true;
-        }
-
-        if (region.length() >= 2) {
-            String lastTwoChars = region.substring(region.length() - 2);
-            List<String> allowedSuffixes = Arrays.asList("移动", "联通", "电信", "基站");
-            if (allowedSuffixes.contains(lastTwoChars)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

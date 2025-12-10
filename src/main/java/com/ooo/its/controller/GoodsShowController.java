@@ -110,9 +110,10 @@ public class GoodsShowController {
     }
 
     @GetMapping("/user/read")
-    public void Read(HttpSession session){
+    public ResponseEntity<?> Read(HttpSession session){
         String qq = (String) session.getAttribute("qqNumber");
         logService.SaveLog(qq,"阅读了 <span style='color:blue'>用户须知</span>",9);
+        return ResponseEntity.ok().body("ok");
     }
 
     @GetMapping("/user/update")
