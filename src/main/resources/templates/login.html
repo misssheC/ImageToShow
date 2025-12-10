@@ -171,9 +171,15 @@
             border-radius: 10px;
             margin-bottom: 20px;
             text-align: center;
-            display: none;
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 192, 203, 0.5);
+            display: none;
+        }
+
+        .vpn-warning {
+            background-color: rgba(255, 243, 224, 0.8);
+            color: #ff6f00;
+            border: 1px solid rgba(255, 167, 38, 0.5);
         }
 
         .footer-links {
@@ -199,7 +205,6 @@
             display: none;
         }
 
-        /* 苹果风格的细节 */
         .apple-style {
             position: relative;
         }
@@ -216,7 +221,6 @@
             pointer-events: none;
         }
 
-        /* 响应式设计 */
         @media (max-width: 480px) {
             .login-container {
                 width: 90%;
@@ -226,7 +230,6 @@
     </style>
 </head>
 <body>
-<!-- 液态玻璃背景元素 -->
 <div class="liquid-bg"></div>
 <div class="liquid-bg"></div>
 <div class="liquid-bg"></div>
@@ -257,10 +260,17 @@
     document.addEventListener('DOMContentLoaded', function() {
         const urlParams = new URLSearchParams(window.location.search);
         const error = urlParams.get('error');
+        const errorMessageEl = document.getElementById('errorMessage');
+
         if (error) {
-            document.getElementById('errorMessage').textContent = decodeURIComponent(error);
-            document.getElementById('errorMessage').style.display = 'block';
+            const decodedError = decodeURIComponent(error);
+            errorMessageEl.textContent = decodedError;
+            errorMessageEl.style.display = 'block';
+            if (decodedError === "请关闭VPN") {
+                errorMessageEl.classList.add('vpn-warning');
+            }
         }
+
         autoFillDeviceInfo();
         autoFillIPAddress();
     });
@@ -277,18 +287,24 @@
             if (data.code === 200 && data.ipinfo && data.ipinfo.text) {
                 document.getElementById('ipAddress').value = data.ipinfo.text;
             } else {
+                await useBackupIPService();
             }
         } catch (error) {
-            try {
-                const backupResponse = await fetch('https://ipapi.co/json');
-                const backupData = await backupResponse.json();
-                if (backupData && backupData.ip) {
-                    document.getElementById('ipAddress').value = backupData.ip;
-                } else {
-                }
-            } catch (backupError) {
+            await useBackupIPService();
+        }
+    }
+
+    async function useBackupIPService() {
+        try {
+            const backupResponse = await fetch('https://ipapi.co/json');
+            const backupData = await backupResponse.json();
+            if (backupData && backupData.ip) {
+                document.getElementById('ipAddress').value = backupData.ip;
+            } else {
                 document.getElementById('ipAddress').value = '未知';
             }
+        } catch (backupError) {
+            document.getElementById('ipAddress').value = '未知';
         }
     }
 </script>
