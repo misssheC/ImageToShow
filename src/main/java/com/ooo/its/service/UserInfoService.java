@@ -1,6 +1,7 @@
 package com.ooo.its.service;
 
 import com.ooo.its.entity.UserInfo;
+import com.ooo.its.entity.User;
 import com.ooo.its.repository.UserInfoRep;
 import com.ooo.its.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,5 +100,15 @@ public class UserInfoService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public int getVipStatus(String qq){
+        Optional<User> user = userRepository.findByQqNumber(qq);
+        return user.map(User::getVip).orElse(0);
+    }
+
+    public int getBlackStatus(String qq){
+        Optional<User> user = userRepository.findByQqNumber(qq);
+        return user.map(User::getBlack).orElse(0);
     }
 }

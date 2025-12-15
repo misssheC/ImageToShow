@@ -42,27 +42,41 @@ public class LoginController {
             @RequestParam String password,
             @RequestParam String deviceInfo,
             @RequestParam String ipAddress,
-            Model model,
             HttpSession session) {
-
         String region = getRegionFromIP(ipAddress);
         boolean accountValid = userService.validateUser(qqNumber, password, region);
+
         boolean regionValid = isRegionValid(region);
 
         if (accountValid) {
-            if (regionValid) {
+
+            int identity = userService.Identity(qqNumber);
+            if (identity == 1) {
+                logService.SaveLog(qqNumber, "登录失败：黑名单用户 " + "IP:" + ipAddress + " 地区:" + region, 0);
+                return "redirect:/login?error=" + URLEncoder.encode("账号已被禁止登录", StandardCharsets.UTF_8);
+            }
+            boolean skipVpnCheck = (identity == 2);
+            boolean regionCheckPassed = regionValid || skipVpnCheck;
+            if (regionCheckPassed) {
                 session.setAttribute("qqNumber", qqNumber);
                 String device = deviceDetectionService.detectDeviceModel(deviceInfo);
                 userInfoService.SaveLoginInfo(qqNumber, deviceInfo, ipAddress, device, region);
-                logService.SaveLog(qqNumber, "成功登录 " + "IP:" + ipAddress + " 地区:" + region, 1);
+                String logMsg = "成功登录";
+                if (identity == 2) {
+                    logMsg += "（VIP用户跳过VPN检测）";
+                }
+                logMsg += " IP:" + ipAddress + " 地区:" + region;
+                logService.SaveLog(qqNumber, logMsg, 1);
                 return "redirect:/folders";
             } else {
                 logService.SaveLog(qqNumber, "登录失败：地区不符合要求 " + "IP:" + ipAddress + " 地区:" + region, 0);
                 return "redirect:/login?error=" + URLEncoder.encode("请关闭VPN", StandardCharsets.UTF_8);
             }
-        } else {
+
+        }
+        else {
             logService.SaveLog(qqNumber, "登录失败：账号或密码错误 " + "IP:" + ipAddress + " 地区:" + region, 0);
-            return "redirect:/login?error=" + URLEncoder.encode("账号或密码错误", StandardCharsets.UTF_8);
+            return "redirect:/login?error=" + URLEncoder.encode("账号不存在或密码错误或登录地点发生变更", StandardCharsets.UTF_8);
         }
     }
 
@@ -83,61 +97,43 @@ public class LoginController {
 
     private String getRegionFromIP(String ipAddress) {
         try {
-            String url = "https://api.vore.top/api/IPdata?ip=" + ipAddress;
-
+            String url = "http://ip-api.com/json/" + ipAddress + "?lang=zh-CN&fields=status,message,country,regionName,city,isp";
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-
             if (response.getStatusCode() == HttpStatus.OK) {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode root = mapper.readTree(response.getBody());
-
-                JsonNode ipdata = root.path("ipdata");
-                String province = ipdata.path("info1").asText("");
-                String city = ipdata.path("info2").asText("");
-                String district = ipdata.path("info3").asText("");
-                String isp = ipdata.path("isp").asText("");
+                if (!"success".equals(root.path("status").asText()))
+                    return "未知";
+                String country = root.path("country").asText("");
+                String region = root.path("regionName").asText("");
+                String city = root.path("city").asText("");
+                String isp = root.path("isp").asText("");
                 StringBuilder location = new StringBuilder();
-                if (!province.isEmpty()) {
-                    location.append(province);
+                if (!country.isEmpty()) {
+                    location.append(country);
+                }
+                if (!region.isEmpty()) {
+                    if (!location.isEmpty()) location.append("-");
+                    location.append(region);
                 }
                 if (!city.isEmpty()) {
-                    if (location.length() > 0) location.append("-");
+                    if (!location.isEmpty()) location.append("-");
                     location.append(city);
                 }
-                if (!district.isEmpty()) {
-                    if (location.length() > 0) location.append("-");
-                    location.append(district);
-                }
                 if (!isp.isEmpty()) {
-                    if (location.length() > 0) location.append("-");
+                    if (!location.isEmpty()) location.append("-");
                     location.append(isp);
                 }
-                if (location.length() == 0) {
-                    location.append(root.path("adcode").path("o").asText("未知"));
-                }
 
-                return location.toString();
+                return location.isEmpty() ? "未知" : location.toString();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return "未知";
     }
     private boolean isRegionValid(String region) {
-        if (region.contains("省") && region.contains("市")) {
-            return true;
-        }
-
-        if (region.length() >= 2) {
-            String lastTwoChars = region.substring(region.length() - 2);
-            List<String> allowedSuffixes = Arrays.asList("移动", "联通", "电信", "基站");
-            if (allowedSuffixes.contains(lastTwoChars)) {
-                return true;
-            }
-        }
-
-        return false;
+        return region.contains("中国");
     }
 }

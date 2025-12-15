@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class ManageOrdersController {
@@ -68,8 +65,25 @@ public class ManageOrdersController {
 
     @GetMapping("/admin/allinfo")
     @ResponseBody
-    public List<UserInfo> ShowAllInfo(){
-        return userInfoService.ShowAllUserInfo();
+    public List<Map<String, Object>> ShowAllInfo() {
+        List<UserInfo> userInfoList = userInfoService.ShowAllUserInfo();
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (UserInfo userInfo : userInfoList) {
+            Map<String, Object> userMap = new LinkedHashMap<>();
+            userMap.put("qqNumber", userInfo.getQqNumber());
+            userMap.put("lastTime", userInfo.getLastTime());
+            userMap.put("regTime", userInfo.getRegTime());
+            userMap.put("purchaseQuantity", userInfo.getPurchaseQuantity());
+            userMap.put("numberOfLogins", userInfo.getNumberOfLogins());
+            userMap.put("lumpSum", userInfo.getLumpSum());
+            userMap.put("ipAddress", userInfo.getIpAddress());
+            userMap.put("device", userInfo.getDevice());
+            userMap.put("region", userInfo.getRegion());
+            userMap.put("vip",userInfoService.getVipStatus(userInfo.getQqNumber()));
+            userMap.put("black",userInfoService.getBlackStatus(userInfo.getQqNumber()));
+            result.add(userMap);
+        }
+        return result;
     }
 
     @GetMapping("/admin/ranking")
@@ -162,6 +176,13 @@ public class ManageOrdersController {
         else {
             return ResponseEntity.status(401).body("no");
         }
+    }
+
+    @GetMapping("/admin/setvip")
+    public ResponseEntity<?> SetVip(@RequestParam String qqNumber ,@RequestParam int s){
+        if(userService.setIdentity(qqNumber,s))
+            return ResponseEntity.ok("ok");
+        return ResponseEntity.status(401).body("no");
     }
 
 }
