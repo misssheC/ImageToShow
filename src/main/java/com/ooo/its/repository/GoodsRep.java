@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface GoodsRep extends JpaRepository<Goods,Long> {
-    List<Goods> findByParentFolderOrderByUpdateDesc(String parentfolder);
+    List<Goods> findByParentFolderAndDeleteOrderByUpdateDesc(String parentfolder,int d);
 
     @Query("SELECT g FROM Goods g ORDER BY g.buy DESC limit 50")
     List<Goods> findAllOrderByBuyDesc();

@@ -24,8 +24,11 @@ public class Goods {
     private String url;
     @Column(name = "update_time")
     private Date update;
+
+    @Column(name = "is_deleted")
+    private int delete;
     public Goods() {}
-    public Goods(Long id,String goodsName, String parentFolder,int click ,int buy,String url,Date update) {
+    public Goods(Long id,String goodsName, String parentFolder,int click ,int buy,String url,Date update,int delete) {
         this.id = id;
         this.name = goodsName;
         this.parentFolder = parentFolder;
@@ -33,6 +36,7 @@ public class Goods {
         this.buy = buy;
         this.url = url;
         this.update = update;
+        this.delete = delete;
     }
 
     public Long getId() {
@@ -89,5 +93,13 @@ public class Goods {
 
     public void setUpdate(Date update) {
         this.update = update;
+    }
+
+    public int getDelete() {
+        return delete;
+    }
+
+    public void setDelete(int delete) {
+        this.delete = delete;
     }
 }

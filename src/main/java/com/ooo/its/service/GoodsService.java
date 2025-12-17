@@ -17,7 +17,7 @@ public class GoodsService {
     @Autowired
     private GoodsRep goodsRep;
     public List<String> getGoodsUrlByFolder(String parentFolder) {
-        List<Goods> goodsList = goodsRep.findByParentFolderOrderByUpdateDesc(parentFolder);
+        List<Goods> goodsList = goodsRep.findByParentFolderAndDeleteOrderByUpdateDesc(parentFolder,0);
         List<String> goodsUrl = new ArrayList<>();
 
         for (Goods goods : goodsList) {
@@ -27,7 +27,7 @@ public class GoodsService {
         return goodsUrl;
     }
     public  List<Goods> getGoodsByFolder(String p){
-        return goodsRep.findByParentFolderOrderByUpdateDesc(p);
+        return goodsRep.findByParentFolderAndDeleteOrderByUpdateDesc(p,0);
     }
 
     public boolean IncreaseClick(Long goodid){

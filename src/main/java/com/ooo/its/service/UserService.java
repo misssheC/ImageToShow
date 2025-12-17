@@ -38,7 +38,8 @@ public class UserService {
         }
         UserInfo userInfo = userInfoOpt.get();
         Date currentTime = new Date();
-        boolean regionMatch = region.equals(userInfo.getRegion());
+
+        boolean regionMatch = compareRegionWithoutISP(region, userInfo.getRegion());
         if (userInfo.getLastTime() == null) {
             if ("unknown".equals(userInfo.getRegion())) {
                 return true;
@@ -52,6 +53,29 @@ public class UserService {
         } else {
             return true;
         }
+    }
+    public boolean compareRegionWithoutISP(String region1, String region2) {
+        if (region1 == null || region2 == null) {
+            return region1 == region2;
+        }
+        region1 = region1.trim();
+        region2 = region2.trim();
+        if ("unknown".equals(region1) && "unknown".equals(region2)) {
+            return true;
+        }
+
+        if ("unknown".equals(region1) || "unknown".equals(region2)) {
+            return false;
+        }
+        String[] parts1 = region1.split("-");
+        String[] parts2 = region2.split("-");
+        int compareLength = Math.min(3, Math.min(parts1.length, parts2.length));
+        for (int i = 0; i < compareLength; i++) {
+            if (!parts1[i].trim().equals(parts2[i].trim())) {
+                return false;
+            }
+        }
+        return true;
     }
     public boolean RegisterUser(String qq) {
         User verification = userRepository.findByQqNumber(qq).orElse(null);
