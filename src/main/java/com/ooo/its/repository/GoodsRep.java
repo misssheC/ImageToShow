@@ -6,13 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 public interface GoodsRep extends JpaRepository<Goods,Long> {
     List<Goods> findByParentFolderAndDeleteOrderByUpdateDesc(String parentfolder,int d);
 
-    @Query("SELECT g FROM Goods g ORDER BY g.buy DESC limit 50")
+    @Query("SELECT g FROM Goods g WHERE g.delete = 0 ORDER BY g.buy DESC limit 50")
     List<Goods> findAllOrderByBuyDesc();
 
-    List<Goods> findAllByUpdateGreaterThan(Date Time);
+    List<Goods> findAllByUpdateGreaterThanAndDeleteEquals(Date updateTime, int deleteFlag);
 }

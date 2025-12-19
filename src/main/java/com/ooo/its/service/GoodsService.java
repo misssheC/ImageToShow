@@ -59,6 +59,6 @@ public class GoodsService {
     }
 
     public List<Goods> Update(Date time){
-        return goodsRep.findAllByUpdateGreaterThan(time);
+        return goodsRep.findAllByUpdateGreaterThanAndDeleteEquals(time,0);
     }
 }
