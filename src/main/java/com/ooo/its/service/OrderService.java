@@ -6,6 +6,9 @@ import com.ooo.its.entity.Order;
 import com.ooo.its.repository.OrderRep;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -40,8 +43,9 @@ public class OrderService {
             return false;
         }
     }
-    public List<Order> AllOrders(){
-        return orderRep.findAllByOrderByIdDesc();
+    public List<Order> AllOrders(int n){
+        Pageable pageable = PageRequest.of(0, n, Sort.by("id").descending());
+        return orderRep.findAllByOrderByIdDesc(pageable);
     }
 
 

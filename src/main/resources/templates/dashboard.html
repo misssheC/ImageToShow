@@ -978,6 +978,34 @@
             background-color: transparent;
         }
 
+        /* 订单数量选择器样式 */
+        .order-count-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .order-count-selector label {
+            font-size: 0.9rem;
+            color: var(--dark);
+            white-space: nowrap;
+        }
+
+        .order-count-select {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            background-color: white;
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+            min-width: 80px;
+        }
+
+        .order-count-select:focus {
+            border-color: var(--primary);
+        }
+
         @media (max-width: 992px) {
             .sidebar {
                 width: 80px;
@@ -1020,8 +1048,12 @@
             .user-card-info h3 {
                 padding-right: 80px;
             }
+            .order-count-selector {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
 
-            /* 调整内容区域高度 */
             .content {
                 height: calc(100vh - 90px);
             }
@@ -1164,7 +1196,20 @@
             <div class="card">
                 <div class="card-header">
                     <h3>近期订单</h3>
-                    <button class="btn" id="refresh-orders">刷新数据</button>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <div class="order-count-selector">
+                            <label for="order-count-select">显示数量:</label>
+                            <select class="order-count-select" id="order-count-select">
+                                <option value="20" selected>20条</option>
+                                <option value="50">50条</option>
+                                <option value="100">100条</option>
+                                <option value="150">150条</option>
+                                <option value="200">200条</option>
+                                <option value="300">300条</option>
+                            </select>
+                        </div>
+                        <button class="btn" id="refresh-orders">刷新数据</button>
+                    </div>
                 </div>
                 <div id="orders-table-container">
                     <table>
@@ -1407,6 +1452,7 @@
     let logRefreshTimer = null;
     let isLogsActive = false;
     let activeDropdown = null;
+    let ordersNumber = 20;
 
     document.addEventListener('DOMContentLoaded', function() {
         const navLinks = document.querySelectorAll('.nav-links li');
@@ -1453,6 +1499,11 @@
 
         loadOrders();
         loadSalesData();
+
+        document.getElementById('order-count-select').addEventListener('change', function() {
+            ordersNumber = parseInt(this.value);
+            loadOrders();
+        });
 
         document.getElementById('refresh-orders').addEventListener('click', loadOrders);
         document.getElementById('refresh-carts').addEventListener('click', loadCarts);
@@ -1593,8 +1644,7 @@
                 </td>
             </tr>
         `;
-
-        fetch('/admin/allOrders')
+        fetch(`/admin/allOrders?number=${ordersNumber}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('网络响应不正常');

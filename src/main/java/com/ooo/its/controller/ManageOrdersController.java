@@ -33,14 +33,12 @@ public class ManageOrdersController {
 
     @GetMapping("/admin/allOrders")
     @ResponseBody
-    public List<Map<String, Object>> ShowAllOrders() {
-        List<Order> orders = orderService.AllOrders();
+    public List<Map<String, Object>> ShowAllOrders(@RequestParam int number) {
+        List<Order> orders = orderService.AllOrders(number);
         List<Map<String, Object>> result = new ArrayList<>();
 
         for (Order o : orders) {
             Map<String, Object> orderMap = new HashMap<>();
-
-            // 将订单的基本信息添加到map中
             orderMap.put("id", o.getId());
             orderMap.put("goodsId", o.getGoodsId());
             orderMap.put("qqNumber", o.getQqNumber());
