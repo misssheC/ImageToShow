@@ -31,11 +31,5 @@ public class LogService {
         return logRep.findLast24HoursLogs(twentyFourHoursAgo);
     }
 
-    public List<Log> FindByUser(String qq){
-        return logRep.findByUser(qq);
-    }
 
-    public List<Log> FindByType(int type){
-        return logRep.findByType(type);
-    }
 }

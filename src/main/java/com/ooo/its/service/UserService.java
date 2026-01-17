@@ -69,7 +69,7 @@ public class UserService {
         }
         String[] parts1 = region1.split("-");
         String[] parts2 = region2.split("-");
-        int compareLength = Math.min(3, Math.min(parts1.length, parts2.length));
+        int compareLength = 2;
         for (int i = 0; i < compareLength; i++) {
             if (!parts1[i].trim().equals(parts2[i].trim())) {
                 return false;

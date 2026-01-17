@@ -61,4 +61,9 @@ public class GoodsService {
     public List<Goods> Update(Date time){
         return goodsRep.findAllByUpdateGreaterThanAndDeleteEquals(time,0);
     }
+
+
+    public String ViewPicture(Long id){
+        return goodsRep.findById(id).orElse(null).getUrl();
+    }
 }

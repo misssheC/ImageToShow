@@ -76,7 +76,7 @@ public class LoginController {
         }
         else {
             logService.SaveLog(qqNumber, "登录失败：账号或密码错误 " + "IP:" + ipAddress + " 地区:" + region, 0);
-            return "redirect:/login?error=" + URLEncoder.encode("账号不存在或密码错误或登录地点发生变更", StandardCharsets.UTF_8);
+            return "redirect:/login?error=" + URLEncoder.encode("账号不存在或密码错误或登录网络发生变更", StandardCharsets.UTF_8);
         }
     }
 

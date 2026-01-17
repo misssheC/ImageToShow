@@ -1,5 +1,7 @@
 package com.ooo.its.repository;
 import com.ooo.its.entity.UserInfo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +14,7 @@ import java.util.Optional;
 public interface UserInfoRep extends JpaRepository<UserInfo, Long> {
     Optional<UserInfo> findByQqNumber(String qqNumber);
 
-    List<UserInfo> findAllByOrderByLastTimeDesc();
+    Page<UserInfo> findAllByOrderByLastTimeDesc(Pageable pageable);
 
     List<UserInfo> findAllByOrderByLumpSumDesc();
 

@@ -37,7 +37,7 @@ public class CartService {
 
     public List<Cart> ShowMyCart(String QQ){
 
-        return cartRep.findByQqNumber(QQ);
+        return cartRep.findByQqNumberOrderByIdDesc(QQ);
     }
 
     public boolean ChangeState(String qq , Long id , int event){
@@ -53,7 +53,7 @@ public class CartService {
     }
 
     public List<Cart> ShowAll(){
-        return cartRep.findAll();
+        return cartRep.findAllByOrderByIdDesc();
     }
 
     public boolean ClearCart(String qq){

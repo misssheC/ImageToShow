@@ -28,8 +28,16 @@ public class GoodsShowController {
     private UserInfoService userInfoService;
     @GetMapping("/user/showfolders")
     @ResponseBody
-    public List<Folder> getFolders() {
-        return folderService.getFolderList();
+    public Map<String, Object> getFolders(HttpSession session) {
+        String qqNumber = (String) session.getAttribute("qqNumber");
+        int loginNumber = userInfoService.getLoginNumber(qqNumber);
+        List<Folder> folderList = folderService.getFolderList();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("loginNumber", loginNumber);
+        result.put("folderList", folderList);
+
+        return result;
     }
 
     @GetMapping("/user/showimages")

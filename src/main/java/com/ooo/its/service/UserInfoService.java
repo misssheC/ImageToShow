@@ -5,6 +5,10 @@ import com.ooo.its.entity.User;
 import com.ooo.its.repository.UserInfoRep;
 import com.ooo.its.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -44,8 +48,9 @@ public class UserInfoService {
         return timeDifference > twoDaysInMillis;
     }
 
-    public List<UserInfo> ShowAllUserInfo() {
-        return userInfoRep.findAllByOrderByLastTimeDesc();
+    public Page<UserInfo> ShowAllUserInfo(int page) {
+            Pageable pageable = PageRequest.of(page - 1, 50, Sort.by(Sort.Direction.DESC, "lastTime"));
+            return userInfoRep.findAllByOrderByLastTimeDesc(pageable);
     }
 
     public boolean RecordAboutUser(String qq, int amount, int quantity) {
@@ -110,5 +115,9 @@ public class UserInfoService {
     public int getBlackStatus(String qq){
         Optional<User> user = userRepository.findByQqNumber(qq);
         return user.map(User::getBlack).orElse(0);
+    }
+    public int getLoginNumber(String qq){
+        Optional<UserInfo> userInfo = userInfoRep.findByQqNumber(qq);
+        return userInfo.map(UserInfo::getNumberOfLogins).orElse(0);
     }
 }

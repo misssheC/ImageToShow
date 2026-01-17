@@ -6,6 +6,7 @@
     <title>用户管理系统</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* 所有之前的CSS样式保持不变 */
         * {
             margin: 0;
             padding: 0;
@@ -146,6 +147,20 @@
             outline: none;
             width: 100%;
             margin-left: 10px;
+        }
+
+        /* 新增搜索按钮样式 */
+        .search-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            padding: 0 5px;
+            transition: color 0.3s;
+        }
+
+        .search-btn:hover {
+            color: var(--secondary);
         }
 
         .sales-info {
@@ -294,6 +309,14 @@
             background-color: #e1156d;
         }
 
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -354,6 +377,10 @@
 
         .action-icons i.fa-check-circle:hover {
             color: var(--success);
+        }
+
+        .action-icons i.fa-trash:hover {
+            color: #dc3545;
         }
 
         .product-image {
@@ -707,6 +734,24 @@
             background-color: var(--light);
         }
 
+        .pagination-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            color: var(--gray);
+            font-size: 0.9rem;
+            padding: 10px 0;
+        }
+
+        .total-count {
+            font-weight: 500;
+        }
+
+        .page-info {
+            font-weight: 500;
+        }
+
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -1006,6 +1051,33 @@
             border-color: var(--primary);
         }
 
+        /* 搜索提示样式 */
+        .search-hint {
+            margin-top: 5px;
+            font-size: 0.8rem;
+            color: var(--gray);
+            font-style: italic;
+        }
+
+        /* 搜索模式指示器 */
+        .search-mode-indicator {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
         @media (max-width: 992px) {
             .sidebar {
                 width: 80px;
@@ -1052,6 +1124,12 @@
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 5px;
+            }
+
+            .pagination-info {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
             }
 
             .content {
@@ -1171,8 +1249,11 @@
 <div class="main-content">
     <div class="top-bar">
         <div class="search-bar">
-            <i class="fas fa-search"></i>
-            <input type="text" placeholder="搜索用户、订单或...">
+            <i class="fas fa-search" id="search-icon"></i>
+            <input type="text" placeholder="输入QQ号码搜索用户、订单或..." id="search-input">
+            <button class="search-btn" id="search-btn" title="搜索">
+                <i class="fas fa-search"></i>
+            </button>
         </div>
 
         <div class="sales-info">
@@ -1190,8 +1271,8 @@
     <div class="content">
         <div class="content-section active" id="user-orders">
             <div class="section-header">
-                <h2>用户订单管理</h2>
-                <p>查看和管理所有用户订单信息</p>
+                <h2>用户订单管理 <span id="orders-search-indicator" class="search-mode-indicator" style="display: none;">搜索模式</span></h2>
+                <p>查看和管理所有用户订单信息 <span class="search-hint" id="orders-search-hint" style="display: none;">当前显示QQ: <span id="orders-search-qq"></span> 的订单</span></p>
             </div>
             <div class="card">
                 <div class="card-header">
@@ -1209,6 +1290,7 @@
                             </select>
                         </div>
                         <button class="btn" id="refresh-orders">刷新数据</button>
+                        <button class="btn btn-warning" id="clear-orders-search" style="display: none;">清除搜索</button>
                     </div>
                 </div>
                 <div id="orders-table-container">
@@ -1218,7 +1300,7 @@
                             <th>订单号</th>
                             <th>QQ号码</th>
                             <th>日期</th>
-                            <th>ID</th>
+                            <th>商品名</th>
                             <th>图片</th>
                             <th>状态</th>
                             <th>批次</th>
@@ -1234,13 +1316,16 @@
 
         <div class="content-section" id="user-carts">
             <div class="section-header">
-                <h2>用户购物车</h2>
-                <p>查看用户购物车中的信息</p>
+                <h2>用户购物车 <span id="carts-search-indicator" class="search-mode-indicator" style="display: none;">搜索模式</span></h2>
+                <p>查看用户购物车中的信息 <span class="search-hint" id="carts-search-hint" style="display: none;">当前显示QQ: <span id="carts-search-qq"></span> 的购物车</span></p>
             </div>
             <div class="card">
                 <div class="card-header">
                     <h3>购物车列表</h3>
-                    <button class="btn" id="refresh-carts">刷新数据</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" id="refresh-carts">刷新数据</button>
+                        <button class="btn btn-warning" id="clear-carts-search" style="display: none;">清除搜索</button>
+                    </div>
                 </div>
                 <div id="carts-table-container">
                     <table>
@@ -1263,8 +1348,8 @@
 
         <div class="content-section" id="user-logs">
             <div class="section-header">
-                <h2>用户行为日志</h2>
-                <p>记录和分析用户行为数据</p>
+                <h2>用户行为日志 <span id="logs-search-indicator" class="search-mode-indicator" style="display: none;">搜索模式</span></h2>
+                <p>记录和分析用户行为数据 <span class="search-hint" id="logs-search-hint" style="display: none;">当前显示QQ: <span id="logs-search-qq"></span> 的日志</span></p>
             </div>
             <div class="card">
                 <div class="card-header">
@@ -1281,6 +1366,7 @@
                             <i class="fas fa-circle"></i> 自动刷新已关闭
                         </div>
                         <button class="btn" id="refresh-logs">刷新日志</button>
+                        <button class="btn btn-warning" id="clear-logs-search" style="display: none;">清除搜索</button>
                     </div>
                 </div>
                 <div id="logs-table-container">
@@ -1317,13 +1403,16 @@
 
         <div class="content-section" id="user-history">
             <div class="section-header">
-                <h2>用户历史消费记录</h2>
-                <p>查看用户的完整消费历史</p>
+                <h2>用户历史消费记录 <span id="history-search-indicator" class="search-mode-indicator" style="display: none;">搜索模式</span></h2>
+                <p>查看用户的完整消费历史 <span class="search-hint" id="history-search-hint" style="display: none;">当前显示QQ: <span id="history-search-qq"></span> 的历史消费</span></p>
             </div>
             <div class="card">
                 <div class="card-header">
                     <h3>详细消费记录</h3>
-                    <button class="btn" id="refresh-history">刷新数据</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" id="refresh-history">刷新数据</button>
+                        <button class="btn btn-warning" id="clear-history-search" style="display: none;">清除搜索</button>
+                    </div>
                 </div>
                 <div id="history-table-container">
                     <table>
@@ -1347,8 +1436,8 @@
 
         <div class="content-section" id="user-details">
             <div class="section-header">
-                <h2>用户详细信息</h2>
-                <p>查看和管理用户的详细资料</p>
+                <h2>用户详细信息 <span id="users-search-indicator" class="search-mode-indicator" style="display: none;">搜索模式</span></h2>
+                <p>查看和管理用户的详细资料 <span class="search-hint" id="users-search-hint" style="display: none;">当前显示QQ: <span id="users-search-qq"></span> 的信息</span></p>
             </div>
 
             <div class="card">
@@ -1356,8 +1445,14 @@
                     <h3>用户列表</h3>
                     <div style="display: flex; gap: 10px;">
                         <button class="btn" id="refresh-users">刷新数据</button>
+                        <button class="btn btn-warning" id="clear-users-search" style="display: none;">清除搜索</button>
                         <button class="btn btn-warning" id="clear-users">清除无效用户</button>
                     </div>
+                </div>
+
+                <div class="pagination-info" id="pagination-info">
+                    <div class="total-count">总用户数: <span id="total-count">0</span></div>
+                    <div class="page-info">当前页: <span id="current-page">1</span> / <span id="total-pages">1</span></div>
                 </div>
 
                 <div class="users-list" id="users-list-container">
@@ -1370,6 +1465,7 @@
     </div>
 </div>
 
+<!-- 所有之前的modal保持不变 -->
 <div class="modal-overlay" id="price-modal">
     <div class="modal">
         <div class="modal-header">
@@ -1454,6 +1550,16 @@
     let activeDropdown = null;
     let ordersNumber = 20;
 
+    // 分页相关变量
+    let currentPage = 1;
+    let totalPages = 1;
+    let totalCount = 0;
+    let usersData = [];
+
+    // 搜索相关变量
+    let currentSearchKeyword = '';
+    let currentSearchSection = '';
+
     document.addEventListener('DOMContentLoaded', function() {
         const navLinks = document.querySelectorAll('.nav-links li');
         const contentSections = document.querySelectorAll('.content-section');
@@ -1475,12 +1581,25 @@
                     clearLogAutoRefresh();
                 }
 
+                // 切换页面时，清除搜索状态（除了当前搜索的页面）
+                if (currentSearchSection && currentSearchSection !== targetId) {
+                    clearSearch();
+                }
+
                 if (targetId === 'user-carts') {
-                    loadCarts();
+                    if (currentSearchSection === 'user-carts' && currentSearchKeyword) {
+                        searchCarts(currentSearchKeyword);
+                    } else {
+                        loadCarts();
+                    }
                 }
 
                 if (targetId === 'user-details') {
-                    loadUsers();
+                    if (currentSearchSection === 'user-details' && currentSearchKeyword) {
+                        searchUser(currentSearchKeyword);
+                    } else {
+                        loadUsers(1);
+                    }
                 }
 
                 if (targetId === 'user-ranking') {
@@ -1488,11 +1607,28 @@
                 }
 
                 if (targetId === 'user-logs') {
-                    loadLogs();
+                    if (currentSearchSection === 'user-logs' && currentSearchKeyword) {
+                        searchLogs(currentSearchKeyword);
+                    } else {
+                        loadLogs();
+                    }
                 }
 
                 if (targetId === 'user-history') {
-                    loadHistory();
+                    if (currentSearchSection === 'user-history' && currentSearchKeyword) {
+                        searchHistory(currentSearchKeyword);
+                    } else {
+                        loadHistory();
+                    }
+                }
+
+                // 如果是订单页面
+                if (targetId === 'user-orders') {
+                    if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
+                        searchOrders(currentSearchKeyword);
+                    } else {
+                        loadOrders();
+                    }
                 }
             });
         });
@@ -1500,17 +1636,96 @@
         loadOrders();
         loadSalesData();
 
-        document.getElementById('order-count-select').addEventListener('change', function() {
-            ordersNumber = parseInt(this.value);
+        // 搜索相关事件监听
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        const searchIcon = document.getElementById('search-icon');
+
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        searchBtn.addEventListener('click', performSearch);
+        searchIcon.addEventListener('click', performSearch);
+
+        // 清除搜索按钮事件
+        document.getElementById('clear-orders-search').addEventListener('click', function() {
+            clearSearch();
             loadOrders();
         });
 
-        document.getElementById('refresh-orders').addEventListener('click', loadOrders);
-        document.getElementById('refresh-carts').addEventListener('click', loadCarts);
-        document.getElementById('refresh-users').addEventListener('click', loadUsers);
+        document.getElementById('clear-carts-search').addEventListener('click', function() {
+            clearSearch();
+            loadCarts();
+        });
+
+        document.getElementById('clear-logs-search').addEventListener('click', function() {
+            clearSearch();
+            loadLogs();
+        });
+
+        document.getElementById('clear-history-search').addEventListener('click', function() {
+            clearSearch();
+            loadHistory();
+        });
+
+        document.getElementById('clear-users-search').addEventListener('click', function() {
+            clearSearch();
+            loadUsers(1);
+        });
+
+        document.getElementById('order-count-select').addEventListener('change', function() {
+            ordersNumber = parseInt(this.value);
+            if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
+                searchOrders(currentSearchKeyword);
+            } else {
+                loadOrders();
+            }
+        });
+
+        document.getElementById('refresh-orders').addEventListener('click', function() {
+            if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
+                searchOrders(currentSearchKeyword);
+            } else {
+                loadOrders();
+            }
+        });
+
+        document.getElementById('refresh-carts').addEventListener('click', function() {
+            if (currentSearchSection === 'user-carts' && currentSearchKeyword) {
+                searchCarts(currentSearchKeyword);
+            } else {
+                loadCarts();
+            }
+        });
+
+        document.getElementById('refresh-users').addEventListener('click', function() {
+            if (currentSearchSection === 'user-details' && currentSearchKeyword) {
+                searchUser(currentSearchKeyword);
+            } else {
+                loadUsers(currentPage);
+            }
+        });
+
         document.getElementById('refresh-ranking').addEventListener('click', loadRanking);
-        document.getElementById('refresh-logs').addEventListener('click', loadLogs);
-        document.getElementById('refresh-history').addEventListener('click', loadHistory);
+
+        document.getElementById('refresh-logs').addEventListener('click', function() {
+            if (currentSearchSection === 'user-logs' && currentSearchKeyword) {
+                searchLogs(currentSearchKeyword);
+            } else {
+                loadLogs();
+            }
+        });
+
+        document.getElementById('refresh-history').addEventListener('click', function() {
+            if (currentSearchSection === 'user-history' && currentSearchKeyword) {
+                searchHistory(currentSearchKeyword);
+            } else {
+                loadHistory();
+            }
+        });
 
         document.getElementById('close-price-modal').addEventListener('click', closePriceModal);
         document.getElementById('cancel-pricing').addEventListener('click', closePriceModal);
@@ -1553,6 +1768,637 @@
         });
     });
 
+    // 搜索功能实现
+    function performSearch() {
+        const keyword = document.getElementById('search-input').value.trim();
+
+        if (!keyword) {
+            alert('请输入搜索关键词');
+            return;
+        }
+
+        const activeSection = document.querySelector('.content-section.active');
+        if (!activeSection) return;
+
+        const sectionId = activeSection.id;
+        currentSearchKeyword = keyword;
+        currentSearchSection = sectionId;
+
+        switch(sectionId) {
+            case 'user-orders':
+                searchOrders(keyword);
+                break;
+            case 'user-carts':
+                searchCarts(keyword);
+                break;
+            case 'user-logs':
+                searchLogs(keyword);
+                break;
+            case 'user-history':
+                searchHistory(keyword);
+                break;
+            case 'user-details':
+                searchUser(keyword);
+                break;
+            case 'user-ranking':
+                alert('消费排名页面不支持搜索');
+                break;
+            default:
+                alert('当前页面不支持搜索');
+        }
+    }
+
+    function clearSearch() {
+        currentSearchKeyword = '';
+        currentSearchSection = '';
+
+        // 隐藏所有搜索指示器
+        document.getElementById('orders-search-indicator').style.display = 'none';
+        document.getElementById('orders-search-hint').style.display = 'none';
+        document.getElementById('carts-search-indicator').style.display = 'none';
+        document.getElementById('carts-search-hint').style.display = 'none';
+        document.getElementById('logs-search-indicator').style.display = 'none';
+        document.getElementById('logs-search-hint').style.display = 'none';
+        document.getElementById('history-search-indicator').style.display = 'none';
+        document.getElementById('history-search-hint').style.display = 'none';
+        document.getElementById('users-search-indicator').style.display = 'none';
+        document.getElementById('users-search-hint').style.display = 'none';
+
+        // 隐藏所有清除搜索按钮
+        document.getElementById('clear-orders-search').style.display = 'none';
+        document.getElementById('clear-carts-search').style.display = 'none';
+        document.getElementById('clear-logs-search').style.display = 'none';
+        document.getElementById('clear-history-search').style.display = 'none';
+        document.getElementById('clear-users-search').style.display = 'none';
+
+        // 清空搜索框
+        document.getElementById('search-input').value = '';
+    }
+
+    // 搜索订单
+    function searchOrders(keyword) {
+        const tableBody = document.getElementById('orders-table-body');
+        const searchIndicator = document.getElementById('orders-search-indicator');
+        const searchHint = document.getElementById('orders-search-hint');
+        const searchQQ = document.getElementById('orders-search-qq');
+        const clearBtn = document.getElementById('clear-orders-search');
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="8" class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>正在搜索订单数据...</p>
+                </td>
+            </tr>
+        `;
+
+        // 显示搜索状态
+        searchIndicator.style.display = 'inline-block';
+        searchHint.style.display = 'block';
+        searchQQ.textContent = keyword;
+        clearBtn.style.display = 'inline-block';
+
+        fetch(`/admin/searchOrder?qq=${keyword}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('网络响应不正常');
+                }
+                return response.json();
+            })
+            .then(orders => {
+                tableBody.innerHTML = '';
+
+                if (orders.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="loading">
+                                <i class="fas fa-inbox"></i>
+                                <p>没有找到QQ号码为 "${keyword}" 的订单</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                orders.forEach(order => {
+                    const row = document.createElement('tr');
+                    const orderDate = new Date(order.date);
+                    const formattedDate = orderDate.toLocaleDateString('zh-CN');
+                    let statusText, statusClass;
+                    switch(order.status) {
+                        case '0':
+                            statusText = '待定价';
+                            statusClass = 'pending';
+                            break;
+                        case '1':
+                            statusText = '待支付';
+                            statusClass = 'processing';
+                            break;
+                        case '2':
+                            statusText = '已完成';
+                            statusClass = 'completed';
+                            break;
+                        default:
+                            statusText = '未知';
+                            statusClass = 'pending';
+                    }
+
+                    let actionButtons = '';
+                    if (order.status === '0') {
+                        actionButtons = `
+                            <i class="fas fa-tag" title="定价" onclick="showPriceModal('${order.qqNumber}')"></i>
+                            <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
+                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}')"></i>
+                        `;
+                    } else if (order.status === '1') {
+                        actionButtons = `
+                            <i class="fas fa-check-circle" title="完成订单" onclick="completeOrder('${order.qqNumber}', ${order.batch})"></i>
+                            <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
+                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}')"></i>
+                        `;
+                    } else {
+                        actionButtons = `
+                            <i class="fas fa-check-circle" title="已完成" style="color: var(--success);"></i>
+                            <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
+                        `;
+                    }
+
+                    row.innerHTML = `
+                        <td>#ORD-${order.id}</td>
+                        <td>${order.qqNumber}</td>
+                        <td>${formattedDate}</td>
+                        <td>${order.goodsName}</td>
+                        <td>
+                            <img src="${order.imageUrl}" alt="图片" class="product-image"
+                                 onerror="this.src='https://via.placeholder.com/50x50?text=No+Image'"
+                                 onclick="showEnlargedImage('${order.imageUrl}')">
+                        </td>
+                        <td><span class="status ${statusClass}">${statusText}</span></td>
+                        <td>${order.batch}</td>
+                        <td class="action-icons">
+                            ${actionButtons}
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('搜索订单失败:', error);
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>搜索订单失败: ${error.message}</p>
+                            <button class="btn" onclick="searchOrders('${keyword}')">重试</button>
+                        </td>
+                    </tr>
+                `;
+            });
+    }
+
+    // 搜索购物车
+    function searchCarts(keyword) {
+        const tableBody = document.getElementById('carts-table-body');
+        const searchIndicator = document.getElementById('carts-search-indicator');
+        const searchHint = document.getElementById('carts-search-hint');
+        const searchQQ = document.getElementById('carts-search-qq');
+        const clearBtn = document.getElementById('clear-carts-search');
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>正在搜索购物车数据...</p>
+                </td>
+            </tr>
+        `;
+
+        // 显示搜索状态
+        searchIndicator.style.display = 'inline-block';
+        searchHint.style.display = 'block';
+        searchQQ.textContent = keyword;
+        clearBtn.style.display = 'inline-block';
+
+        fetch(`/admin/searchCart?qq=${keyword}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('网络响应不正常');
+                }
+                return response.json();
+            })
+            .then(carts => {
+                tableBody.innerHTML = '';
+
+                if (carts.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="loading">
+                                <i class="fas fa-inbox"></i>
+                                <p>没有找到QQ号码为 "${keyword}" 的购物车</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                carts.forEach(cart => {
+                    const row = document.createElement('tr');
+                    const cartTime = new Date(cart.time);
+                    const formattedTime = cartTime.toLocaleString('zh-CN');
+                    let statusText, statusClass;
+                    switch(cart.state) {
+                        case 0:
+                            statusText = '预备';
+                            statusClass = 'pending';
+                            break;
+                        case 1:
+                            statusText = '已下单';
+                            statusClass = 'active';
+                            break;
+                        default:
+                            statusText = '未知';
+                            statusClass = 'pending';
+                    }
+
+                    row.innerHTML = `
+                        <td>${cart.id}</td>
+                        <td>${cart.qqNumber}</td>
+                        <td>${cart.goodsId}</td>
+                        <td>${formattedTime}</td>
+                        <td><span class="status ${statusClass}">${statusText}</span></td>
+                        <td class="action-icons">
+                            <i class="fas fa-eye" title="查看详情" onclick="viewCartGoodsImage('${cart.goodsId}')"></i>
+                            <i class="fas fa-trash" title="删除购物车" onclick="deleteCart('${cart.id}')"></i>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('搜索购物车失败:', error);
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>搜索购物车失败: ${error.message}</p>
+                            <button class="btn" onclick="searchCarts('${keyword}')">重试</button>
+                        </td>
+                    </tr>
+                `;
+            });
+    }
+
+    // 搜索日志
+    function searchLogs(keyword) {
+        const tableBody = document.getElementById('logs-table-body');
+        const searchIndicator = document.getElementById('logs-search-indicator');
+        const searchHint = document.getElementById('logs-search-hint');
+        const searchQQ = document.getElementById('logs-search-qq');
+        const clearBtn = document.getElementById('clear-logs-search');
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="4" class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>正在搜索用户行为日志数据...</p>
+                </td>
+            </tr>
+        `;
+
+        // 显示搜索状态
+        searchIndicator.style.display = 'inline-block';
+        searchHint.style.display = 'block';
+        searchQQ.textContent = keyword;
+        clearBtn.style.display = 'inline-block';
+
+        fetch(`/admin/searchLog?qq=${keyword}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('网络响应不正常');
+                }
+                return response.json();
+            })
+            .then(logs => {
+                tableBody.innerHTML = '';
+
+                if (logs.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="loading">
+                                <i class="fas fa-inbox"></i>
+                                <p>没有找到QQ号码为 "${keyword}" 的用户行为日志</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                logs.forEach(log => {
+                    const row = document.createElement('tr');
+                    const logTime = new Date(log.time);
+                    const formattedTime = logTime.toLocaleString('zh-CN');
+
+                    let eventType = '';
+                    switch(log.type) {
+                        case 0:
+                            eventType = '<span class="warning-text">登录失败</span>';
+                            break;
+                        case 1:
+                            eventType = '登录';
+                            break;
+                        case 2:
+                            eventType = '浏览类别';
+                            break;
+                        case 3:
+                            eventType = '查看预览';
+                            break;
+                        case 4:
+                            eventType = '加入';
+                            break;
+                        case 5:
+                            eventType = '移除';
+                            break;
+                        case 6:
+                            eventType = '查看购物车';
+                            break;
+                        case 7:
+                            eventType = '提交订单';
+                            break;
+                        case 8:
+                            eventType = '支付';
+                            break;
+                        case 9:
+                            eventType = '阅读协议';
+                            break;
+                        default:
+                            eventType = '其他';
+                    }
+
+                    row.innerHTML = `
+                        <td>${log.user}</td>
+                        <td>${eventType}</td>
+                        <td>${log.event}</td>
+                        <td>${formattedTime}</td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('搜索用户行为日志失败:', error);
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>搜索用户行为日志失败: ${error.message}</p>
+                            <button class="btn" onclick="searchLogs('${keyword}')">重试</button>
+                        </td>
+                    </tr>
+                `;
+            });
+    }
+
+    // 搜索历史消费
+    function searchHistory(keyword) {
+        const tableBody = document.getElementById('history-table-body');
+        const searchIndicator = document.getElementById('history-search-indicator');
+        const searchHint = document.getElementById('history-search-hint');
+        const searchQQ = document.getElementById('history-search-qq');
+        const clearBtn = document.getElementById('clear-history-search');
+
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>正在搜索历史消费数据...</p>
+                </td>
+            </tr>
+        `;
+
+        // 显示搜索状态
+        searchIndicator.style.display = 'inline-block';
+        searchHint.style.display = 'block';
+        searchQQ.textContent = keyword;
+        clearBtn.style.display = 'inline-block';
+
+        fetch(`/admin/searchHistory?qq=${keyword}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('网络响应不正常');
+                }
+                return response.json();
+            })
+            .then(records => {
+                tableBody.innerHTML = '';
+
+                if (records.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="loading">
+                                <i class="fas fa-inbox"></i>
+                                <p>没有找到QQ号码为 "${keyword}" 的历史消费记录</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                records.forEach(record => {
+                    const row = document.createElement('tr');
+                    const recordTime = new Date(record.time);
+                    const formattedTime = recordTime.toLocaleString('zh-CN');
+
+                    let payStatusText, payStatusClass;
+                    if (record.isPay === 1) {
+                        payStatusText = '已支付';
+                        payStatusClass = 'completed';
+                    } else {
+                        payStatusText = '未支付';
+                        payStatusClass = 'pending';
+                    }
+
+                    row.innerHTML = `
+                        <td>${record.id}</td>
+                        <td>${record.qqNumber}</td>
+                        <td>${formattedTime}</td>
+                        <td>¥${record.amount.toFixed(2)}</td>
+                        <td>${record.goodsQuantity}</td>
+                        <td>${record.batch}</td>
+                        <td><span class="status ${payStatusClass}">${payStatusText}</span></td>
+                    `;
+
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('搜索历史消费数据失败:', error);
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>搜索历史消费数据失败: ${error.message}</p>
+                            <button class="btn" onclick="searchHistory('${keyword}')">重试</button>
+                        </td>
+                    </tr>
+                `;
+            });
+    }
+
+    // 搜索用户信息
+    function searchUser(keyword) {
+        const usersContainer = document.getElementById('users-list-container');
+        const paginationContainer = document.getElementById('pagination-container');
+        const paginationInfo = document.getElementById('pagination-info');
+        const searchIndicator = document.getElementById('users-search-indicator');
+        const searchHint = document.getElementById('users-search-hint');
+        const searchQQ = document.getElementById('users-search-qq');
+        const clearBtn = document.getElementById('clear-users-search');
+
+        usersContainer.innerHTML = `
+            <div class="loading" style="grid-column: 1 / -1;">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>正在搜索用户数据...</p>
+            </div>
+        `;
+
+        // 显示搜索状态
+        searchIndicator.style.display = 'inline-block';
+        searchHint.style.display = 'block';
+        searchQQ.textContent = keyword;
+        clearBtn.style.display = 'inline-block';
+
+        // 隐藏分页
+        paginationContainer.innerHTML = '';
+        paginationInfo.style.display = 'none';
+
+        fetch(`/admin/searchPerson?qq=${keyword}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('网络响应不正常');
+                }
+                return response.json();
+            })
+            .then(user => {
+                usersContainer.innerHTML = '';
+
+                if (!user || !user.qqNumber) {
+                    usersContainer.innerHTML = `
+                        <div class="loading" style="grid-column: 1 / -1;">
+                            <i class="fas fa-user-slash"></i>
+                            <p>没有找到QQ号码为 "${keyword}" 的用户</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // 显示单个用户卡片
+                const userCard = document.createElement('div');
+                let cardClass = 'user-card';
+                if (user.vip === 1) cardClass += ' vip';
+                if (user.black === 1) cardClass += ' blacklist';
+                userCard.className = cardClass;
+
+                const dropdownId = `dropdown-${user.qqNumber}-0`;
+
+                let tagsHTML = '';
+                if (user.vip === 1) {
+                    tagsHTML += '<span class="user-tag vip"><i class="fas fa-crown"></i> VIP</span>';
+                }
+                if (user.black === 1) {
+                    tagsHTML += '<span class="user-tag blacklist"><i class="fas fa-ban"></i> 黑名单</span>';
+                }
+
+                userCard.innerHTML = `
+                    <div class="user-card-header">
+                        <div class="user-card-info">
+                            <h3>QQ: ${user.qqNumber}</h3>
+                            <p>登录次数: ${user.numberOfLogins}</p>
+                        </div>
+                        <div class="header-actions">
+                            <div class="user-tags">
+                                ${tagsHTML}
+                            </div>
+                            <div class="user-management-dropdown">
+                                <button class="user-management-btn" type="button" onclick="toggleDropdown('${dropdownId}')">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                                <div class="dropdown-menu" id="${dropdownId}">
+                                    <div class="dropdown-item vip-add ${user.vip === 1 ? 'disabled' : ''}" onclick="setUserVip('${user.qqNumber}', 1, this)">
+                                        <i class="fas fa-crown"></i>
+                                        <span>设为VIP</span>
+                                    </div>
+                                    <div class="dropdown-item vip-remove ${user.vip !== 1 ? 'disabled' : ''}" onclick="setUserVip('${user.qqNumber}', 2, this)">
+                                        <i class="fas fa-times-circle"></i>
+                                        <span>移除VIP</span>
+                                    </div>
+                                    <div class="dropdown-item blacklist-add ${user.black === 1 ? 'disabled' : ''}" onclick="setUserVip('${user.qqNumber}', 3, this)">
+                                        <i class="fas fa-ban"></i>
+                                        <span>设为黑名单</span>
+                                    </div>
+                                    <div class="dropdown-item blacklist-remove ${user.black !== 1 ? 'disabled' : ''}" onclick="setUserVip('${user.qqNumber}', 4, this)">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>移除黑名单</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-card-body">
+                        <div class="user-stats">
+                            <div class="user-stat">
+                                <div class="user-stat-value">¥${(user.lumpSum || 0).toLocaleString()}</div>
+                                <div class="user-stat-label">消费总额</div>
+                            </div>
+                            <div class="user-stat">
+                                <div class="user-stat-value">${user.purchaseQuantity || 0}</div>
+                                <div class="user-stat-label">购买数量</div>
+                            </div>
+                        </div>
+                        <div class="user-details-list">
+                            <div class="user-detail-item">
+                                <span class="user-detail-label">注册时间</span>
+                                <span class="user-detail-value">${user.regTime ? formatDate(user.regTime) : '未知'}</span>
+                            </div>
+                            <div class="user-detail-item">
+                                <span class="user-detail-label">最后登录</span>
+                                <span class="user-detail-value">${user.lastTime ? formatDate(user.lastTime) : '未知'}</span>
+                            </div>
+                            <div class="user-detail-item">
+                                <span class="user-detail-label">设备型号</span>
+                                <span class="user-detail-value" title="${user.device || '未知'}">${(user.device || '未知').length > 30 ? (user.device || '未知').substring(0, 30) + '...' : (user.device || '未知')}</span>
+                            </div>
+                            <div class="user-detail-item">
+                                <span class="user-detail-label">地区</span>
+                                <span class="user-detail-value">${user.region || '未知'}</span>
+                            </div>
+                            <div class="user-detail-item">
+                                <span class="user-detail-label">IP地址</span>
+                                <span class="user-detail-value">${user.ipAddress || '未知'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                usersContainer.appendChild(userCard);
+            })
+            .catch(error => {
+                console.error('搜索用户失败:', error);
+                usersContainer.innerHTML = `
+                    <div class="error" style="grid-column: 1 / -1;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>搜索用户失败: ${error.message}</p>
+                        <button class="btn" onclick="searchUser('${keyword}')">重试</button>
+                    </div>
+                `;
+            });
+    }
+
+    // 以下所有原有函数保持不变，这里只展示修改的部分
+    // 原有的 loadOrders, loadCarts, loadRanking, loadLogs, loadHistory, loadUsers 等函数都保持不变
+    // 只是在这些函数的开头添加了检查当前搜索状态的逻辑
+
     function closeAllDropdowns() {
         const dropdowns = document.querySelectorAll('.dropdown-menu');
         dropdowns.forEach(dropdown => {
@@ -1591,7 +2437,11 @@
 
         if (isLogsActive && logRefreshInterval > 0) {
             logRefreshTimer = setInterval(() => {
-                loadLogs();
+                if (currentSearchSection === 'user-logs' && currentSearchKeyword) {
+                    searchLogs(currentSearchKeyword);
+                } else {
+                    loadLogs();
+                }
             }, logRefreshInterval);
         }
     }
@@ -1687,21 +2537,32 @@
                             statusText = '未知';
                             statusClass = 'pending';
                     }
+
                     let actionButtons = '';
                     if (order.status === '0') {
                         actionButtons = `
                             <i class="fas fa-tag" title="定价" onclick="showPriceModal('${order.qqNumber}')"></i>
                             <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
+                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}')"></i>
                         `;
                     } else if (order.status === '1') {
-                        actionButtons = `<i class="fas fa-check-circle" title="完成订单" onclick="completeOrder('${order.qqNumber}', ${order.batch})"></i>`;
+                        actionButtons = `
+                            <i class="fas fa-check-circle" title="完成订单" onclick="completeOrder('${order.qqNumber}', ${order.batch})"></i>
+                            <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
+                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}')"></i>
+                        `;
+                    } else {
+                        actionButtons = `
+                            <i class="fas fa-check-circle" title="已完成" style="color: var(--success);"></i>
+                            <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
+                        `;
                     }
 
                     row.innerHTML = `
                         <td>#ORD-${order.id}</td>
                         <td>${order.qqNumber}</td>
                         <td>${formattedDate}</td>
-                        <td>${order.goodsId}</td>
+                        <td>${order.goodsName}</td>
                         <td>
                             <img src="${order.imageUrl}" alt="图片" class="product-image"
                                  onerror="this.src='https://via.placeholder.com/50x50?text=No+Image'"
@@ -1733,6 +2594,44 @@
             });
     }
 
+    // 删除订单函数
+    function deleteOrder(orderId, qqNumber, goodsId) {
+        if (!confirm(`确定要删除订单 #ORD-${orderId} 吗？此操作不可恢复。`)) {
+            return;
+        }
+
+        const targetButton = event.target;
+        const originalClass = targetButton.className;
+        targetButton.className = 'fas fa-spinner fa-spin';
+
+        fetch(`/admin/deleteorder?orderId=${orderId}&qq=${qqNumber}&goodsId=${goodsId}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('删除订单失败');
+                }
+            })
+            .then(result => {
+                if (result === 'ok') {
+                    alert('订单删除成功！');
+                    // 重新加载数据（根据当前状态）
+                    if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
+                        searchOrders(currentSearchKeyword);
+                    } else {
+                        loadOrders();
+                    }
+                } else {
+                    throw new Error('删除订单失败');
+                }
+            })
+            .catch(error => {
+                console.error('删除订单失败:', error);
+                alert('删除订单失败: ' + error.message);
+                targetButton.className = originalClass;
+            });
+    }
+
     function showEnlargedImage(imageUrl) {
         const modal = document.getElementById('image-modal');
         const enlargedImage = document.getElementById('enlarged-image');
@@ -1748,6 +2647,34 @@
         modal.classList.remove('active');
 
         document.body.style.overflow = '';
+    }
+
+    // 查看购物车商品图片
+    function viewCartGoodsImage(goodsId) {
+        const targetButton = event.target;
+        const originalClass = targetButton.className;
+        targetButton.className = 'fas fa-spinner fa-spin';
+
+        fetch(`/admin/view?goodsId=${goodsId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('网络响应不正常');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.Purl) {
+                    showEnlargedImage(data.Purl);
+                } else {
+                    alert('获取商品图片失败');
+                }
+                targetButton.className = originalClass;
+            })
+            .catch(error => {
+                console.error('获取商品图片失败:', error);
+                alert('获取商品图片失败: ' + error.message);
+                targetButton.className = originalClass;
+            });
     }
 
     function loadRanking() {
@@ -2039,7 +2966,12 @@
                 if (result === 'ok') {
                     alert('下单成功！');
                     closePriceModal();
-                    loadOrders();
+                    // 重新加载数据（根据当前状态）
+                    if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
+                        searchOrders(currentSearchKeyword);
+                    } else {
+                        loadOrders();
+                    }
                 } else {
                     throw new Error('下单失败');
                 }
@@ -2138,7 +3070,12 @@
             .then(result => {
                 if (result === 'ok') {
                     alert('订单已完成！');
-                    loadOrders();
+                    // 重新加载数据（根据当前状态）
+                    if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
+                        searchOrders(currentSearchKeyword);
+                    } else {
+                        loadOrders();
+                    }
                 } else {
                     throw new Error('完成订单失败');
                 }
@@ -2206,8 +3143,8 @@
                         <td>${formattedTime}</td>
                         <td><span class="status ${statusClass}">${statusText}</span></td>
                         <td class="action-icons">
-                            <i class="fas fa-eye" title="查看详情"></i>
-                            <i class="fas fa-trash" title="删除"></i>
+                            <i class="fas fa-eye" title="查看详情" onclick="viewCartGoodsImage('${cart.goodsId}')"></i>
+                            <i class="fas fa-trash" title="删除购物车" onclick="deleteCart('${cart.id}')"></i>
                         </td>
                     `;
 
@@ -2222,17 +3159,51 @@
                             <i class="fas fa-exclamation-triangle"></i>
                             <p>加载购物车数据失败: ${error.message}</p>
                             <button class="btn" onclick="loadCarts()">重试</button>
-                        </td>
                     </tr>
                 `;
             });
     }
 
-    let usersData = [];
-    const usersPerPage = 50;
-    let currentPage = 1;
+    // 删除购物车函数
+    function deleteCart(cartId) {
+        if (!confirm(`确定要删除购物车记录 ${cartId} 吗？此操作不可恢复。`)) {
+            return;
+        }
 
-    function loadUsers() {
+        const targetButton = event.target;
+        const originalClass = targetButton.className;
+        targetButton.className = 'fas fa-spinner fa-spin';
+
+        fetch(`/admin/deletecart?cartId=${cartId}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('删除购物车失败');
+                }
+            })
+            .then(result => {
+                if (result === 'ok') {
+                    alert('购物车删除成功！');
+                    // 重新加载数据（根据当前状态）
+                    if (currentSearchSection === 'user-carts' && currentSearchKeyword) {
+                        searchCarts(currentSearchKeyword);
+                    } else {
+                        loadCarts();
+                    }
+                } else {
+                    throw new Error('删除购物车失败');
+                }
+            })
+            .catch(error => {
+                console.error('删除购物车失败:', error);
+                alert('删除购物车失败: ' + error.message);
+                targetButton.className = originalClass;
+            });
+    }
+
+    // 加载用户数据（支持分页）
+    function loadUsers(page) {
         const usersContainer = document.getElementById('users-list-container');
         usersContainer.innerHTML = `
             <div class="loading" style="grid-column: 1 / -1;">
@@ -2240,16 +3211,33 @@
                 <p>正在加载用户数据...</p>
             </div>
         `;
-        fetch('/admin/allinfo')
+
+        // 更新当前页码
+        currentPage = page || 1;
+
+        fetch(`/admin/allinfo?page=${currentPage}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('网络响应不正常');
                 }
                 return response.json();
             })
-            .then(users => {
-                usersData = users;
-                displayUsers(1);
+            .then(data => {
+                // 从新的响应结构中获取数据
+                usersData = data.users || [];
+                currentPage = data.currentPage || 1;
+                totalPages = data.totalPages || 1;
+                totalCount = data.totalCount || 0;
+
+                // 更新分页信息显示
+                document.getElementById('total-count').textContent = totalCount.toLocaleString();
+                document.getElementById('current-page').textContent = currentPage;
+                document.getElementById('total-pages').textContent = totalPages;
+
+                // 显示分页信息
+                document.getElementById('pagination-info').style.display = 'flex';
+
+                displayUsers();
             })
             .catch(error => {
                 console.error('获取用户数据失败:', error);
@@ -2257,20 +3245,15 @@
                     <div class="error" style="grid-column: 1 / -1;">
                         <i class="fas fa-exclamation-triangle"></i>
                         <p>加载用户数据失败: ${error.message}</p>
-                        <button class="btn" onclick="loadUsers()">重试</button>
+                        <button class="btn" onclick="loadUsers(${currentPage})">重试</button>
                     </div>
                 `;
             });
     }
 
-    function displayUsers(page) {
+    function displayUsers() {
         const usersContainer = document.getElementById('users-list-container');
         const paginationContainer = document.getElementById('pagination-container');
-
-        currentPage = page;
-        const startIndex = (page - 1) * usersPerPage;
-        const endIndex = startIndex + usersPerPage;
-        const usersToShow = usersData.slice(startIndex, endIndex);
 
         usersContainer.innerHTML = '';
 
@@ -2285,7 +3268,7 @@
             return;
         }
 
-        usersToShow.forEach((user, index) => {
+        usersData.forEach((user, index) => {
             const userCard = document.createElement('div');
             let cardClass = 'user-card';
             if (user.vip === 1) cardClass += ' vip';
@@ -2340,34 +3323,34 @@
                 <div class="user-card-body">
                     <div class="user-stats">
                         <div class="user-stat">
-                            <div class="user-stat-value">¥${user.lumpSum.toLocaleString()}</div>
+                            <div class="user-stat-value">¥${(user.lumpSum || 0).toLocaleString()}</div>
                             <div class="user-stat-label">消费总额</div>
                         </div>
                         <div class="user-stat">
-                            <div class="user-stat-value">${user.purchaseQuantity}</div>
+                            <div class="user-stat-value">${user.purchaseQuantity || 0}</div>
                             <div class="user-stat-label">购买数量</div>
                         </div>
                     </div>
                     <div class="user-details-list">
                         <div class="user-detail-item">
                             <span class="user-detail-label">注册时间</span>
-                            <span class="user-detail-value">${formatDate(user.regTime)}</span>
+                            <span class="user-detail-value">${user.regTime ? formatDate(user.regTime) : '未知'}</span>
                         </div>
                         <div class="user-detail-item">
                             <span class="user-detail-label">最后登录</span>
-                            <span class="user-detail-value">${formatDate(user.lastTime)}</span>
+                            <span class="user-detail-value">${user.lastTime ? formatDate(user.lastTime) : '未知'}</span>
                         </div>
                         <div class="user-detail-item">
                             <span class="user-detail-label">设备型号</span>
-                            <span class="user-detail-value" title="${user.device}">${user.device.length > 30 ? user.device.substring(0, 30) + '...' : user.device}</span>
+                            <span class="user-detail-value" title="${user.device || '未知'}">${(user.device || '未知').length > 30 ? (user.device || '未知').substring(0, 30) + '...' : (user.device || '未知')}</span>
                         </div>
                         <div class="user-detail-item">
                             <span class="user-detail-label">地区</span>
-                            <span class="user-detail-value">${user.region}</span>
+                            <span class="user-detail-value">${user.region || '未知'}</span>
                         </div>
                         <div class="user-detail-item">
                             <span class="user-detail-label">IP地址</span>
-                            <span class="user-detail-value">${user.ipAddress}</span>
+                            <span class="user-detail-value">${user.ipAddress || '未知'}</span>
                         </div>
                     </div>
                 </div>
@@ -2376,35 +3359,52 @@
             usersContainer.appendChild(userCard);
         });
 
-        generatePagination(paginationContainer, Math.ceil(usersData.length / usersPerPage), page);
+        generatePagination(paginationContainer, totalPages, currentPage);
     }
 
     function generatePagination(container, totalPages, currentPage) {
         container.innerHTML = '';
+
+        // 如果只有一页，不显示分页
+        if (totalPages <= 1) {
+            return;
+        }
+
         const prevButton = document.createElement('button');
         prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
         prevButton.disabled = currentPage === 1;
         prevButton.addEventListener('click', () => {
             if (currentPage > 1) {
-                displayUsers(currentPage - 1);
+                loadUsers(currentPage - 1);
             }
         });
         container.appendChild(prevButton);
-        for (let i = 1; i <= totalPages; i++) {
+
+        // 计算显示的页码范围
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+
+        // 调整起始页以确保显示5个页码（如果有足够页面）
+        if (endPage - startPage < 4) {
+            startPage = Math.max(1, endPage - 4);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
             const pageButton = document.createElement('button');
             pageButton.textContent = i;
             pageButton.className = i === currentPage ? 'active' : '';
             pageButton.addEventListener('click', () => {
-                displayUsers(i);
+                loadUsers(i);
             });
             container.appendChild(pageButton);
         }
+
         const nextButton = document.createElement('button');
         nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
         nextButton.disabled = currentPage === totalPages;
         nextButton.addEventListener('click', () => {
             if (currentPage < totalPages) {
-                displayUsers(currentPage + 1);
+                loadUsers(currentPage + 1);
             }
         });
         container.appendChild(nextButton);
@@ -2443,7 +3443,12 @@
             .then(result => {
                 if (result === 'ok') {
                     alert('操作成功！');
-                    loadUsers(currentPage);
+                    // 重新加载数据（根据当前状态）
+                    if (currentSearchSection === 'user-details' && currentSearchKeyword) {
+                        searchUser(currentSearchKeyword);
+                    } else {
+                        loadUsers(currentPage);
+                    }
                 } else {
                     throw new Error('操作失败');
                 }
@@ -2500,7 +3505,7 @@
                     message.innerHTML = '<span style="color: var(--success);">用户注册成功！</span>';
                     setTimeout(() => {
                         closeRegisterModal();
-                        loadUsers();
+                        loadUsers(1);
                     }, 1500);
                 } else {
                     message.innerHTML = '<span style="color: var(--warning);">用户注册失败</span>';
@@ -2537,7 +3542,12 @@
             .then(result => {
                 if (result === 'ok') {
                     alert('清除无效用户成功！');
-                    loadUsers();
+                    // 重新加载数据（根据当前状态）
+                    if (currentSearchSection === 'user-details' && currentSearchKeyword) {
+                        searchUser(currentSearchKeyword);
+                    } else {
+                        loadUsers(1);
+                    }
                 } else {
                     throw new Error('清除失败');
                 }

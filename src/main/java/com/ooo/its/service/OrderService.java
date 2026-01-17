@@ -53,6 +53,9 @@ public class OrderService {
         return orderRep.findByQqNumberAndState(qq,state);
     }
 
+    public List<Order> PrintOrders(String qq , int batch){
+        return orderRep.findByQqNumberAndBatch(qq,batch);
+    }
     public boolean SaveOrder(Order order){
         try {
             orderRep.save(order);

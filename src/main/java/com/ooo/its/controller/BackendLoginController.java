@@ -1,7 +1,9 @@
 package com.ooo.its.controller;
 
+import com.ooo.its.service.AdminAuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -10,16 +12,21 @@ import java.util.Map;
 
 @Controller
 public class BackendLoginController {
-    private static final String FIXED_USERNAME = "me";
-    private static final String FIXED_PASSWORD = "okok";
+    @Autowired
+    private AdminAuthService adminAuthService;
 
     @PostMapping("/adminlogin")
     public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
         Map<String, Object> response = new HashMap<>();
-        if (FIXED_USERNAME.equals(loginRequest.getUsername()) &&
-                FIXED_PASSWORD.equals(loginRequest.getPassword())) {
+
+        String username = loginRequest.getUsername();
+        String password = loginRequest.getPassword();
+
+        boolean isAuthenticated = adminAuthService.Authenticate(username, password);
+
+        if (isAuthenticated) {
             HttpSession session = request.getSession();
-            session.setAttribute("adminUsername", loginRequest.getUsername());
+            session.setAttribute("adminUsername", username);
 
             response.put("success", true);
             response.put("message", "登录成功");

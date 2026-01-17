@@ -17,4 +17,5 @@ public interface RecordRep extends JpaRepository<Record,Long> {
 
     List<Record> findAllByOrderByIdDesc();
 
+    List<Record> findAllByQqNumberOrderByIdDesc(String qq);
 }

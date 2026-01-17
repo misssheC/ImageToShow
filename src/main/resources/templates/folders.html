@@ -21,7 +21,6 @@
             margin: 0 auto;
         }
 
-        /* 顶部导航栏 */
         .top-nav {
             position: absolute;
             top: 20px;
@@ -202,6 +201,119 @@
             margin: 20px 0;
         }
 
+        /* 浮层样式 */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .agreement-modal {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .overlay.active .agreement-modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-title i {
+            color: #f39c12;
+            font-size: 1.8rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #7f8c8d;
+            cursor: pointer;
+            line-height: 1;
+            padding: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #e74c3c;
+        }
+
+        .modal-content {
+            margin-bottom: 25px;
+        }
+
+        .modal-content p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .primary-btn {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .primary-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
         @media (max-width: 768px) {
             .folder-container {
                 grid-template-columns: repeat(3, 1fr);
@@ -239,6 +351,15 @@
 
             header {
                 padding-top: 20px;
+            }
+
+            .agreement-modal {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .modal-title {
+                font-size: 1.3rem;
             }
         }
 
@@ -294,10 +415,36 @@
                 width: 100%;
                 text-align: center;
             }
+
+            .modal-btn {
+                width: 100%;
+            }
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+
+<!-- 协议浮层 -->
+<div class="overlay" id="agreementOverlay">
+    <div class="agreement-modal">
+        <div class="modal-header">
+            <h2 class="modal-title">
+                <i class="fas fa-exclamation-triangle"></i>
+                提示
+            </h2>
+            <button class="close-btn" id="closeOverlayBtn">&times;</button>
+        </div>
+        <div class="modal-content">
+            <p>客官您好，请先查看"客观须知"，以确保您了解价位、发货方式等其他情况。</p>
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn primary-btn" onclick="window.location.href='/user/instructions'">
+                <i class="fas fa-file-contract"></i> 查看客观须知
+            </button>
+        </div>
+    </div>
+</div>
 
 <header>
     <h1>分类</h1>
@@ -328,21 +475,30 @@
             // 清除加载提示
             folderContainer.innerHTML = '';
 
-            if (data.length === 0) {
+            // 检查是否需要显示协议浮层
+            if (data.loginNumber !== undefined && data.loginNumber < 3) {
+                // 显示协议浮层
+                document.getElementById('agreementOverlay').classList.add('active');
+            }
+
+            // 获取文件夹列表
+            const folderList = data.folderList || [];
+
+            if (folderList.length === 0) {
                 folderContainer.innerHTML = '<div class="error">暂无分类数据</div>';
                 return;
             }
 
-            data.forEach(folder => {
+            folderList.forEach(folder => {
                 const folderCard = document.createElement('div');
                 folderCard.classList.add('folder-card');
 
                 folderCard.innerHTML = `
-                        <div class="folder-icon">📁</div>
-                        <h3>${folder.name}</h3>
-                        <p>文件总数: <span class="folder-count">${folder.quantity}</span></p>
-                        <p>最后更新: ${folder.last}</p>
-                    `;
+                    <div class="folder-icon">📁</div>
+                    <h3>${folder.name}</h3>
+                    <p>文件总数: <span class="folder-count">${folder.quantity}</span></p>
+                    <p>最后更新: ${folder.last}</p>
+                `;
 
                 folderCard.addEventListener('click', function() {
                     // 跳转到文件夹详情页面
@@ -357,6 +513,28 @@
             document.getElementById('folder-container').innerHTML =
                 '<div class="error">加载文件夹数据失败，请稍后再试！</div>';
         });
+
+    // 关闭浮层功能
+    const closeOverlay = () => {
+        document.getElementById('agreementOverlay').classList.remove('active');
+    };
+
+    // 为关闭按钮添加事件监听
+    document.getElementById('closeOverlayBtn').addEventListener('click', closeOverlay);
+
+    // 点击浮层背景也可以关闭浮层
+    document.getElementById('agreementOverlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeOverlay();
+        }
+    });
+
+    // 按ESC键也可以关闭浮层
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeOverlay();
+        }
+    });
 </script>
 </body>
 </html>

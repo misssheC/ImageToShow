@@ -4,6 +4,7 @@ import com.ooo.its.entity.*;
 import com.ooo.its.entity.Record;
 import com.ooo.its.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +42,7 @@ public class ManageOrdersController {
             Map<String, Object> orderMap = new HashMap<>();
             orderMap.put("id", o.getId());
             orderMap.put("goodsId", o.getGoodsId());
+            orderMap.put("goodsName",goodsService.FindGoodsName(o.getGoodsId()));
             orderMap.put("qqNumber", o.getQqNumber());
             orderMap.put("status", String.valueOf(o.getState()));
             orderMap.put("date", o.getDate());
@@ -63,25 +65,15 @@ public class ManageOrdersController {
 
     @GetMapping("/admin/allinfo")
     @ResponseBody
-    public List<Map<String, Object>> ShowAllInfo() {
-        List<UserInfo> userInfoList = userInfoService.ShowAllUserInfo();
-        List<Map<String, Object>> result = new ArrayList<>();
-        for (UserInfo userInfo : userInfoList) {
-            Map<String, Object> userMap = new LinkedHashMap<>();
-            userMap.put("qqNumber", userInfo.getQqNumber());
-            userMap.put("lastTime", userInfo.getLastTime());
-            userMap.put("regTime", userInfo.getRegTime());
-            userMap.put("purchaseQuantity", userInfo.getPurchaseQuantity());
-            userMap.put("numberOfLogins", userInfo.getNumberOfLogins());
-            userMap.put("lumpSum", userInfo.getLumpSum());
-            userMap.put("ipAddress", userInfo.getIpAddress());
-            userMap.put("device", userInfo.getDevice());
-            userMap.put("region", userInfo.getRegion());
-            userMap.put("vip",userInfoService.getVipStatus(userInfo.getQqNumber()));
-            userMap.put("black",userInfoService.getBlackStatus(userInfo.getQqNumber()));
-            result.add(userMap);
-        }
-        return result;
+    public Map<String, Object> ShowAllInfo(@RequestParam(defaultValue = "1") int page) {
+        Page<UserInfo> userPage = userInfoService.ShowAllUserInfo(page);
+        List<Map<String, Object>> result = convertUserInfoToMapList(userPage.getContent());
+        Map<String, Object> response = new HashMap<>();
+        response.put("users", result);
+        response.put("currentPage", page);
+        response.put("totalCount", userPage.getTotalElements());
+        response.put("totalPages", userPage.getTotalPages());
+        return response;
     }
 
     @GetMapping("/admin/ranking")
@@ -131,7 +123,7 @@ public class ManageOrdersController {
     @GetMapping("/admin/print")
     @ResponseBody
     public List<String> Print(@RequestParam String qqNumber,@RequestParam int batch){
-        List<Order> orders = orderService.FindHandleData(qqNumber,0);
+        List<Order> orders = orderService.PrintOrders(qqNumber,batch);
         List<String> result = new ArrayList<>();
         for (Order o :orders)
             result.add(goodsService.FindGoodsName(o.getGoodsId()));
@@ -183,4 +175,38 @@ public class ManageOrdersController {
         return ResponseEntity.status(401).body("no");
     }
 
+    @GetMapping("/admin/view")
+    @ResponseBody
+    public Map<String,String> View(@RequestParam String goodsId){
+
+        Long id = Long.parseLong(goodsId);
+        Map<String,String> r = new HashMap<>();
+        String url = goodsService.ViewPicture(id);
+        r.put("Purl" , url);
+        return r;
+    }
+
+
+    private List<Map<String, Object>> convertUserInfoToMapList(List<UserInfo> userInfoList) {
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (UserInfo userInfo : userInfoList) {
+            Map<String, Object> userMap = new LinkedHashMap<>();
+            userMap.put("qqNumber", userInfo.getQqNumber());
+            userMap.put("lastTime", userInfo.getLastTime());
+            userMap.put("regTime", userInfo.getRegTime());
+            userMap.put("purchaseQuantity", userInfo.getPurchaseQuantity());
+            userMap.put("numberOfLogins", userInfo.getNumberOfLogins());
+            userMap.put("lumpSum", userInfo.getLumpSum());
+            userMap.put("ipAddress", userInfo.getIpAddress());
+            userMap.put("device", userInfo.getDevice());
+            userMap.put("region", userInfo.getRegion());
+            userMap.put("vip", userInfoService.getVipStatus(userInfo.getQqNumber()));
+            userMap.put("black", userInfoService.getBlackStatus(userInfo.getQqNumber()));
+
+            result.add(userMap);
+        }
+
+        return result;
+    }
 }

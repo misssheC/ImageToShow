@@ -13,7 +13,7 @@ public interface LogRep extends JpaRepository<Log,Long> {
     @Query("SELECT l FROM Log l WHERE l.time >= :startTime ORDER BY l.time DESC")
     List<Log> findLast24HoursLogs(@Param("startTime") Date startTime);
 
-    List<Log> findByUser(String qq);
+    List<Log> findByUserOrderByTimeDesc(String qq);
 
     List<Log> findByType(int type);
 
