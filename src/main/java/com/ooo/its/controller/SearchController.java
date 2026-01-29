@@ -23,8 +23,9 @@ public class SearchController {
     private GoodsService goodsService;
     @GetMapping("/admin/searchOrder")
     @ResponseBody
-    public List<Map<String, Object>> SearchOrders(@RequestParam String qq) {
-        List<Order> orders = searchService.SearchOrderByQQ(qq);
+    public List<Map<String, Object>> SearchOrders(@RequestParam String qq,
+                                                  @RequestParam int state) {
+        List<Order> orders = searchService.SearchOrderByQQ(qq,state);
         List<Map<String, Object>> result = new ArrayList<>();
 
         for (Order o : orders) {
@@ -50,6 +51,9 @@ public class SearchController {
     public Map<String,Object> SearchPerson(@RequestParam String qq){
         UserInfo userInfo = searchService.SearchPerson(qq);
         Map<String, Object> personMap = new LinkedHashMap<>();
+        if (userInfo == null) {
+            return personMap;
+        }
         personMap.put("qqNumber", userInfo.getQqNumber());
         personMap.put("lastTime", userInfo.getLastTime());
         personMap.put("regTime", userInfo.getRegTime());
@@ -74,19 +78,17 @@ public class SearchController {
 
     @GetMapping("/admin/searchLog")
     @ResponseBody
-    public List<Log> SearchLog(@RequestParam String qq){
-        return searchService.SearchLogByUser(qq);
+    public List<Log> SearchLog(@RequestParam String qq,
+                               @RequestParam int type){
+        return searchService.SearchLogByUser(qq,type);
     }
 
 
     @GetMapping("/admin/searchCart")
     @ResponseBody
-    public List<Cart> SearchCart(@RequestParam String qq){
-        return searchService.SearchCartByQQ(qq);
+    public List<Cart> SearchCart(@RequestParam String qq,
+                                 @RequestParam int state){
+        return searchService.SearchCartByQQ(qq,state);
     }
-
-
-
-
 
 }

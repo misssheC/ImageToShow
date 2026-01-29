@@ -14,8 +14,11 @@ public interface LogRep extends JpaRepository<Log,Long> {
     List<Log> findLast24HoursLogs(@Param("startTime") Date startTime);
 
     List<Log> findByUserOrderByTimeDesc(String qq);
+    List<Log> findByUserAndTypeOrderByTimeDesc(String qq,int type);
 
-    List<Log> findByType(int type);
+
+
+    List<Log> findByTypeOrderByTimeDesc(int type);
 
 
 }

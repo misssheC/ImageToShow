@@ -44,10 +44,11 @@ public class LoginController {
             @RequestParam String ipAddress,
             HttpSession session) {
         String region = getRegionFromIP(ipAddress);
-        boolean accountValid = userService.validateUser(qqNumber, password, region);
+
+        String device = deviceDetectionService.detectDeviceModel(deviceInfo);
+        boolean accountValid = userService.validateUser(qqNumber, password, device);
 
         boolean regionValid = isRegionValid(region);
-
         if (accountValid) {
 
             int identity = userService.Identity(qqNumber);
@@ -55,28 +56,33 @@ public class LoginController {
                 logService.SaveLog(qqNumber, "登录失败：黑名单用户 " + "IP:" + ipAddress + " 地区:" + region, 0);
                 return "redirect:/login?error=" + URLEncoder.encode("账号已被禁止登录", StandardCharsets.UTF_8);
             }
-            boolean skipVpnCheck = (identity == 2);
+            boolean skipVpnCheck = (identity == 2 || identity == 3);
             boolean regionCheckPassed = regionValid || skipVpnCheck;
+            boolean regionMatch = (region.equals(userService.GetLastRegion(qqNumber)));
             if (regionCheckPassed) {
                 session.setAttribute("qqNumber", qqNumber);
-                String device = deviceDetectionService.detectDeviceModel(deviceInfo);
                 userInfoService.SaveLoginInfo(qqNumber, deviceInfo, ipAddress, device, region);
                 String logMsg = "成功登录";
                 if (identity == 2) {
                     logMsg += "（VIP用户跳过VPN检测）";
                 }
+                if (identity == 3) {
+                    logMsg += "（海外用户跳过VPN检测）";
+                }
+                if (regionMatch)
+                    logMsg += "登录异常，登录地点发生变更！";
                 logMsg += " IP:" + ipAddress + " 地区:" + region;
                 logService.SaveLog(qqNumber, logMsg, 1);
                 return "redirect:/folders";
             } else {
-                logService.SaveLog(qqNumber, "登录失败：地区不符合要求 " + "IP:" + ipAddress + " 地区:" + region, 0);
+                logService.SaveLog(qqNumber, "登录失败：地区不符合要求 " + " 地区:" + region + " 登录设备："+ device, 0);
                 return "redirect:/login?error=" + URLEncoder.encode("请关闭VPN", StandardCharsets.UTF_8);
             }
 
         }
         else {
-            logService.SaveLog(qqNumber, "登录失败：账号或密码错误 " + "IP:" + ipAddress + " 地区:" + region, 0);
-            return "redirect:/login?error=" + URLEncoder.encode("账号不存在或密码错误或登录网络发生变更", StandardCharsets.UTF_8);
+            logService.SaveLog(qqNumber, "登录失败：账号或密码错误 " + " 地区:" + region + " 登录设备："+ device, 0);
+            return "redirect:/login?error=" + URLEncoder.encode("账号不存在或密码错误或登录设备发生变更", StandardCharsets.UTF_8);
         }
     }
 

@@ -1078,6 +1078,36 @@
             100% { opacity: 0.7; }
         }
 
+        /* 新增：分类搜索控件样式 */
+        .category-search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .category-select {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            background-color: white;
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        .category-select:focus {
+            border-color: var(--primary);
+        }
+
+        .category-label {
+            font-size: 0.9rem;
+            color: var(--dark);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
         @media (max-width: 992px) {
             .sidebar {
                 width: 80px;
@@ -1135,6 +1165,17 @@
             .content {
                 height: calc(100vh - 90px);
             }
+
+            /* 响应式调整分类搜索 */
+            .category-search {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            .category-select {
+                width: 100%;
+                min-width: unset;
+            }
         }
 
         @media (max-width: 768px) {
@@ -1172,6 +1213,10 @@
             .content {
                 padding: 20px;
                 height: calc(100vh - 110px);
+            }
+
+            .category-search {
+                margin-top: 10px;
             }
         }
 
@@ -1274,6 +1319,19 @@
                 <h2>用户订单管理 <span id="orders-search-indicator" class="search-mode-indicator" style="display: none;">搜索模式</span></h2>
                 <p>查看和管理所有用户订单信息 <span class="search-hint" id="orders-search-hint" style="display: none;">当前显示QQ: <span id="orders-search-qq"></span> 的订单</span></p>
             </div>
+
+            <!-- 新增：订单分类搜索控件 -->
+            <div class="category-search">
+                <span class="category-label">订单状态:</span>
+                <select class="category-select" id="order-state-select">
+                    <option value="1000">全部订单</option>
+                    <option value="0">待定价</option>
+                    <option value="1">待支付</option>
+                    <option value="2">已完成</option>
+                </select>
+                <span class="category-label" id="order-state-label" style="display: none;">状态: <span id="order-state-value"></span></span>
+            </div>
+
             <div class="card">
                 <div class="card-header">
                     <h3>近期订单</h3>
@@ -1319,6 +1377,18 @@
                 <h2>用户购物车 <span id="carts-search-indicator" class="search-mode-indicator" style="display: none;">搜索模式</span></h2>
                 <p>查看用户购物车中的信息 <span class="search-hint" id="carts-search-hint" style="display: none;">当前显示QQ: <span id="carts-search-qq"></span> 的购物车</span></p>
             </div>
+
+            <!-- 新增：购物车分类搜索控件 -->
+            <div class="category-search">
+                <span class="category-label">购物车状态:</span>
+                <select class="category-select" id="cart-state-select">
+                    <option value="1000">全部状态</option>
+                    <option value="0">预备</option>
+                    <option value="1">已下单</option>
+                </select>
+                <span class="category-label" id="cart-state-label" style="display: none;">状态: <span id="cart-state-value"></span></span>
+            </div>
+
             <div class="card">
                 <div class="card-header">
                     <h3>购物车列表</h3>
@@ -1351,6 +1421,26 @@
                 <h2>用户行为日志 <span id="logs-search-indicator" class="search-mode-indicator" style="display: none;">搜索模式</span></h2>
                 <p>记录和分析用户行为数据 <span class="search-hint" id="logs-search-hint" style="display: none;">当前显示QQ: <span id="logs-search-qq"></span> 的日志</span></p>
             </div>
+
+            <!-- 新增：日志分类搜索控件 -->
+            <div class="category-search">
+                <span class="category-label">日志类型:</span>
+                <select class="category-select" id="log-type-select">
+                    <option value="1000">全部类型</option>
+                    <option value="0">登录失败</option>
+                    <option value="1">登录</option>
+                    <option value="2">浏览类别</option>
+                    <option value="3">查看预览</option>
+                    <option value="4">加入</option>
+                    <option value="5">移除</option>
+                    <option value="6">查看购物车</option>
+                    <option value="7">提交订单</option>
+                    <option value="8">支付</option>
+                    <option value="9">阅读协议</option>
+                </select>
+                <span class="category-label" id="log-type-label" style="display: none;">类型: <span id="log-type-value"></span></span>
+            </div>
+
             <div class="card">
                 <div class="card-header">
                     <h3>用户活动日志</h3>
@@ -1559,6 +1649,8 @@
     // 搜索相关变量
     let currentSearchKeyword = '';
     let currentSearchSection = '';
+    let currentSearchState = 1000; // 默认全部
+    let currentSearchType = 1000; // 默认全部
 
     document.addEventListener('DOMContentLoaded', function() {
         const navLinks = document.querySelectorAll('.nav-links li');
@@ -1650,19 +1742,59 @@
         searchBtn.addEventListener('click', performSearch);
         searchIcon.addEventListener('click', performSearch);
 
+        // 分类选择器事件监听
+        document.getElementById('order-state-select').addEventListener('change', function() {
+            if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
+                searchOrders(currentSearchKeyword);
+            } else if (this.value !== '1000') {
+                // 只选择状态，不输入QQ
+                searchOrders('');
+            } else {
+                loadOrders();
+            }
+        });
+
+        document.getElementById('cart-state-select').addEventListener('change', function() {
+            if (currentSearchSection === 'user-carts' && currentSearchKeyword) {
+                searchCarts(currentSearchKeyword);
+            } else if (this.value !== '1000') {
+                // 只选择状态，不输入QQ
+                searchCarts('');
+            } else {
+                loadCarts();
+            }
+        });
+
+        document.getElementById('log-type-select').addEventListener('change', function() {
+            if (currentSearchSection === 'user-logs' && currentSearchKeyword) {
+                searchLogs(currentSearchKeyword);
+            } else if (this.value !== '1000') {
+                // 只选择类型，不输入QQ
+                searchLogs('');
+            } else {
+                loadLogs();
+            }
+        });
+
         // 清除搜索按钮事件
         document.getElementById('clear-orders-search').addEventListener('click', function() {
             clearSearch();
+            document.getElementById('order-state-select').value = '1000';
+            document.getElementById('order-state-label').style.display = 'none';
             loadOrders();
         });
 
         document.getElementById('clear-carts-search').addEventListener('click', function() {
             clearSearch();
+            document.getElementById('cart-state-select').value = '1000';
+            document.getElementById('cart-state-label').style.display = 'none';
             loadCarts();
         });
 
         document.getElementById('clear-logs-search').addEventListener('click', function() {
             clearSearch();
+            document.getElementById('log-type-select').value = '1000';
+            document.getElementById('log-type-label').style.display = 'none';
             loadLogs();
         });
 
@@ -1771,27 +1903,32 @@
     // 搜索功能实现
     function performSearch() {
         const keyword = document.getElementById('search-input').value.trim();
-
-        if (!keyword) {
-            alert('请输入搜索关键词');
-            return;
-        }
-
         const activeSection = document.querySelector('.content-section.active');
+
         if (!activeSection) return;
 
         const sectionId = activeSection.id;
         currentSearchKeyword = keyword;
         currentSearchSection = sectionId;
 
+        // 根据当前页面获取状态/类型值
+        let state = 1000;
+        let type = 1000;
+
         switch(sectionId) {
             case 'user-orders':
+                state = parseInt(document.getElementById('order-state-select').value);
+                currentSearchState = state;
                 searchOrders(keyword);
                 break;
             case 'user-carts':
+                state = parseInt(document.getElementById('cart-state-select').value);
+                currentSearchState = state;
                 searchCarts(keyword);
                 break;
             case 'user-logs':
+                type = parseInt(document.getElementById('log-type-select').value);
+                currentSearchType = type;
                 searchLogs(keyword);
                 break;
             case 'user-history':
@@ -1811,6 +1948,8 @@
     function clearSearch() {
         currentSearchKeyword = '';
         currentSearchSection = '';
+        currentSearchState = 1000;
+        currentSearchType = 1000;
 
         // 隐藏所有搜索指示器
         document.getElementById('orders-search-indicator').style.display = 'none';
@@ -1831,17 +1970,28 @@
         document.getElementById('clear-history-search').style.display = 'none';
         document.getElementById('clear-users-search').style.display = 'none';
 
+        // 隐藏分类搜索标签
+        document.getElementById('order-state-label').style.display = 'none';
+        document.getElementById('cart-state-label').style.display = 'none';
+        document.getElementById('log-type-label').style.display = 'none';
+
         // 清空搜索框
         document.getElementById('search-input').value = '';
     }
 
-    // 搜索订单
+    // 搜索订单（支持分类搜索）
     function searchOrders(keyword) {
         const tableBody = document.getElementById('orders-table-body');
         const searchIndicator = document.getElementById('orders-search-indicator');
         const searchHint = document.getElementById('orders-search-hint');
         const searchQQ = document.getElementById('orders-search-qq');
         const clearBtn = document.getElementById('clear-orders-search');
+        const stateLabel = document.getElementById('order-state-label');
+        const stateValue = document.getElementById('order-state-value');
+
+        // 获取状态值
+        const stateSelect = document.getElementById('order-state-select');
+        const state = parseInt(stateSelect.value);
 
         tableBody.innerHTML = `
             <tr>
@@ -1852,13 +2002,31 @@
             </tr>
         `;
 
+        // 构建请求URL
+        let url = `/admin/searchOrder?qq=${keyword}&state=${state}`;
+
         // 显示搜索状态
         searchIndicator.style.display = 'inline-block';
         searchHint.style.display = 'block';
-        searchQQ.textContent = keyword;
+        searchQQ.textContent = keyword || '全部';
         clearBtn.style.display = 'inline-block';
 
-        fetch(`/admin/searchOrder?qq=${keyword}`)
+        // 显示状态标签
+        if (state !== 1000) {
+            let stateText = '';
+            switch(state) {
+                case 0: stateText = '待定价'; break;
+                case 1: stateText = '待支付'; break;
+                case 2: stateText = '已完成'; break;
+                default: stateText = '未知';
+            }
+            stateValue.textContent = stateText;
+            stateLabel.style.display = 'inline-block';
+        } else {
+            stateLabel.style.display = 'none';
+        }
+
+        fetch(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('网络响应不正常');
@@ -1869,11 +2037,22 @@
                 tableBody.innerHTML = '';
 
                 if (orders.length === 0) {
+                    let message = '';
+                    if (keyword && state !== 1000) {
+                        message = `没有找到QQ号码为 "${keyword}" 且状态为 "${getOrderStateText(state)}" 的订单`;
+                    } else if (keyword) {
+                        message = `没有找到QQ号码为 "${keyword}" 的订单`;
+                    } else if (state !== 1000) {
+                        message = `没有找到状态为 "${getOrderStateText(state)}" 的订单`;
+                    } else {
+                        message = '暂无订单数据';
+                    }
+
                     tableBody.innerHTML = `
                         <tr>
                             <td colspan="8" class="loading">
                                 <i class="fas fa-inbox"></i>
-                                <p>没有找到QQ号码为 "${keyword}" 的订单</p>
+                                <p>${message}</p>
                             </td>
                         </tr>
                     `;
@@ -1957,13 +2136,19 @@
             });
     }
 
-    // 搜索购物车
+    // 搜索购物车（支持分类搜索）
     function searchCarts(keyword) {
         const tableBody = document.getElementById('carts-table-body');
         const searchIndicator = document.getElementById('carts-search-indicator');
         const searchHint = document.getElementById('carts-search-hint');
         const searchQQ = document.getElementById('carts-search-qq');
         const clearBtn = document.getElementById('clear-carts-search');
+        const stateLabel = document.getElementById('cart-state-label');
+        const stateValue = document.getElementById('cart-state-value');
+
+        // 获取状态值
+        const stateSelect = document.getElementById('cart-state-select');
+        const state = parseInt(stateSelect.value);
 
         tableBody.innerHTML = `
             <tr>
@@ -1974,13 +2159,30 @@
             </tr>
         `;
 
+        // 构建请求URL
+        let url = `/admin/searchCart?qq=${keyword}&state=${state}`;
+
         // 显示搜索状态
         searchIndicator.style.display = 'inline-block';
         searchHint.style.display = 'block';
-        searchQQ.textContent = keyword;
+        searchQQ.textContent = keyword || '全部';
         clearBtn.style.display = 'inline-block';
 
-        fetch(`/admin/searchCart?qq=${keyword}`)
+        // 显示状态标签
+        if (state !== 1000) {
+            let stateText = '';
+            switch(state) {
+                case 0: stateText = '预备'; break;
+                case 1: stateText = '已下单'; break;
+                default: stateText = '未知';
+            }
+            stateValue.textContent = stateText;
+            stateLabel.style.display = 'inline-block';
+        } else {
+            stateLabel.style.display = 'none';
+        }
+
+        fetch(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('网络响应不正常');
@@ -1991,11 +2193,22 @@
                 tableBody.innerHTML = '';
 
                 if (carts.length === 0) {
+                    let message = '';
+                    if (keyword && state !== 1000) {
+                        message = `没有找到QQ号码为 "${keyword}" 且状态为 "${getCartStateText(state)}" 的购物车`;
+                    } else if (keyword) {
+                        message = `没有找到QQ号码为 "${keyword}" 的购物车`;
+                    } else if (state !== 1000) {
+                        message = `没有找到状态为 "${getCartStateText(state)}" 的购物车`;
+                    } else {
+                        message = '暂无购物车数据';
+                    }
+
                     tableBody.innerHTML = `
                         <tr>
                             <td colspan="6" class="loading">
                                 <i class="fas fa-inbox"></i>
-                                <p>没有找到QQ号码为 "${keyword}" 的购物车</p>
+                                <p>${message}</p>
                             </td>
                         </tr>
                     `;
@@ -2050,13 +2263,19 @@
             });
     }
 
-    // 搜索日志
+    // 搜索日志（支持分类搜索）
     function searchLogs(keyword) {
         const tableBody = document.getElementById('logs-table-body');
         const searchIndicator = document.getElementById('logs-search-indicator');
         const searchHint = document.getElementById('logs-search-hint');
         const searchQQ = document.getElementById('logs-search-qq');
         const clearBtn = document.getElementById('clear-logs-search');
+        const typeLabel = document.getElementById('log-type-label');
+        const typeValue = document.getElementById('log-type-value');
+
+        // 获取类型值
+        const typeSelect = document.getElementById('log-type-select');
+        const type = parseInt(typeSelect.value);
 
         tableBody.innerHTML = `
             <tr>
@@ -2067,13 +2286,25 @@
             </tr>
         `;
 
+        // 构建请求URL
+        let url = `/admin/searchLog?qq=${keyword}&type=${type}`;
+
         // 显示搜索状态
         searchIndicator.style.display = 'inline-block';
         searchHint.style.display = 'block';
-        searchQQ.textContent = keyword;
+        searchQQ.textContent = keyword || '全部';
         clearBtn.style.display = 'inline-block';
 
-        fetch(`/admin/searchLog?qq=${keyword}`)
+        // 显示类型标签
+        if (type !== 1000) {
+            let typeText = getLogTypeText(type);
+            typeValue.textContent = typeText;
+            typeLabel.style.display = 'inline-block';
+        } else {
+            typeLabel.style.display = 'none';
+        }
+
+        fetch(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('网络响应不正常');
@@ -2084,11 +2315,22 @@
                 tableBody.innerHTML = '';
 
                 if (logs.length === 0) {
+                    let message = '';
+                    if (keyword && type !== 1000) {
+                        message = `没有找到QQ号码为 "${keyword}" 且类型为 "${getLogTypeText(type)}" 的用户行为日志`;
+                    } else if (keyword) {
+                        message = `没有找到QQ号码为 "${keyword}" 的用户行为日志`;
+                    } else if (type !== 1000) {
+                        message = `没有找到类型为 "${getLogTypeText(type)}" 的用户行为日志`;
+                    } else {
+                        message = '暂无用户行为日志数据';
+                    }
+
                     tableBody.innerHTML = `
                         <tr>
                             <td colspan="4" class="loading">
                                 <i class="fas fa-inbox"></i>
-                                <p>没有找到QQ号码为 "${keyword}" 的用户行为日志</p>
+                                <p>${message}</p>
                             </td>
                         </tr>
                     `;
@@ -2393,6 +2635,42 @@
                     </div>
                 `;
             });
+    }
+
+    // 辅助函数：获取订单状态文本
+    function getOrderStateText(state) {
+        switch(state) {
+            case 0: return '待定价';
+            case 1: return '待支付';
+            case 2: return '已完成';
+            default: return '未知';
+        }
+    }
+
+    // 辅助函数：获取购物车状态文本
+    function getCartStateText(state) {
+        switch(state) {
+            case 0: return '预备';
+            case 1: return '已下单';
+            default: return '未知';
+        }
+    }
+
+    // 辅助函数：获取日志类型文本
+    function getLogTypeText(type) {
+        switch(type) {
+            case 0: return '登录失败';
+            case 1: return '登录';
+            case 2: return '浏览类别';
+            case 3: return '查看预览';
+            case 4: return '加入';
+            case 5: return '移除';
+            case 6: return '查看购物车';
+            case 7: return '提交订单';
+            case 8: return '支付';
+            case 9: return '阅读协议';
+            default: return '其他';
+        }
     }
 
     // 以下所有原有函数保持不变，这里只展示修改的部分
@@ -2819,6 +3097,9 @@
                             break;
                         case 9:
                             eventType = '阅读协议';
+                            break;
+                        case 10:
+                            eventType = '<span class="warning-text">异常登录</span>';
                             break;
                         default:
                             eventType = '其他';

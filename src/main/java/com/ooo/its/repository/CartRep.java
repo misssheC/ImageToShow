@@ -17,6 +17,10 @@ public interface CartRep extends JpaRepository<Cart,Long> {
 
     List<Cart> findAllByOrderByIdDesc();
 
+    List<Cart> findByStateOrderByIdDesc(int state);
+
+    List<Cart> findByQqNumberAndStateOrderByIdDesc(String qq , int state);
+
     @Modifying
     @Transactional
     void deleteByQqNumber(String qqNumber);

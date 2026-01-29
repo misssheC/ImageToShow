@@ -46,11 +46,9 @@ public class BackendLoginController {
     public String Dashboard(){
         return "dashboard";
     }
-    public static class LoginRequest {
+    public static class LoginRequest { 
         private String username;
         private String password;
-
-        // getters and setters
         public String getUsername() {
             return username;
         }

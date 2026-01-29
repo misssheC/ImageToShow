@@ -15,9 +15,13 @@ public interface OrderRep extends JpaRepository<Order,Long> {
 
     List<Order> findByQqNumberAndState(String qqNumber,int state);
 
+    List<Order>findByQqNumberAndStateOrderByIdDesc(String qqNumber,int state);
+
     List<Order> findByQqNumberAndBatch(String qqNumber,int batch);
 
     List<Order> findAllByQqNumberOrderByIdDesc(String qq);
+
+    List<Order> findAllByStateOrderByIdDesc(int state);
     @Modifying
     @Transactional
     void deleteByQqNumberAndGoodsIdAndState(String qqNumber, Long goodsId,int s);

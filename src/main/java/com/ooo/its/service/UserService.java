@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -27,7 +28,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public boolean validateUser(String qq_number, String password, String region) {
+    public boolean validateUser(String qq_number, String password, String device) {
         Optional<User> userOpt = userRepository.findByQqNumber(qq_number);
         Optional<UserInfo> userInfoOpt = userInfoRep.findByQqNumber(qq_number);
         if (userOpt.isEmpty() || !userOpt.get().getPassword().equals(password)) {
@@ -39,43 +40,34 @@ public class UserService {
         UserInfo userInfo = userInfoOpt.get();
         Date currentTime = new Date();
 
-        boolean regionMatch = compareRegionWithoutISP(region, userInfo.getRegion());
+        boolean deviceMatch = compareDevice(device, userInfo.getDevice());
         if (userInfo.getLastTime() == null) {
             if ("unknown".equals(userInfo.getRegion())) {
                 return true;
             }
-            return regionMatch;
+            return deviceMatch;
         }
         long timeDifference = currentTime.getTime() - userInfo.getLastTime().getTime();
         long twentyFourHours = 72 * 60 * 60 * 1000;
         if (timeDifference <= twentyFourHours) {
-            return regionMatch;
+            return deviceMatch;
         } else {
             return true;
         }
     }
-    public boolean compareRegionWithoutISP(String region1, String region2) {
-        if (region1 == null || region2 == null) {
-            return region1 == region2;
+    public boolean compareDevice(String device1, String device2) {
+        if (device1 == null || device2 == null) {
+            return Objects.equals(device1, device2);
         }
-        region1 = region1.trim();
-        region2 = region2.trim();
-        if ("unknown".equals(region1) && "unknown".equals(region2)) {
+        device1 = device1.trim().toLowerCase();
+        device2 = device2.trim().toLowerCase();
+        if ("unknown".equals(device1) && "unknown".equals(device2)) {
             return true;
         }
-
-        if ("unknown".equals(region1) || "unknown".equals(region2)) {
+        if ("unknown".equals(device1) || "unknown".equals(device2)) {
             return false;
         }
-        String[] parts1 = region1.split("-");
-        String[] parts2 = region2.split("-");
-        int compareLength = 2;
-        for (int i = 0; i < compareLength; i++) {
-            if (!parts1[i].trim().equals(parts2[i].trim())) {
-                return false;
-            }
-        }
-        return true;
+        return device1.equals(device2);
     }
     public boolean RegisterUser(String qq) {
         User verification = userRepository.findByQqNumber(qq).orElse(null);
@@ -100,6 +92,11 @@ public class UserService {
             }
         }
         return result;
+    }
+
+    public String GetLastRegion(String qq){
+        Optional<UserInfo> u = userInfoRep.findByQqNumber(qq);
+        return u.map(UserInfo::getRegion).orElse(null);
     }
 
     public boolean setIdentity(String qqNumber, int s) {
