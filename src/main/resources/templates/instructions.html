@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>商品购买用户须知</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -142,6 +142,31 @@
             border-radius: 0 8px 8px 0;
         }
 
+        /* 让解压教程链接更醒目 */
+        .important-note a {
+            color: #c45d00;
+            font-weight: 700;
+            text-decoration: underline;
+            background-color: transparent;
+            padding: 2px 6px;
+            border-radius: 20px;
+            transition: background-color 0.2s, color 0.2s;
+            display: inline-block;
+        }
+        .important-note a:hover {
+            background-color: #ffd89c;
+            color: #a14500;
+            text-decoration: none;
+        }
+        .important-note i {
+            margin-right: 6px;
+            color: #e67e22;
+        }
+        .important-note strong {
+            font-weight: 700;
+            color: #795548;
+        }
+
         footer {
             text-align: center;
             margin-top: 50px;
@@ -184,6 +209,7 @@
     </header>
 
     <div class="notice-container">
+        <!-- 卡片一：视频价格和操作说明 -->
         <div class="notice-card">
             <div class="card-header">
                 <div class="icon price-icon">
@@ -203,6 +229,8 @@
                 </ul>
             </div>
         </div>
+
+        <!-- 卡片二：发货方式说明（已添加醒目的解压教程） -->
         <div class="notice-card">
             <div class="card-header">
                 <div class="icon shipping-icon">
@@ -216,9 +244,16 @@
                     <li>所以我们采用<strong class="highlight">QQ压缩打包发送</strong>的方式发送给您</li>
                     <li>不知道解压可以qq询问</li>
                 </ul>
+                <!-- 醒目解压教程入口 -->
+                <div class="important-note" style="margin-top: 20px;">
+                    <!--<i class="fas fa-hand-point-right"></i> -->
+                    <strong>解压教程点这个 👉 <a href="/user/unzip">解压教程</a> 👈</strong>
+                    ，点击查看详细解压步骤（含常见问题）
+                </div>
             </div>
         </div>
 
+        <!-- 卡片三：其他事项说明 -->
         <div class="notice-card">
             <div class="card-header">
                 <div class="icon other-icon">
@@ -237,6 +272,7 @@
         </div>
     </div>
 </div>
+
 <script>
     function triggerInstructionAPI() {
         const apiEndpoint = '/user/read';
@@ -275,8 +311,12 @@
             });
     }
 
+    // 卡片点击特效（如果点击的是链接或其子元素，不触发卡片跳动）
     document.querySelectorAll('.notice-card').forEach(card => {
-        card.addEventListener('click', function() {
+        card.addEventListener('click', function(e) {
+            // 如果点击的元素或其父级是链接，则不执行卡片跳动
+            if (e.target.closest('a')) return;
+
             document.querySelectorAll('.notice-card').forEach(c => {
                 if (c !== this) c.style.transform = 'translateY(0)';
             });
@@ -287,6 +327,8 @@
             }
         });
     });
+
+    // 页面加载淡入动画 + 卡片依次出现 + 调用API
     window.addEventListener('load', function() {
         document.body.style.opacity = '0';
         document.body.style.transition = 'opacity 0.5s';
@@ -294,6 +336,7 @@
         setTimeout(() => {
             document.body.style.opacity = '1';
         }, 100);
+
         const cards = document.querySelectorAll('.notice-card');
         cards.forEach((card, index) => {
             card.style.opacity = '0';
@@ -305,6 +348,8 @@
                 card.style.transform = 'translateY(0)';
             }, 300 + index * 200);
         });
+
+        // 延迟调用API（模拟用户阅读行为）
         setTimeout(() => {
             triggerInstructionAPI();
         }, 500);

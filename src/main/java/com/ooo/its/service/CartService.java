@@ -57,7 +57,11 @@ public class CartService {
     }
 
     public boolean ClearCart(String qq){
-        cartRep.deleteByQqNumber(qq);
+        cartRep.deleteByQqNumberAndState(qq,1);
         return true;
+    }
+
+    public Cart GetCartId(String qq,Long goodId){
+        return cartRep.findByQqNumberAndGoodsId(qq,goodId);
     }
 }

@@ -4,16 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>用户管理系统</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/all.min.css">
     <style>
-        /* 所有之前的CSS样式保持不变 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
         :root {
             --primary: #4361ee;
             --secondary: #3a0ca3;
@@ -25,16 +23,14 @@
             --border: #dee2e6;
             --vip: #ffd700;
             --blacklist: #dc3545;
+            --overseas: #3a0ca3;
         }
-
         body {
             background-color: #f5f7fb;
             color: var(--dark);
             display: flex;
             min-height: 100vh;
         }
-
-        /* 侧边栏样式 - 修改为固定定位 */
         .sidebar {
             width: 250px;
             background: linear-gradient(180deg, var(--primary), var(--secondary));
@@ -49,45 +45,35 @@
             z-index: 1000;
             overflow-y: auto;
         }
-
-        /* 自定义滚动条样式 */
         .sidebar::-webkit-scrollbar {
             width: 5px;
         }
-
         .sidebar::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.1);
         }
-
         .sidebar::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.3);
             border-radius: 5px;
         }
-
         .sidebar::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.5);
         }
-
         .logo {
             text-align: center;
             padding: 20px 0;
             margin-bottom: 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-
         .logo h2 {
             font-size: 1.5rem;
         }
-
         .nav-links {
             list-style: none;
         }
-
         .nav-links li {
             padding: 12px 20px;
             margin: 5px 0;
         }
-
         .nav-links li a {
             color: white;
             text-decoration: none;
@@ -96,22 +82,17 @@
             font-size: 1rem;
             transition: all 0.3s;
         }
-
         .nav-links li a i {
             margin-right: 15px;
             font-size: 1.2rem;
         }
-
         .nav-links li.active {
             background-color: rgba(255, 255, 255, 0.1);
             border-left: 4px solid white;
         }
-
         .nav-links li:hover {
             background-color: rgba(255, 255, 255, 0.1);
         }
-
-        /* 主内容区域 - 添加左边距以避开固定侧边栏 */
         .main-content {
             flex: 1;
             display: flex;
@@ -119,7 +100,6 @@
             margin-left: 250px;
             width: calc(100% - 250px);
         }
-
         .top-bar {
             background-color: white;
             padding: 15px 30px;
@@ -131,7 +111,6 @@
             top: 0;
             z-index: 999;
         }
-
         .search-bar {
             display: flex;
             align-items: center;
@@ -140,7 +119,6 @@
             padding: 8px 15px;
             width: 300px;
         }
-
         .search-bar input {
             border: none;
             background: transparent;
@@ -148,8 +126,6 @@
             width: 100%;
             margin-left: 10px;
         }
-
-        /* 新增搜索按钮样式 */
         .search-btn {
             background: none;
             border: none;
@@ -158,44 +134,36 @@
             padding: 0 5px;
             transition: color 0.3s;
         }
-
         .search-btn:hover {
             color: var(--secondary);
         }
-
         .sales-info {
             display: flex;
             align-items: center;
             gap: 25px;
             margin-right: 20px;
         }
-
         .sales-item {
             text-align: center;
             padding: 0 15px;
         }
-
         .sales-label {
             font-size: 0.8rem;
             color: var(--gray);
             margin-bottom: 5px;
         }
-
         .sales-value {
             font-size: 1.2rem;
             font-weight: bold;
             color: var(--primary);
         }
-
         .sales-value.amount {
             color: red;
         }
-
         .user-info {
             display: flex;
             align-items: center;
         }
-
         .user-info img {
             width: 40px;
             height: 40px;
@@ -203,60 +171,47 @@
             margin-right: 10px;
             object-fit: cover;
         }
-
         .content {
             padding: 30px;
             flex: 1;
             overflow-y: auto;
             height: calc(100vh - 70px);
         }
-
-        /* 内容区域滚动条样式 */
         .content::-webkit-scrollbar {
             width: 8px;
         }
-
         .content::-webkit-scrollbar-track {
             background: #f1f1f1;
         }
-
         .content::-webkit-scrollbar-thumb {
             background: var(--primary);
             border-radius: 5px;
         }
-
         .content::-webkit-scrollbar-thumb:hover {
             background: var(--secondary);
         }
-
         .content-section {
             display: none;
             animation: fadeIn 0.5s;
         }
-
         .content-section.active {
             display: block;
         }
-
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
-
         .section-header {
             margin-bottom: 25px;
         }
-
         .section-header h2 {
             font-size: 1.8rem;
             color: var(--dark);
             margin-bottom: 10px;
         }
-
         .section-header p {
             color: var(--gray);
         }
-
         .card {
             background-color: white;
             border-radius: 10px;
@@ -264,7 +219,6 @@
             padding: 20px;
             margin-bottom: 25px;
         }
-
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -273,12 +227,10 @@
             padding-bottom: 15px;
             border-bottom: 1px solid var(--border);
         }
-
         .card-header h3 {
             font-size: 1.3rem;
             color: var(--dark);
         }
-
         .btn {
             padding: 8px 15px;
             background-color: var(--primary);
@@ -288,101 +240,80 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .btn:hover {
             background-color: var(--secondary);
         }
-
         .btn-success {
             background-color: var(--success);
         }
-
         .btn-success:hover {
             background-color: #3ab0d6;
         }
-
         .btn-warning {
             background-color: var(--warning);
         }
-
         .btn-warning:hover {
             background-color: #e1156d;
         }
-
         .btn-danger {
             background-color: #dc3545;
         }
-
         .btn-danger:hover {
             background-color: #c82333;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
         }
-
         th, td {
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid var(--border);
         }
-
         th {
             background-color: var(--light);
             font-weight: 600;
         }
-
         tr:hover {
             background-color: rgba(0, 0, 0, 0.02);
         }
-
         .status {
             padding: 5px 10px;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
         }
-
         .status.pending {
             background-color: rgba(247, 37, 133, 0.2);
             color: var(--warning);
         }
-
         .status.processing {
             background-color: rgba(67, 97, 238, 0.2);
             color: var(--primary);
         }
-
         .status.completed {
             background-color: rgba(76, 201, 240, 0.2);
             color: var(--success);
         }
-
         .status.active {
             background-color: rgba(76, 201, 240, 0.2);
             color: var(--success);
         }
-
         .action-icons i {
             margin-right: 10px;
             cursor: pointer;
             color: var(--gray);
             transition: color 0.3s;
         }
-
         .action-icons i:hover {
             color: var(--primary);
         }
-
         .action-icons i.fa-check-circle:hover {
             color: var(--success);
         }
-
         .action-icons i.fa-trash:hover {
             color: #dc3545;
         }
-
         .product-image {
             width: 50px;
             height: 50px;
@@ -392,11 +323,9 @@
             transition: transform 0.3s;
             cursor: pointer;
         }
-
         .product-image:hover {
             transform: scale(1.1);
         }
-
         .image-modal-overlay {
             position: fixed;
             top: 0;
@@ -412,12 +341,10 @@
             visibility: hidden;
             transition: all 0.3s;
         }
-
         .image-modal-overlay.active {
             opacity: 1;
             visibility: visible;
         }
-
         .image-modal {
             max-width: 90%;
             max-height: 90%;
@@ -425,18 +352,15 @@
             transform: scale(0.8);
             transition: transform 0.3s;
         }
-
         .image-modal-overlay.active .image-modal {
             transform: scale(1);
         }
-
         .image-modal img {
             max-width: 100%;
             max-height: 90vh;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
-
         .close-image-modal {
             position: absolute;
             top: 15px;
@@ -454,37 +378,30 @@
             cursor: pointer;
             transition: background 0.3s;
         }
-
         .close-image-modal:hover {
             background: rgba(0, 0, 0, 0.9);
         }
-
         .loading {
             text-align: center;
             padding: 20px;
             color: var(--gray);
         }
-
         .loading i {
             font-size: 2rem;
             margin-bottom: 10px;
         }
-
         .error {
             text-align: center;
             padding: 20px;
             color: var(--warning);
         }
-
         .error i {
             font-size: 2rem;
             margin-bottom: 10px;
         }
-
         .ranking-list {
             list-style: none;
         }
-
         .ranking-item {
             display: flex;
             align-items: center;
@@ -493,7 +410,6 @@
             border-radius: 8px;
             background-color: var(--light);
         }
-
         .rank {
             width: 30px;
             height: 30px;
@@ -505,23 +421,18 @@
             margin-right: 15px;
             font-weight: bold;
         }
-
         .rank-1 {
             background-color: #ffc107;
         }
-
         .rank-2 {
             background-color: #6c757d;
         }
-
         .rank-3 {
             background-color: #cd7f32;
         }
-
         .rank-other {
             background-color: var(--primary);
         }
-
         .user-avatar {
             width: 40px;
             height: 40px;
@@ -529,31 +440,25 @@
             object-fit: cover;
             margin-right: 15px;
         }
-
         .user-details {
             flex: 1;
         }
-
         .user-details h4 {
             margin-bottom: 5px;
         }
-
         .user-details p {
             color: var(--gray);
             font-size: 0.9rem;
         }
-
         .amount {
             font-weight: bold;
             color: var(--primary);
         }
-
         .users-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 15px;
         }
-
         .user-card {
             background-color: white;
             border-radius: 10px;
@@ -562,27 +467,38 @@
             transition: transform 0.3s, box-shadow 0.3s;
             position: relative;
         }
-
         .user-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
         }
-
         .user-card.vip {
             border: 2px solid var(--vip);
             box-shadow: 0 3px 15px rgba(255, 215, 0, 0.2);
         }
-
         .user-card.blacklist {
             border: 2px solid var(--blacklist);
             box-shadow: 0 3px 15px rgba(220, 53, 69, 0.2);
         }
-
+        .user-card.overseas {
+            border: 2px solid var(--overseas);
+            box-shadow: 0 3px 15px rgba(58, 12, 163, 0.2);
+        }
         .user-card.vip.blacklist {
             border: 2px solid linear-gradient(45deg, var(--vip), var(--blacklist));
             box-shadow: 0 3px 15px rgba(255, 215, 0, 0.2), 0 3px 15px rgba(220, 53, 69, 0.2);
         }
-
+        .user-card.vip.overseas {
+            border: 2px solid linear-gradient(45deg, var(--vip), var(--overseas));
+            box-shadow: 0 3px 15px rgba(255, 215, 0, 0.2), 0 3px 15px rgba(58, 12, 163, 0.2);
+        }
+        .user-card.blacklist.overseas {
+            border: 2px solid linear-gradient(45deg, var(--blacklist), var(--overseas));
+            box-shadow: 0 3px 15px rgba(220, 53, 69, 0.2), 0 3px 15px rgba(58, 12, 163, 0.2);
+        }
+        .user-card.vip.blacklist.overseas {
+            border: 2px solid linear-gradient(45deg, var(--vip), var(--blacklist), var(--overseas));
+            box-shadow: 0 3px 15px rgba(255, 215, 0, 0.2), 0 3px 15px rgba(220, 53, 69, 0.2), 0 3px 15px rgba(58, 12, 163, 0.2);
+        }
         .user-card-header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
@@ -591,19 +507,27 @@
             align-items: center;
             position: relative;
         }
-
         .user-card.vip .user-card-header {
             background: linear-gradient(135deg, var(--vip), #ffa500);
         }
-
         .user-card.blacklist .user-card-header {
             background: linear-gradient(135deg, var(--blacklist), #b02a37);
         }
-
+        .user-card.overseas .user-card-header {
+            background: linear-gradient(135deg, var(--overseas), #7209b7);
+        }
         .user-card.vip.blacklist .user-card-header {
             background: linear-gradient(135deg, var(--vip), var(--blacklist));
         }
-
+        .user-card.vip.overseas .user-card-header {
+            background: linear-gradient(135deg, var(--vip), var(--overseas));
+        }
+        .user-card.blacklist.overseas .user-card-header {
+            background: linear-gradient(135deg, var(--blacklist), var(--overseas));
+        }
+        .user-card.vip.blacklist.overseas .user-card-header {
+            background: linear-gradient(135deg, var(--vip), var(--blacklist), var(--overseas));
+        }
         .header-actions {
             position: absolute;
             top: 10px;
@@ -612,14 +536,12 @@
             align-items: center;
             gap: 5px;
         }
-
         .user-tags {
             display: flex;
             gap: 5px;
             flex-wrap: wrap;
             justify-content: flex-end;
         }
-
         .user-tag {
             padding: 3px 8px;
             border-radius: 12px;
@@ -631,22 +553,22 @@
             gap: 3px;
             white-space: nowrap;
         }
-
         .user-tag.vip {
             background-color: var(--vip);
             color: #333;
         }
-
         .user-tag.blacklist {
             background-color: var(--blacklist);
             color: white;
         }
-
+        .user-tag.overseas {
+            background-color: var(--overseas);
+            color: white;
+        }
         .user-card-info {
             flex: 1;
             min-width: 0;
         }
-
         .user-card-info h3 {
             margin-bottom: 5px;
             font-size: 1.1rem;
@@ -655,41 +577,34 @@
             text-overflow: ellipsis;
             padding-right: 100px;
         }
-
         .user-card-body {
             padding: 15px;
         }
-
         .user-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-bottom: 15px;
         }
-
         .user-stat {
             text-align: center;
             padding: 8px;
             background-color: var(--light);
             border-radius: 8px;
         }
-
         .user-stat-value {
             font-weight: bold;
             color: var(--primary);
             font-size: 1rem;
             margin-bottom: 5px;
         }
-
         .user-stat-label {
             color: var(--gray);
             font-size: 0.7rem;
         }
-
         .user-details-list {
             margin-bottom: 15px;
         }
-
         .user-detail-item {
             display: flex;
             justify-content: space-between;
@@ -697,24 +612,20 @@
             border-bottom: 1px solid var(--border);
             font-size: 0.8rem;
         }
-
         .user-detail-label {
             color: var(--gray);
         }
-
         .user-detail-value {
             font-weight: 500;
             max-width: 60%;
             text-align: right;
         }
-
         .pagination {
             display: flex;
             justify-content: center;
             margin-top: 20px;
             gap: 5px;
         }
-
         .pagination button {
             padding: 8px 12px;
             border: 1px solid var(--border);
@@ -723,17 +634,14 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .pagination button.active {
             background-color: var(--primary);
             color: white;
             border-color: var(--primary);
         }
-
         .pagination button:hover:not(.active) {
             background-color: var(--light);
         }
-
         .pagination-info {
             display: flex;
             justify-content: space-between;
@@ -743,15 +651,12 @@
             font-size: 0.9rem;
             padding: 10px 0;
         }
-
         .total-count {
             font-weight: 500;
         }
-
         .page-info {
             font-weight: 500;
         }
-
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -767,12 +672,10 @@
             visibility: hidden;
             transition: all 0.3s;
         }
-
         .modal-overlay.active {
             opacity: 1;
             visibility: visible;
         }
-
         .modal {
             background-color: white;
             border-radius: 10px;
@@ -783,11 +686,9 @@
             transform: translateY(-20px);
             transition: transform 0.3s;
         }
-
         .modal-overlay.active .modal {
             transform: translateY(0);
         }
-
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -796,12 +697,10 @@
             padding-bottom: 15px;
             border-bottom: 1px solid var(--border);
         }
-
         .modal-header h3 {
             font-size: 1.3rem;
             color: var(--dark);
         }
-
         .close-modal {
             background: none;
             border: none;
@@ -809,22 +708,18 @@
             cursor: pointer;
             color: var(--gray);
         }
-
         .modal-body {
             margin-bottom: 20px;
         }
-
         .form-group {
             margin-bottom: 15px;
         }
-
         .form-group label {
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
             color: var(--dark);
         }
-
         .form-control {
             width: 100%;
             padding: 10px 15px;
@@ -833,18 +728,15 @@
             font-size: 1rem;
             transition: border-color 0.3s;
         }
-
         .form-control:focus {
             border-color: var(--primary);
             outline: none;
         }
-
         .modal-footer {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
         }
-
         .print-list {
             max-height: 400px;
             overflow-y: auto;
@@ -853,7 +745,6 @@
             border-radius: 5px;
             background-color: var(--light);
         }
-
         .print-item {
             padding: 10px;
             margin-bottom: 8px;
@@ -866,13 +757,11 @@
             color: #ff4d4f;
             font-weight: bold;
         }
-
         .auto-refresh-controls {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-
         .refresh-select {
             padding: 6px 12px;
             border: 1px solid var(--border);
@@ -882,7 +771,6 @@
             outline: none;
             cursor: pointer;
         }
-
         .refresh-status {
             font-size: 0.8rem;
             color: var(--gray);
@@ -893,32 +781,26 @@
             align-items: center;
             gap: 5px;
         }
-
         .refresh-status.active {
             color: var(--success);
             background-color: rgba(76, 201, 240, 0.1);
         }
-
         .refresh-status i {
             font-size: 0.7rem;
         }
-
         .register-user-btn {
             margin-top: auto;
             margin-bottom: 20px;
             text-align: center;
         }
-
         .register-user-btn .btn {
             width: 80%;
             padding: 12px;
             font-size: 1rem;
         }
-
         .user-management-dropdown {
             position: relative;
         }
-
         .user-management-btn {
             width: 28px;
             height: 28px;
@@ -934,12 +816,10 @@
             font-size: 0.9rem;
             margin-left: 5px;
         }
-
         .user-management-btn:hover {
             background-color: rgba(255, 255, 255, 0.5);
             transform: scale(1.1);
         }
-
         .dropdown-menu {
             position: absolute;
             top: 100%;
@@ -952,16 +832,14 @@
             visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.3s;
-            width: 140px;
-            min-width: 140px;
+            width: 160px;
+            min-width: 160px;
         }
-
         .dropdown-menu.show {
             opacity: 1;
             visibility: visible;
             transform: translateY(5px);
         }
-
         .dropdown-item {
             padding: 8px 12px;
             display: flex;
@@ -973,69 +851,65 @@
             font-size: 0.8rem;
             white-space: nowrap;
         }
-
         .dropdown-item:last-child {
             border-bottom: none;
         }
-
         .dropdown-item:hover {
             background-color: var(--light);
         }
-
         .dropdown-item.vip-add {
             color: #b8860b;
         }
-
         .dropdown-item.vip-add i {
             color: #ffd700;
         }
-
         .dropdown-item.vip-remove {
             color: #6c757d;
         }
-
         .dropdown-item.vip-remove i {
             color: #6c757d;
         }
-
         .dropdown-item.blacklist-add {
             color: #dc3545;
         }
-
         .dropdown-item.blacklist-add i {
             color: #dc3545;
         }
-
         .dropdown-item.blacklist-remove {
             color: #28a745;
         }
-
         .dropdown-item.blacklist-remove i {
             color: #28a745;
         }
-
+        .dropdown-item.overseas-add {
+            color: #3a0ca3;
+        }
+        .dropdown-item.overseas-add i {
+            color: #3a0ca3;
+        }
+        .dropdown-item.overseas-remove {
+            color: #4361ee;
+        }
+        .dropdown-item.overseas-remove i {
+            color: #4361ee;
+        }
         .dropdown-item.disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-
         .dropdown-item.disabled:hover {
             background-color: transparent;
         }
-
-        /* 订单数量选择器样式 */
         .order-count-selector {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-
         .order-count-selector label {
             font-size: 0.9rem;
             color: var(--dark);
             white-space: nowrap;
         }
-
         .order-count-select {
             padding: 6px 12px;
             border: 1px solid var(--border);
@@ -1046,20 +920,15 @@
             cursor: pointer;
             min-width: 80px;
         }
-
         .order-count-select:focus {
             border-color: var(--primary);
         }
-
-        /* 搜索提示样式 */
         .search-hint {
             margin-top: 5px;
             font-size: 0.8rem;
             color: var(--gray);
             font-style: italic;
         }
-
-        /* 搜索模式指示器 */
         .search-mode-indicator {
             display: inline-block;
             background-color: var(--primary);
@@ -1071,21 +940,17 @@
             margin-left: 10px;
             animation: pulse 2s infinite;
         }
-
         @keyframes pulse {
             0% { opacity: 0.7; }
             50% { opacity: 1; }
             100% { opacity: 0.7; }
         }
-
-        /* 新增：分类搜索控件样式 */
         .category-search {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-top: 15px;
         }
-
         .category-select {
             padding: 6px 12px;
             border: 1px solid var(--border);
@@ -1096,28 +961,53 @@
             cursor: pointer;
             min-width: 150px;
         }
-
         .category-select:focus {
             border-color: var(--primary);
         }
-
         .category-label {
             font-size: 0.9rem;
             color: var(--dark);
             font-weight: 500;
             white-space: nowrap;
         }
-
+        .search-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+        .search-pagination-info {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        .search-page-button {
+            padding: 5px 10px;
+            border: 1px solid var(--border);
+            background-color: white;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        .search-page-button:hover {
+            background-color: var(--light);
+        }
+        .search-page-button.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
         @media (max-width: 992px) {
             .sidebar {
                 width: 80px;
             }
-
             .main-content {
                 margin-left: 80px;
                 width: calc(100% - 80px);
             }
-
             .logo h2, .nav-links li a span {
                 display: none;
             }
@@ -1155,18 +1045,14 @@
                 align-items: flex-start;
                 gap: 5px;
             }
-
             .pagination-info {
                 flex-direction: column;
                 gap: 10px;
                 text-align: center;
             }
-
             .content {
                 height: calc(100vh - 90px);
             }
-
-            /* 响应式调整分类搜索 */
             .category-search {
                 flex-direction: column;
                 align-items: flex-start;
@@ -1177,7 +1063,6 @@
                 min-width: unset;
             }
         }
-
         @media (max-width: 768px) {
             .top-bar {
                 flex-direction: column;
@@ -1208,28 +1093,26 @@
                 width: 100%;
                 justify-content: space-between;
             }
-
-            /* 调整内容区域高度 */
             .content {
                 padding: 20px;
                 height: calc(100vh - 110px);
             }
-
             .category-search {
                 margin-top: 10px;
             }
+            .search-pagination {
+                flex-direction: column;
+                gap: 5px;
+            }
         }
-
         @media (max-width: 576px) {
             .sidebar {
                 width: 60px;
             }
-
             .main-content {
                 margin-left: 60px;
                 width: calc(100% - 60px);
             }
-
             .sales-info {
                 flex-wrap: wrap;
                 gap: 10px;
@@ -1239,7 +1122,7 @@
                 padding: 0 5px;
             }
             .dropdown-menu {
-                width: 130px;
+                width: 140px;
             }
             .user-card-info h3 {
                 padding-right: 60px;
@@ -1249,8 +1132,6 @@
                 align-items: flex-end;
                 gap: 3px;
             }
-
-            /* 调整内容区域高度 */
             .content {
                 padding: 15px;
                 height: calc(100vh - 120px);
@@ -1283,14 +1164,12 @@
             <a href="#"><i class="fas fa-user"></i> <span>用户详细信息</span></a>
         </li>
     </ul>
-
     <div class="register-user-btn">
         <button class="btn" id="register-user-btn">
             <i class="fas fa-user-plus"></i> <span>注册新用户</span>
         </button>
     </div>
 </div>
-
 <div class="main-content">
     <div class="top-bar">
         <div class="search-bar">
@@ -1300,7 +1179,6 @@
                 <i class="fas fa-search"></i>
             </button>
         </div>
-
         <div class="sales-info">
             <div class="sales-item">
                 <div class="sales-label">总销售额</div>
@@ -1312,15 +1190,12 @@
             </div>
         </div>
     </div>
-
     <div class="content">
         <div class="content-section active" id="user-orders">
             <div class="section-header">
                 <h2>用户订单管理 <span id="orders-search-indicator" class="search-mode-indicator" style="display: none;">搜索模式</span></h2>
                 <p>查看和管理所有用户订单信息 <span class="search-hint" id="orders-search-hint" style="display: none;">当前显示QQ: <span id="orders-search-qq"></span> 的订单</span></p>
             </div>
-
-            <!-- 新增：订单分类搜索控件 -->
             <div class="category-search">
                 <span class="category-label">订单状态:</span>
                 <select class="category-select" id="order-state-select">
@@ -1331,7 +1206,6 @@
                 </select>
                 <span class="category-label" id="order-state-label" style="display: none;">状态: <span id="order-state-value"></span></span>
             </div>
-
             <div class="card">
                 <div class="card-header">
                     <h3>近期订单</h3>
@@ -1339,8 +1213,7 @@
                         <div class="order-count-selector">
                             <label for="order-count-select">显示数量:</label>
                             <select class="order-count-select" id="order-count-select">
-                                <option value="20" selected>20条</option>
-                                <option value="50">50条</option>
+                                <option value="50" selected>50条</option>
                                 <option value="100">100条</option>
                                 <option value="150">150条</option>
                                 <option value="200">200条</option>
@@ -1369,16 +1242,18 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="search-pagination" id="orders-pagination" style="display: none;">
+                    <button class="search-page-button" id="orders-prev-btn">上一页</button>
+                    <span class="search-pagination-info" id="orders-page-info">第1页</span>
+                    <button class="search-page-button" id="orders-next-btn">下一页</button>
+                </div>
             </div>
         </div>
-
         <div class="content-section" id="user-carts">
             <div class="section-header">
                 <h2>用户购物车 <span id="carts-search-indicator" class="search-mode-indicator" style="display: none;">搜索模式</span></h2>
                 <p>查看用户购物车中的信息 <span class="search-hint" id="carts-search-hint" style="display: none;">当前显示QQ: <span id="carts-search-qq"></span> 的购物车</span></p>
             </div>
-
-            <!-- 新增：购物车分类搜索控件 -->
             <div class="category-search">
                 <span class="category-label">购物车状态:</span>
                 <select class="category-select" id="cart-state-select">
@@ -1388,7 +1263,6 @@
                 </select>
                 <span class="category-label" id="cart-state-label" style="display: none;">状态: <span id="cart-state-value"></span></span>
             </div>
-
             <div class="card">
                 <div class="card-header">
                     <h3>购物车列表</h3>
@@ -1413,16 +1287,18 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="search-pagination" id="carts-pagination" style="display: none;">
+                    <button class="search-page-button" id="carts-prev-btn">上一页</button>
+                    <span class="search-pagination-info" id="carts-page-info">第1页</span>
+                    <button class="search-page-button" id="carts-next-btn">下一页</button>
+                </div>
             </div>
         </div>
-
         <div class="content-section" id="user-logs">
             <div class="section-header">
                 <h2>用户行为日志 <span id="logs-search-indicator" class="search-mode-indicator" style="display: none;">搜索模式</span></h2>
                 <p>记录和分析用户行为数据 <span class="search-hint" id="logs-search-hint" style="display: none;">当前显示QQ: <span id="logs-search-qq"></span> 的日志</span></p>
             </div>
-
-            <!-- 新增：日志分类搜索控件 -->
             <div class="category-search">
                 <span class="category-label">日志类型:</span>
                 <select class="category-select" id="log-type-select">
@@ -1440,7 +1316,6 @@
                 </select>
                 <span class="category-label" id="log-type-label" style="display: none;">类型: <span id="log-type-value"></span></span>
             </div>
-
             <div class="card">
                 <div class="card-header">
                     <h3>用户活动日志</h3>
@@ -1473,9 +1348,13 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="search-pagination" id="logs-pagination" style="display: none;">
+                    <button class="search-page-button" id="logs-prev-btn">上一页</button>
+                    <span class="search-pagination-info" id="logs-page-info">第1页</span>
+                    <button class="search-page-button" id="logs-next-btn">下一页</button>
+                </div>
             </div>
         </div>
-
         <div class="content-section" id="user-ranking">
             <div class="section-header">
                 <h2>用户消费排名</h2>
@@ -1490,7 +1369,6 @@
                 </div>
             </div>
         </div>
-
         <div class="content-section" id="user-history">
             <div class="section-header">
                 <h2>用户历史消费记录 <span id="history-search-indicator" class="search-mode-indicator" style="display: none;">搜索模式</span></h2>
@@ -1521,15 +1399,18 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="search-pagination" id="history-pagination" style="display: none;">
+                    <button class="search-page-button" id="history-prev-btn">上一页</button>
+                    <span class="search-pagination-info" id="history-page-info">第1页</span>
+                    <button class="search-page-button" id="history-next-btn">下一页</button>
+                </div>
             </div>
         </div>
-
         <div class="content-section" id="user-details">
             <div class="section-header">
                 <h2>用户详细信息 <span id="users-search-indicator" class="search-mode-indicator" style="display: none;">搜索模式</span></h2>
                 <p>查看和管理用户的详细资料 <span class="search-hint" id="users-search-hint" style="display: none;">当前显示QQ: <span id="users-search-qq"></span> 的信息</span></p>
             </div>
-
             <div class="card">
                 <div class="card-header">
                     <h3>用户列表</h3>
@@ -1539,23 +1420,18 @@
                         <button class="btn btn-warning" id="clear-users">清除无效用户</button>
                     </div>
                 </div>
-
                 <div class="pagination-info" id="pagination-info">
                     <div class="total-count">总用户数: <span id="total-count">0</span></div>
                     <div class="page-info">当前页: <span id="current-page">1</span> / <span id="total-pages">1</span></div>
                 </div>
-
                 <div class="users-list" id="users-list-container">
                 </div>
-
                 <div class="pagination" id="pagination-container">
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- 所有之前的modal保持不变 -->
 <div class="modal-overlay" id="price-modal">
     <div class="modal">
         <div class="modal-header">
@@ -1578,7 +1454,6 @@
         </div>
     </div>
 </div>
-
 <div class="modal-overlay" id="print-modal">
     <div class="modal">
         <div class="modal-header">
@@ -1605,7 +1480,6 @@
         </div>
     </div>
 </div>
-
 <div class="modal-overlay" id="register-modal">
     <div class="modal">
         <div class="modal-header">
@@ -1625,46 +1499,72 @@
         </div>
     </div>
 </div>
-
+<div class="modal-overlay" id="edit-price-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>修改订单价格</h3>
+            <button class="close-modal" id="close-edit-price-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="edit-qq-number">QQ号码</label>
+                <input type="text" id="edit-qq-number" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+                <label for="edit-batch">批次</label>
+                <input type="text" id="edit-batch" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+                <label for="edit-amount">价格金额</label>
+                <input type="number" id="edit-amount" class="form-control" placeholder="请输入新价格" min="0" step="0.01">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" id="cancel-edit-price">取消</button>
+            <button class="btn btn-success" id="confirm-edit-price">确认修改</button>
+        </div>
+    </div>
+</div>
 <div class="image-modal-overlay" id="image-modal">
     <div class="image-modal">
         <button class="close-image-modal" id="close-image-modal">&times;</button>
         <img id="enlarged-image" src="" alt="放大图片">
     </div>
 </div>
-
 <script>
     let logRefreshInterval = 0;
     let logRefreshTimer = null;
     let isLogsActive = false;
     let activeDropdown = null;
-    let ordersNumber = 20;
-
-    // 分页相关变量
+    let ordersNumber = 50; // 默认订单显示条数改为50
     let currentPage = 1;
     let totalPages = 1;
     let totalCount = 0;
     let usersData = [];
-
-    // 搜索相关变量
     let currentSearchKeyword = '';
     let currentSearchSection = '';
-    let currentSearchState = 1000; // 默认全部
-    let currentSearchType = 1000; // 默认全部
-
+    let currentSearchState = 1000;
+    let currentSearchType = 1000;
+    let ordersCurrentPage = 1;
+    let cartsCurrentPage = 1;
+    let logsCurrentPage = 1;
+    let historyCurrentPage = 1;
+    let usersCurrentPage = 1;
+    let lastOrdersSearchParams = { keyword: '', state: 1000 };
+    let lastCartsSearchParams = { keyword: '', state: 1000 };
+    let lastLogsSearchParams = { keyword: '', type: 1000 };
+    let lastHistorySearchParams = { keyword: '' };
+    let lastUsersSearchParams = { keyword: '' };
     document.addEventListener('DOMContentLoaded', function() {
         const navLinks = document.querySelectorAll('.nav-links li');
         const contentSections = document.querySelectorAll('.content-section');
-
         navLinks.forEach(link => {
             link.addEventListener('click', function() {
                 navLinks.forEach(item => item.classList.remove('active'));
                 contentSections.forEach(section => section.classList.remove('active'));
-
                 this.classList.add('active');
                 const targetId = this.getAttribute('data-target');
                 document.getElementById(targetId).classList.add('active');
-
                 if (targetId === 'user-logs') {
                     isLogsActive = true;
                     setupLogAutoRefresh();
@@ -1672,12 +1572,9 @@
                     isLogsActive = false;
                     clearLogAutoRefresh();
                 }
-
-                // 切换页面时，清除搜索状态（除了当前搜索的页面）
                 if (currentSearchSection && currentSearchSection !== targetId) {
                     clearSearch();
                 }
-
                 if (targetId === 'user-carts') {
                     if (currentSearchSection === 'user-carts' && currentSearchKeyword) {
                         searchCarts(currentSearchKeyword);
@@ -1685,7 +1582,6 @@
                         loadCarts();
                     }
                 }
-
                 if (targetId === 'user-details') {
                     if (currentSearchSection === 'user-details' && currentSearchKeyword) {
                         searchUser(currentSearchKeyword);
@@ -1693,11 +1589,9 @@
                         loadUsers(1);
                     }
                 }
-
                 if (targetId === 'user-ranking') {
                     loadRanking();
                 }
-
                 if (targetId === 'user-logs') {
                     if (currentSearchSection === 'user-logs' && currentSearchKeyword) {
                         searchLogs(currentSearchKeyword);
@@ -1705,7 +1599,6 @@
                         loadLogs();
                     }
                 }
-
                 if (targetId === 'user-history') {
                     if (currentSearchSection === 'user-history' && currentSearchKeyword) {
                         searchHistory(currentSearchKeyword);
@@ -1713,8 +1606,6 @@
                         loadHistory();
                     }
                 }
-
-                // 如果是订单页面
                 if (targetId === 'user-orders') {
                     if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
                         searchOrders(currentSearchKeyword);
@@ -1724,90 +1615,159 @@
                 }
             });
         });
-
         loadOrders();
         loadSalesData();
-
-        // 搜索相关事件监听
         const searchInput = document.getElementById('search-input');
         const searchBtn = document.getElementById('search-btn');
         const searchIcon = document.getElementById('search-icon');
-
         searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 performSearch();
             }
         });
-
         searchBtn.addEventListener('click', performSearch);
         searchIcon.addEventListener('click', performSearch);
-
-        // 分类选择器事件监听
         document.getElementById('order-state-select').addEventListener('change', function() {
+            ordersCurrentPage = 1;
+            lastOrdersSearchParams = { keyword: '', state: 1000 };
             if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
                 searchOrders(currentSearchKeyword);
             } else if (this.value !== '1000') {
-                // 只选择状态，不输入QQ
                 searchOrders('');
             } else {
                 loadOrders();
             }
         });
-
         document.getElementById('cart-state-select').addEventListener('change', function() {
+            cartsCurrentPage = 1;
+            lastCartsSearchParams = { keyword: '', state: 1000 };
             if (currentSearchSection === 'user-carts' && currentSearchKeyword) {
                 searchCarts(currentSearchKeyword);
             } else if (this.value !== '1000') {
-                // 只选择状态，不输入QQ
                 searchCarts('');
             } else {
                 loadCarts();
             }
         });
-
         document.getElementById('log-type-select').addEventListener('change', function() {
+            logsCurrentPage = 1;
+            lastLogsSearchParams = { keyword: '', type: 1000 };
             if (currentSearchSection === 'user-logs' && currentSearchKeyword) {
                 searchLogs(currentSearchKeyword);
             } else if (this.value !== '1000') {
-                // 只选择类型，不输入QQ
                 searchLogs('');
             } else {
                 loadLogs();
             }
         });
-
-        // 清除搜索按钮事件
         document.getElementById('clear-orders-search').addEventListener('click', function() {
             clearSearch();
             document.getElementById('order-state-select').value = '1000';
             document.getElementById('order-state-label').style.display = 'none';
+            ordersCurrentPage = 1;
+            lastOrdersSearchParams = { keyword: '', state: 1000 };
             loadOrders();
         });
-
         document.getElementById('clear-carts-search').addEventListener('click', function() {
             clearSearch();
             document.getElementById('cart-state-select').value = '1000';
             document.getElementById('cart-state-label').style.display = 'none';
+            cartsCurrentPage = 1;
+            lastCartsSearchParams = { keyword: '', state: 1000 };
             loadCarts();
         });
-
         document.getElementById('clear-logs-search').addEventListener('click', function() {
             clearSearch();
             document.getElementById('log-type-select').value = '1000';
             document.getElementById('log-type-label').style.display = 'none';
+            logsCurrentPage = 1;
+            lastLogsSearchParams = { keyword: '', type: 1000 };
             loadLogs();
         });
-
         document.getElementById('clear-history-search').addEventListener('click', function() {
             clearSearch();
+            historyCurrentPage = 1;
+            lastHistorySearchParams = { keyword: '' };
             loadHistory();
         });
-
         document.getElementById('clear-users-search').addEventListener('click', function() {
             clearSearch();
+            usersCurrentPage = 1;
+            lastUsersSearchParams = { keyword: '' };
             loadUsers(1);
         });
-
+        document.getElementById('orders-prev-btn').addEventListener('click', function() {
+            if (ordersCurrentPage > 1) {
+                ordersCurrentPage--;
+                if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
+                    searchOrders(currentSearchKeyword);
+                } else {
+                    loadOrders();
+                }
+            }
+        });
+        document.getElementById('orders-next-btn').addEventListener('click', function() {
+            ordersCurrentPage++;
+            if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
+                searchOrders(currentSearchKeyword);
+            } else {
+                loadOrders();
+            }
+        });
+        document.getElementById('carts-prev-btn').addEventListener('click', function() {
+            if (cartsCurrentPage > 1) {
+                cartsCurrentPage--;
+                if (currentSearchSection === 'user-carts' && currentSearchKeyword) {
+                    searchCarts(currentSearchKeyword);
+                } else {
+                    loadCarts();
+                }
+            }
+        });
+        document.getElementById('carts-next-btn').addEventListener('click', function() {
+            cartsCurrentPage++;
+            if (currentSearchSection === 'user-carts' && currentSearchKeyword) {
+                searchCarts(currentSearchKeyword);
+            } else {
+                loadCarts();
+            }
+        });
+        document.getElementById('logs-prev-btn').addEventListener('click', function() {
+            if (logsCurrentPage > 1) {
+                logsCurrentPage--;
+                if (currentSearchSection === 'user-logs' && currentSearchKeyword) {
+                    searchLogs(currentSearchKeyword);
+                } else {
+                    loadLogs();
+                }
+            }
+        });
+        document.getElementById('logs-next-btn').addEventListener('click', function() {
+            logsCurrentPage++;
+            if (currentSearchSection === 'user-logs' && currentSearchKeyword) {
+                searchLogs(currentSearchKeyword);
+            } else {
+                loadLogs();
+            }
+        });
+        document.getElementById('history-prev-btn').addEventListener('click', function() {
+            if (historyCurrentPage > 1) {
+                historyCurrentPage--;
+                if (currentSearchSection === 'user-history' && currentSearchKeyword) {
+                    searchHistory(currentSearchKeyword);
+                } else {
+                    loadHistory();
+                }
+            }
+        });
+        document.getElementById('history-next-btn').addEventListener('click', function() {
+            historyCurrentPage++;
+            if (currentSearchSection === 'user-history' && currentSearchKeyword) {
+                searchHistory(currentSearchKeyword);
+            } else {
+                loadHistory();
+            }
+        });
         document.getElementById('order-count-select').addEventListener('change', function() {
             ordersNumber = parseInt(this.value);
             if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
@@ -1816,7 +1776,6 @@
                 loadOrders();
             }
         });
-
         document.getElementById('refresh-orders').addEventListener('click', function() {
             if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
                 searchOrders(currentSearchKeyword);
@@ -1824,7 +1783,6 @@
                 loadOrders();
             }
         });
-
         document.getElementById('refresh-carts').addEventListener('click', function() {
             if (currentSearchSection === 'user-carts' && currentSearchKeyword) {
                 searchCarts(currentSearchKeyword);
@@ -1832,7 +1790,6 @@
                 loadCarts();
             }
         });
-
         document.getElementById('refresh-users').addEventListener('click', function() {
             if (currentSearchSection === 'user-details' && currentSearchKeyword) {
                 searchUser(currentSearchKeyword);
@@ -1840,9 +1797,7 @@
                 loadUsers(currentPage);
             }
         });
-
         document.getElementById('refresh-ranking').addEventListener('click', loadRanking);
-
         document.getElementById('refresh-logs').addEventListener('click', function() {
             if (currentSearchSection === 'user-logs' && currentSearchKeyword) {
                 searchLogs(currentSearchKeyword);
@@ -1850,7 +1805,6 @@
                 loadLogs();
             }
         });
-
         document.getElementById('refresh-history').addEventListener('click', function() {
             if (currentSearchSection === 'user-history' && currentSearchKeyword) {
                 searchHistory(currentSearchKeyword);
@@ -1858,83 +1812,92 @@
                 loadHistory();
             }
         });
-
         document.getElementById('close-price-modal').addEventListener('click', closePriceModal);
         document.getElementById('cancel-pricing').addEventListener('click', closePriceModal);
         document.getElementById('confirm-pricing').addEventListener('click', confirmPricing);
-
         document.getElementById('close-print-modal').addEventListener('click', closePrintModal);
         document.getElementById('close-print').addEventListener('click', closePrintModal);
-
         document.getElementById('register-user-btn').addEventListener('click', showRegisterModal);
         document.getElementById('close-register-modal').addEventListener('click', closeRegisterModal);
         document.getElementById('cancel-register').addEventListener('click', closeRegisterModal);
         document.getElementById('confirm-register').addEventListener('click', confirmRegister);
-
         document.getElementById('close-image-modal').addEventListener('click', closeImageModal);
         document.getElementById('image-modal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeImageModal();
             }
         });
-
         document.getElementById('log-refresh-interval').addEventListener('change', function() {
             logRefreshInterval = parseInt(this.value);
             updateRefreshStatus();
             setupLogAutoRefresh();
         });
-
         document.getElementById('clear-users').addEventListener('click', clearInvalidUsers);
-
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeImageModal();
                 closeAllDropdowns();
+                closeEditPriceModal();
             }
         });
-
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.user-management-dropdown')) {
                 closeAllDropdowns();
             }
         });
+        document.getElementById('close-edit-price-modal').addEventListener('click', closeEditPriceModal);
+        document.getElementById('cancel-edit-price').addEventListener('click', closeEditPriceModal);
+        document.getElementById('confirm-edit-price').addEventListener('click', confirmEditPrice);
     });
-
-    // 搜索功能实现
     function performSearch() {
         const keyword = document.getElementById('search-input').value.trim();
         const activeSection = document.querySelector('.content-section.active');
-
         if (!activeSection) return;
-
         const sectionId = activeSection.id;
         currentSearchKeyword = keyword;
         currentSearchSection = sectionId;
-
-        // 根据当前页面获取状态/类型值
         let state = 1000;
         let type = 1000;
-
         switch(sectionId) {
             case 'user-orders':
                 state = parseInt(document.getElementById('order-state-select').value);
                 currentSearchState = state;
+                if (keyword !== lastOrdersSearchParams.keyword || state !== lastOrdersSearchParams.state) {
+                    ordersCurrentPage = 1;
+                    lastOrdersSearchParams = { keyword, state };
+                }
                 searchOrders(keyword);
                 break;
             case 'user-carts':
                 state = parseInt(document.getElementById('cart-state-select').value);
                 currentSearchState = state;
+                if (keyword !== lastCartsSearchParams.keyword || state !== lastCartsSearchParams.state) {
+                    cartsCurrentPage = 1;
+                    lastCartsSearchParams = { keyword, state };
+                }
                 searchCarts(keyword);
                 break;
             case 'user-logs':
                 type = parseInt(document.getElementById('log-type-select').value);
                 currentSearchType = type;
+                if (keyword !== lastLogsSearchParams.keyword || type !== lastLogsSearchParams.type) {
+                    logsCurrentPage = 1;
+                    lastLogsSearchParams = { keyword, type };
+                }
                 searchLogs(keyword);
                 break;
             case 'user-history':
+                if (keyword !== lastHistorySearchParams.keyword) {
+                    historyCurrentPage = 1;
+                    lastHistorySearchParams = { keyword };
+                }
                 searchHistory(keyword);
                 break;
             case 'user-details':
+                if (keyword !== lastUsersSearchParams.keyword) {
+                    usersCurrentPage = 1;
+                    lastUsersSearchParams = { keyword };
+                }
                 searchUser(keyword);
                 break;
             case 'user-ranking':
@@ -1944,14 +1907,21 @@
                 alert('当前页面不支持搜索');
         }
     }
-
     function clearSearch() {
         currentSearchKeyword = '';
         currentSearchSection = '';
         currentSearchState = 1000;
         currentSearchType = 1000;
-
-        // 隐藏所有搜索指示器
+        ordersCurrentPage = 1;
+        cartsCurrentPage = 1;
+        logsCurrentPage = 1;
+        historyCurrentPage = 1;
+        usersCurrentPage = 1;
+        lastOrdersSearchParams = { keyword: '', state: 1000 };
+        lastCartsSearchParams = { keyword: '', state: 1000 };
+        lastLogsSearchParams = { keyword: '', type: 1000 };
+        lastHistorySearchParams = { keyword: '' };
+        lastUsersSearchParams = { keyword: '' };
         document.getElementById('orders-search-indicator').style.display = 'none';
         document.getElementById('orders-search-hint').style.display = 'none';
         document.getElementById('carts-search-indicator').style.display = 'none';
@@ -1962,24 +1932,20 @@
         document.getElementById('history-search-hint').style.display = 'none';
         document.getElementById('users-search-indicator').style.display = 'none';
         document.getElementById('users-search-hint').style.display = 'none';
-
-        // 隐藏所有清除搜索按钮
         document.getElementById('clear-orders-search').style.display = 'none';
         document.getElementById('clear-carts-search').style.display = 'none';
         document.getElementById('clear-logs-search').style.display = 'none';
         document.getElementById('clear-history-search').style.display = 'none';
         document.getElementById('clear-users-search').style.display = 'none';
-
-        // 隐藏分类搜索标签
         document.getElementById('order-state-label').style.display = 'none';
         document.getElementById('cart-state-label').style.display = 'none';
         document.getElementById('log-type-label').style.display = 'none';
-
-        // 清空搜索框
+        document.getElementById('orders-pagination').style.display = 'none';
+        document.getElementById('carts-pagination').style.display = 'none';
+        document.getElementById('logs-pagination').style.display = 'none';
+        document.getElementById('history-pagination').style.display = 'none';
         document.getElementById('search-input').value = '';
     }
-
-    // 搜索订单（支持分类搜索）
     function searchOrders(keyword) {
         const tableBody = document.getElementById('orders-table-body');
         const searchIndicator = document.getElementById('orders-search-indicator');
@@ -1988,11 +1954,10 @@
         const clearBtn = document.getElementById('clear-orders-search');
         const stateLabel = document.getElementById('order-state-label');
         const stateValue = document.getElementById('order-state-value');
-
-        // 获取状态值
+        const pagination = document.getElementById('orders-pagination');
+        const pageInfo = document.getElementById('orders-page-info');
         const stateSelect = document.getElementById('order-state-select');
         const state = parseInt(stateSelect.value);
-
         tableBody.innerHTML = `
             <tr>
                 <td colspan="8" class="loading">
@@ -2001,17 +1966,11 @@
                 </td>
             </tr>
         `;
-
-        // 构建请求URL
-        let url = `/admin/searchOrder?qq=${keyword}&state=${state}`;
-
-        // 显示搜索状态
+        let url = `/admin/searchOrder?qq=${keyword}&state=${state}&page=${ordersCurrentPage}`;
         searchIndicator.style.display = 'inline-block';
         searchHint.style.display = 'block';
         searchQQ.textContent = keyword || '全部';
         clearBtn.style.display = 'inline-block';
-
-        // 显示状态标签
         if (state !== 1000) {
             let stateText = '';
             switch(state) {
@@ -2025,7 +1984,6 @@
         } else {
             stateLabel.style.display = 'none';
         }
-
         fetch(url)
             .then(response => {
                 if (!response.ok) {
@@ -2035,7 +1993,6 @@
             })
             .then(orders => {
                 tableBody.innerHTML = '';
-
                 if (orders.length === 0) {
                     let message = '';
                     if (keyword && state !== 1000) {
@@ -2047,7 +2004,6 @@
                     } else {
                         message = '暂无订单数据';
                     }
-
                     tableBody.innerHTML = `
                         <tr>
                             <td colspan="8" class="loading">
@@ -2056,9 +2012,9 @@
                             </td>
                         </tr>
                     `;
+                    pagination.style.display = 'none';
                     return;
                 }
-
                 orders.forEach(order => {
                     const row = document.createElement('tr');
                     const orderDate = new Date(order.date);
@@ -2081,19 +2037,19 @@
                             statusText = '未知';
                             statusClass = 'pending';
                     }
-
                     let actionButtons = '';
                     if (order.status === '0') {
                         actionButtons = `
                             <i class="fas fa-tag" title="定价" onclick="showPriceModal('${order.qqNumber}')"></i>
                             <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
-                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}')"></i>
+                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}', ${order.batch})"></i>
                         `;
                     } else if (order.status === '1') {
                         actionButtons = `
+                            <i class="fas fa-pencil-alt" title="修改价格" onclick="showEditPriceModal('${order.qqNumber}', ${order.batch})"></i>
                             <i class="fas fa-check-circle" title="完成订单" onclick="completeOrder('${order.qqNumber}', ${order.batch})"></i>
                             <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
-                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}')"></i>
+                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}', ${order.batch})"></i>
                         `;
                     } else {
                         actionButtons = `
@@ -2101,7 +2057,6 @@
                             <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
                         `;
                     }
-
                     row.innerHTML = `
                         <td>#ORD-${order.id}</td>
                         <td>${order.qqNumber}</td>
@@ -2118,9 +2073,12 @@
                             ${actionButtons}
                         </td>
                     `;
-
                     tableBody.appendChild(row);
                 });
+                pageInfo.textContent = `第${ordersCurrentPage}页`;
+                pagination.style.display = 'flex';
+                document.getElementById('orders-prev-btn').disabled = ordersCurrentPage === 1;
+                document.getElementById('orders-next-btn').disabled = orders.length < 50;
             })
             .catch(error => {
                 console.error('搜索订单失败:', error);
@@ -2133,10 +2091,9 @@
                         </td>
                     </tr>
                 `;
+                pagination.style.display = 'none';
             });
     }
-
-    // 搜索购物车（支持分类搜索）
     function searchCarts(keyword) {
         const tableBody = document.getElementById('carts-table-body');
         const searchIndicator = document.getElementById('carts-search-indicator');
@@ -2145,11 +2102,10 @@
         const clearBtn = document.getElementById('clear-carts-search');
         const stateLabel = document.getElementById('cart-state-label');
         const stateValue = document.getElementById('cart-state-value');
-
-        // 获取状态值
+        const pagination = document.getElementById('carts-pagination');
+        const pageInfo = document.getElementById('carts-page-info');
         const stateSelect = document.getElementById('cart-state-select');
         const state = parseInt(stateSelect.value);
-
         tableBody.innerHTML = `
             <tr>
                 <td colspan="6" class="loading">
@@ -2158,17 +2114,11 @@
                 </td>
             </tr>
         `;
-
-        // 构建请求URL
-        let url = `/admin/searchCart?qq=${keyword}&state=${state}`;
-
-        // 显示搜索状态
+        let url = `/admin/searchCart?qq=${keyword}&state=${state}&page=${cartsCurrentPage}`;
         searchIndicator.style.display = 'inline-block';
         searchHint.style.display = 'block';
         searchQQ.textContent = keyword || '全部';
         clearBtn.style.display = 'inline-block';
-
-        // 显示状态标签
         if (state !== 1000) {
             let stateText = '';
             switch(state) {
@@ -2181,7 +2131,6 @@
         } else {
             stateLabel.style.display = 'none';
         }
-
         fetch(url)
             .then(response => {
                 if (!response.ok) {
@@ -2191,7 +2140,6 @@
             })
             .then(carts => {
                 tableBody.innerHTML = '';
-
                 if (carts.length === 0) {
                     let message = '';
                     if (keyword && state !== 1000) {
@@ -2203,7 +2151,6 @@
                     } else {
                         message = '暂无购物车数据';
                     }
-
                     tableBody.innerHTML = `
                         <tr>
                             <td colspan="6" class="loading">
@@ -2212,9 +2159,9 @@
                             </td>
                         </tr>
                     `;
+                    pagination.style.display = 'none';
                     return;
                 }
-
                 carts.forEach(cart => {
                     const row = document.createElement('tr');
                     const cartTime = new Date(cart.time);
@@ -2233,7 +2180,6 @@
                             statusText = '未知';
                             statusClass = 'pending';
                     }
-
                     row.innerHTML = `
                         <td>${cart.id}</td>
                         <td>${cart.qqNumber}</td>
@@ -2245,9 +2191,12 @@
                             <i class="fas fa-trash" title="删除购物车" onclick="deleteCart('${cart.id}')"></i>
                         </td>
                     `;
-
                     tableBody.appendChild(row);
                 });
+                pageInfo.textContent = `第${cartsCurrentPage}页`;
+                pagination.style.display = 'flex';
+                document.getElementById('carts-prev-btn').disabled = cartsCurrentPage === 1;
+                document.getElementById('carts-next-btn').disabled = carts.length < 50;
             })
             .catch(error => {
                 console.error('搜索购物车失败:', error);
@@ -2260,10 +2209,9 @@
                         </td>
                     </tr>
                 `;
+                pagination.style.display = 'none';
             });
     }
-
-    // 搜索日志（支持分类搜索）
     function searchLogs(keyword) {
         const tableBody = document.getElementById('logs-table-body');
         const searchIndicator = document.getElementById('logs-search-indicator');
@@ -2272,11 +2220,10 @@
         const clearBtn = document.getElementById('clear-logs-search');
         const typeLabel = document.getElementById('log-type-label');
         const typeValue = document.getElementById('log-type-value');
-
-        // 获取类型值
+        const pagination = document.getElementById('logs-pagination');
+        const pageInfo = document.getElementById('logs-page-info');
         const typeSelect = document.getElementById('log-type-select');
         const type = parseInt(typeSelect.value);
-
         tableBody.innerHTML = `
             <tr>
                 <td colspan="4" class="loading">
@@ -2285,17 +2232,11 @@
                 </td>
             </tr>
         `;
-
-        // 构建请求URL
-        let url = `/admin/searchLog?qq=${keyword}&type=${type}`;
-
-        // 显示搜索状态
+        let url = `/admin/searchLog?qq=${keyword}&type=${type}&page=${logsCurrentPage}`;
         searchIndicator.style.display = 'inline-block';
         searchHint.style.display = 'block';
         searchQQ.textContent = keyword || '全部';
         clearBtn.style.display = 'inline-block';
-
-        // 显示类型标签
         if (type !== 1000) {
             let typeText = getLogTypeText(type);
             typeValue.textContent = typeText;
@@ -2303,7 +2244,6 @@
         } else {
             typeLabel.style.display = 'none';
         }
-
         fetch(url)
             .then(response => {
                 if (!response.ok) {
@@ -2313,7 +2253,6 @@
             })
             .then(logs => {
                 tableBody.innerHTML = '';
-
                 if (logs.length === 0) {
                     let message = '';
                     if (keyword && type !== 1000) {
@@ -2325,7 +2264,6 @@
                     } else {
                         message = '暂无用户行为日志数据';
                     }
-
                     tableBody.innerHTML = `
                         <tr>
                             <td colspan="4" class="loading">
@@ -2334,14 +2272,13 @@
                             </td>
                         </tr>
                     `;
+                    pagination.style.display = 'none';
                     return;
                 }
-
                 logs.forEach(log => {
                     const row = document.createElement('tr');
                     const logTime = new Date(log.time);
                     const formattedTime = logTime.toLocaleString('zh-CN');
-
                     let eventType = '';
                     switch(log.type) {
                         case 0:
@@ -2377,16 +2314,18 @@
                         default:
                             eventType = '其他';
                     }
-
                     row.innerHTML = `
                         <td>${log.user}</td>
                         <td>${eventType}</td>
                         <td>${log.event}</td>
                         <td>${formattedTime}</td>
                     `;
-
                     tableBody.appendChild(row);
                 });
+                pageInfo.textContent = `第${logsCurrentPage}页`;
+                pagination.style.display = 'flex';
+                document.getElementById('logs-prev-btn').disabled = logsCurrentPage === 1;
+                document.getElementById('logs-next-btn').disabled = logs.length < 50;
             })
             .catch(error => {
                 console.error('搜索用户行为日志失败:', error);
@@ -2399,17 +2338,17 @@
                         </td>
                     </tr>
                 `;
+                pagination.style.display = 'none';
             });
     }
-
-    // 搜索历史消费
     function searchHistory(keyword) {
         const tableBody = document.getElementById('history-table-body');
         const searchIndicator = document.getElementById('history-search-indicator');
         const searchHint = document.getElementById('history-search-hint');
         const searchQQ = document.getElementById('history-search-qq');
         const clearBtn = document.getElementById('clear-history-search');
-
+        const pagination = document.getElementById('history-pagination');
+        const pageInfo = document.getElementById('history-page-info');
         tableBody.innerHTML = `
             <tr>
                 <td colspan="7" class="loading">
@@ -2418,14 +2357,12 @@
                 </td>
             </tr>
         `;
-
-        // 显示搜索状态
+        let url = `/admin/searchHistory?qq=${keyword}&page=${historyCurrentPage}`;
         searchIndicator.style.display = 'inline-block';
         searchHint.style.display = 'block';
         searchQQ.textContent = keyword;
         clearBtn.style.display = 'inline-block';
-
-        fetch(`/admin/searchHistory?qq=${keyword}`)
+        fetch(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('网络响应不正常');
@@ -2434,7 +2371,6 @@
             })
             .then(records => {
                 tableBody.innerHTML = '';
-
                 if (records.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
@@ -2444,14 +2380,13 @@
                             </td>
                         </tr>
                     `;
+                    pagination.style.display = 'none';
                     return;
                 }
-
                 records.forEach(record => {
                     const row = document.createElement('tr');
                     const recordTime = new Date(record.time);
                     const formattedTime = recordTime.toLocaleString('zh-CN');
-
                     let payStatusText, payStatusClass;
                     if (record.isPay === 1) {
                         payStatusText = '已支付';
@@ -2460,7 +2395,6 @@
                         payStatusText = '未支付';
                         payStatusClass = 'pending';
                     }
-
                     row.innerHTML = `
                         <td>${record.id}</td>
                         <td>${record.qqNumber}</td>
@@ -2470,9 +2404,12 @@
                         <td>${record.batch}</td>
                         <td><span class="status ${payStatusClass}">${payStatusText}</span></td>
                     `;
-
                     tableBody.appendChild(row);
                 });
+                pageInfo.textContent = `第${historyCurrentPage}页`;
+                pagination.style.display = 'flex';
+                document.getElementById('history-prev-btn').disabled = historyCurrentPage === 1;
+                document.getElementById('history-next-btn').disabled = records.length < 50;
             })
             .catch(error => {
                 console.error('搜索历史消费数据失败:', error);
@@ -2485,10 +2422,9 @@
                         </td>
                     </tr>
                 `;
+                pagination.style.display = 'none';
             });
     }
-
-    // 搜索用户信息
     function searchUser(keyword) {
         const usersContainer = document.getElementById('users-list-container');
         const paginationContainer = document.getElementById('pagination-container');
@@ -2497,25 +2433,19 @@
         const searchHint = document.getElementById('users-search-hint');
         const searchQQ = document.getElementById('users-search-qq');
         const clearBtn = document.getElementById('clear-users-search');
-
         usersContainer.innerHTML = `
             <div class="loading" style="grid-column: 1 / -1;">
                 <i class="fas fa-spinner fa-spin"></i>
                 <p>正在搜索用户数据...</p>
             </div>
         `;
-
-        // 显示搜索状态
         searchIndicator.style.display = 'inline-block';
         searchHint.style.display = 'block';
         searchQQ.textContent = keyword;
         clearBtn.style.display = 'inline-block';
-
-        // 隐藏分页
         paginationContainer.innerHTML = '';
         paginationInfo.style.display = 'none';
-
-        fetch(`/admin/searchPerson?qq=${keyword}`)
+        fetch(`/admin/searchPerson?qq=${keyword}&page=${usersCurrentPage}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('网络响应不正常');
@@ -2524,7 +2454,6 @@
             })
             .then(user => {
                 usersContainer.innerHTML = '';
-
                 if (!user || !user.qqNumber) {
                     usersContainer.innerHTML = `
                         <div class="loading" style="grid-column: 1 / -1;">
@@ -2534,16 +2463,13 @@
                     `;
                     return;
                 }
-
-                // 显示单个用户卡片
                 const userCard = document.createElement('div');
                 let cardClass = 'user-card';
                 if (user.vip === 1) cardClass += ' vip';
                 if (user.black === 1) cardClass += ' blacklist';
+                if (user.overseas === 1) cardClass += ' overseas';
                 userCard.className = cardClass;
-
                 const dropdownId = `dropdown-${user.qqNumber}-0`;
-
                 let tagsHTML = '';
                 if (user.vip === 1) {
                     tagsHTML += '<span class="user-tag vip"><i class="fas fa-crown"></i> VIP</span>';
@@ -2551,7 +2477,9 @@
                 if (user.black === 1) {
                     tagsHTML += '<span class="user-tag blacklist"><i class="fas fa-ban"></i> 黑名单</span>';
                 }
-
+                if (user.overseas === 1) {
+                    tagsHTML += '<span class="user-tag overseas"><i class="fas fa-globe"></i> 海外用户</span>';
+                }
                 userCard.innerHTML = `
                     <div class="user-card-header">
                         <div class="user-card-info">
@@ -2582,6 +2510,14 @@
                                     <div class="dropdown-item blacklist-remove ${user.black !== 1 ? 'disabled' : ''}" onclick="setUserVip('${user.qqNumber}', 4, this)">
                                         <i class="fas fa-check-circle"></i>
                                         <span>移除黑名单</span>
+                                    </div>
+                                    <div class="dropdown-item overseas-add ${user.overseas === 1 ? 'disabled' : ''}" onclick="setUserVip('${user.qqNumber}', 5, this)">
+                                        <i class="fas fa-globe"></i>
+                                        <span>设为海外用户</span>
+                                    </div>
+                                    <div class="dropdown-item overseas-remove ${user.overseas !== 1 ? 'disabled' : ''}" onclick="setUserVip('${user.qqNumber}', 6, this)">
+                                        <i class="fas fa-times-circle"></i>
+                                        <span>移除海外用户</span>
                                     </div>
                                 </div>
                             </div>
@@ -2622,7 +2558,6 @@
                         </div>
                     </div>
                 `;
-
                 usersContainer.appendChild(userCard);
             })
             .catch(error => {
@@ -2636,8 +2571,6 @@
                 `;
             });
     }
-
-    // 辅助函数：获取订单状态文本
     function getOrderStateText(state) {
         switch(state) {
             case 0: return '待定价';
@@ -2646,8 +2579,6 @@
             default: return '未知';
         }
     }
-
-    // 辅助函数：获取购物车状态文本
     function getCartStateText(state) {
         switch(state) {
             case 0: return '预备';
@@ -2655,8 +2586,6 @@
             default: return '未知';
         }
     }
-
-    // 辅助函数：获取日志类型文本
     function getLogTypeText(type) {
         switch(type) {
             case 0: return '登录失败';
@@ -2672,11 +2601,6 @@
             default: return '其他';
         }
     }
-
-    // 以下所有原有函数保持不变，这里只展示修改的部分
-    // 原有的 loadOrders, loadCarts, loadRanking, loadLogs, loadHistory, loadUsers 等函数都保持不变
-    // 只是在这些函数的开头添加了检查当前搜索状态的逻辑
-
     function closeAllDropdowns() {
         const dropdowns = document.querySelectorAll('.dropdown-menu');
         dropdowns.forEach(dropdown => {
@@ -2684,20 +2608,15 @@
         });
         activeDropdown = null;
     }
-
     function toggleDropdown(dropdownId) {
         const dropdown = document.getElementById(dropdownId);
-
         if (activeDropdown && activeDropdown !== dropdown) {
             activeDropdown.classList.remove('show');
         }
-
         dropdown.classList.toggle('show');
         activeDropdown = dropdown.classList.contains('show') ? dropdown : null;
-
         event.stopPropagation();
     }
-
     function updateRefreshStatus() {
         const refreshStatus = document.getElementById('refresh-status');
         if (logRefreshInterval > 0) {
@@ -2709,10 +2628,8 @@
             refreshStatus.classList.remove('active');
         }
     }
-
     function setupLogAutoRefresh() {
         clearLogAutoRefresh();
-
         if (isLogsActive && logRefreshInterval > 0) {
             logRefreshTimer = setInterval(() => {
                 if (currentSearchSection === 'user-logs' && currentSearchKeyword) {
@@ -2723,14 +2640,12 @@
             }, logRefreshInterval);
         }
     }
-
     function clearLogAutoRefresh() {
         if (logRefreshTimer) {
             clearInterval(logRefreshTimer);
             logRefreshTimer = null;
         }
     }
-
     function loadSalesData() {
         fetch('/admin/allandall')
             .then(response => {
@@ -2744,7 +2659,6 @@
                     const salesData = data[0];
                     const totalLumpSum = salesData.totalLumpSum || 0;
                     const totalPurchaseQuantity = salesData.totalPurchaseQuantity || 0;
-
                     document.getElementById('total-sales-amount').textContent = '¥' + parseInt(totalLumpSum).toLocaleString();
                     document.getElementById('total-sales-quantity').textContent = parseInt(totalPurchaseQuantity).toLocaleString();
                 }
@@ -2755,15 +2669,12 @@
                 document.getElementById('total-sales-quantity').textContent = '加载失败';
             });
     }
-
     function formatDate(dateString) {
         const date = new Date(dateString);
         return date.toLocaleDateString('zh-CN') + ' ' + date.toLocaleTimeString('zh-CN', {hour12: false});
     }
-
     function loadOrders() {
         const tableBody = document.getElementById('orders-table-body');
-
         tableBody.innerHTML = `
             <tr>
                 <td colspan="8" class="loading">
@@ -2781,7 +2692,6 @@
             })
             .then(orders => {
                 tableBody.innerHTML = '';
-
                 if (orders.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
@@ -2815,19 +2725,19 @@
                             statusText = '未知';
                             statusClass = 'pending';
                     }
-
                     let actionButtons = '';
                     if (order.status === '0') {
                         actionButtons = `
                             <i class="fas fa-tag" title="定价" onclick="showPriceModal('${order.qqNumber}')"></i>
                             <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
-                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}')"></i>
+                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}', ${order.batch})"></i>
                         `;
                     } else if (order.status === '1') {
                         actionButtons = `
+                            <i class="fas fa-pencil-alt" title="修改价格" onclick="showEditPriceModal('${order.qqNumber}', ${order.batch})"></i>
                             <i class="fas fa-check-circle" title="完成订单" onclick="completeOrder('${order.qqNumber}', ${order.batch})"></i>
                             <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
-                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}')"></i>
+                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}', ${order.batch})"></i>
                         `;
                     } else {
                         actionButtons = `
@@ -2835,7 +2745,6 @@
                             <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
                         `;
                     }
-
                     row.innerHTML = `
                         <td>#ORD-${order.id}</td>
                         <td>${order.qqNumber}</td>
@@ -2852,10 +2761,8 @@
                             ${actionButtons}
                         </td>
                     `;
-
                     tableBody.appendChild(row);
                 });
-
                 loadSalesData();
             })
             .catch(error => {
@@ -2871,18 +2778,14 @@
                 `;
             });
     }
-
-    // 删除订单函数
-    function deleteOrder(orderId, qqNumber, goodsId) {
+    function deleteOrder(orderId, qqNumber, goodsId, batch) {
         if (!confirm(`确定要删除订单 #ORD-${orderId} 吗？此操作不可恢复。`)) {
             return;
         }
-
         const targetButton = event.target;
         const originalClass = targetButton.className;
         targetButton.className = 'fas fa-spinner fa-spin';
-
-        fetch(`/admin/deleteorder?orderId=${orderId}&qq=${qqNumber}&goodsId=${goodsId}`)
+        fetch(`/admin/deleteorder?orderId=${orderId}&qq=${qqNumber}&goodsId=${goodsId}&batch=${batch}`)
             .then(response => {
                 if (response.ok) {
                     return response.text();
@@ -2893,7 +2796,6 @@
             .then(result => {
                 if (result === 'ok') {
                     alert('订单删除成功！');
-                    // 重新加载数据（根据当前状态）
                     if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
                         searchOrders(currentSearchKeyword);
                     } else {
@@ -2909,30 +2811,22 @@
                 targetButton.className = originalClass;
             });
     }
-
     function showEnlargedImage(imageUrl) {
         const modal = document.getElementById('image-modal');
         const enlargedImage = document.getElementById('enlarged-image');
-
         enlargedImage.src = imageUrl;
         modal.classList.add('active');
-
         document.body.style.overflow = 'hidden';
     }
-
     function closeImageModal() {
         const modal = document.getElementById('image-modal');
         modal.classList.remove('active');
-
         document.body.style.overflow = '';
     }
-
-    // 查看购物车商品图片
     function viewCartGoodsImage(goodsId) {
         const targetButton = event.target;
         const originalClass = targetButton.className;
         targetButton.className = 'fas fa-spinner fa-spin';
-
         fetch(`/admin/view?goodsId=${goodsId}`)
             .then(response => {
                 if (!response.ok) {
@@ -2954,17 +2848,14 @@
                 targetButton.className = originalClass;
             });
     }
-
     function loadRanking() {
         const rankingContainer = document.getElementById('ranking-container');
-
         rankingContainer.innerHTML = `
             <div class="loading">
                 <i class="fas fa-spinner fa-spin"></i>
                 <p>正在加载消费排名数据...</p>
             </div>
         `;
-
         fetch('/admin/ranking')
             .then(response => {
                 if (!response.ok) {
@@ -2974,7 +2865,6 @@
             })
             .then(users => {
                 rankingContainer.innerHTML = '';
-
                 if (users.length === 0) {
                     rankingContainer.innerHTML = `
                         <div class="loading">
@@ -2984,22 +2874,17 @@
                     `;
                     return;
                 }
-
                 const rankingList = document.createElement('ul');
                 rankingList.className = 'ranking-list';
-
                 users.forEach((user, index) => {
                     const rank = index + 1;
                     const rankingItem = document.createElement('li');
                     rankingItem.className = 'ranking-item';
-
                     let rankClass = 'rank-other';
                     if (rank === 1) rankClass = 'rank-1';
                     else if (rank === 2) rankClass = 'rank-2';
                     else if (rank === 3) rankClass = 'rank-3';
-
                     const avatarUrl = `img/qqava.png`;
-
                     rankingItem.innerHTML = `
                         <div class="rank ${rankClass}">${rank}</div>
                         <img src="${avatarUrl}" alt="用户头像" class="user-avatar">
@@ -3009,10 +2894,8 @@
                         </div>
                         <div class="amount">¥${user.lumpSum.toLocaleString()}</div>
                     `;
-
                     rankingList.appendChild(rankingItem);
                 });
-
                 rankingContainer.appendChild(rankingList);
             })
             .catch(error => {
@@ -3026,10 +2909,8 @@
                 `;
             });
     }
-
     function loadLogs() {
         const tableBody = document.getElementById('logs-table-body');
-
         tableBody.innerHTML = `
             <tr>
                 <td colspan="4" class="loading">
@@ -3038,7 +2919,6 @@
                 </td>
             </tr>
         `;
-
         fetch('/admin/log')
             .then(response => {
                 if (!response.ok) {
@@ -3048,7 +2928,6 @@
             })
             .then(logs => {
                 tableBody.innerHTML = '';
-
                 if (logs.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
@@ -3060,12 +2939,10 @@
                     `;
                     return;
                 }
-
                 logs.forEach(log => {
                     const row = document.createElement('tr');
                     const logTime = new Date(log.time);
                     const formattedTime = logTime.toLocaleString('zh-CN');
-
                     let eventType = '';
                     switch(log.type) {
                         case 0:
@@ -3104,14 +2981,12 @@
                         default:
                             eventType = '其他';
                     }
-
                     row.innerHTML = `
                         <td>${log.user}</td>
                         <td>${eventType}</td>
                         <td>${log.event}</td>
                         <td>${formattedTime}</td>
                     `;
-
                     tableBody.appendChild(row);
                 });
             })
@@ -3128,10 +3003,8 @@
                 `;
             });
     }
-
     function loadHistory() {
         const tableBody = document.getElementById('history-table-body');
-
         tableBody.innerHTML = `
             <tr>
                 <td colspan="7" class="loading">
@@ -3140,7 +3013,6 @@
                 </td>
             </tr>
         `;
-
         fetch('/admin/history')
             .then(response => {
                 if (!response.ok) {
@@ -3150,7 +3022,6 @@
             })
             .then(records => {
                 tableBody.innerHTML = '';
-
                 if (records.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
@@ -3162,12 +3033,10 @@
                     `;
                     return;
                 }
-
                 records.forEach(record => {
                     const row = document.createElement('tr');
                     const recordTime = new Date(record.time);
                     const formattedTime = recordTime.toLocaleString('zh-CN');
-
                     let payStatusText, payStatusClass;
                     if (record.isPay === 1) {
                         payStatusText = '已支付';
@@ -3176,7 +3045,6 @@
                         payStatusText = '未支付';
                         payStatusClass = 'pending';
                     }
-
                     row.innerHTML = `
                         <td>${record.id}</td>
                         <td>${record.qqNumber}</td>
@@ -3186,7 +3054,6 @@
                         <td>${record.batch}</td>
                         <td><span class="status ${payStatusClass}">${payStatusText}</span></td>
                     `;
-
                     tableBody.appendChild(row);
                 });
             })
@@ -3203,38 +3070,30 @@
                 `;
             });
     }
-
     function showPriceModal(qqNumber) {
         const modal = document.getElementById('price-modal');
         const qqInput = document.getElementById('qq-number');
         const amountInput = document.getElementById('price-amount');
-
         qqInput.value = qqNumber;
         amountInput.value = '';
-
         modal.classList.add('active');
         amountInput.focus();
     }
-
     function closePriceModal() {
         const modal = document.getElementById('price-modal');
         modal.classList.remove('active');
     }
-
     function confirmPricing() {
         const qqNumber = document.getElementById('qq-number').value;
         const amount = document.getElementById('price-amount').value;
-
         if (!qqNumber || !amount || amount <= 0) {
             alert('请输入有效的价格金额');
             return;
         }
-
         const confirmBtn = document.getElementById('confirm-pricing');
         const originalText = confirmBtn.innerHTML;
         confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 处理中...';
         confirmBtn.disabled = true;
-
         fetch(`/admin/clinch?qqNumber=${qqNumber}&amount=${amount}`)
             .then(response => {
                 if (response.ok) {
@@ -3247,7 +3106,6 @@
                 if (result === 'ok') {
                     alert('下单成功！');
                     closePriceModal();
-                    // 重新加载数据（根据当前状态）
                     if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
                         searchOrders(currentSearchKeyword);
                     } else {
@@ -3266,25 +3124,20 @@
                 confirmBtn.disabled = false;
             });
     }
-
     function printOrder(qqNumber, batch) {
         const modal = document.getElementById('print-modal');
         const qqInput = document.getElementById('print-qq-number');
         const batchInput = document.getElementById('print-batch');
         const printListContainer = document.getElementById('print-list-container');
-
         qqInput.value = qqNumber;
         batchInput.value = batch;
-
         printListContainer.innerHTML = `
             <div class="loading">
                 <i class="fas fa-spinner fa-spin"></i>
                 <p>正在加载列表...</p>
             </div>
         `;
-
         modal.classList.add('active');
-
         fetch(`/admin/print?qqNumber=${qqNumber}&batch=${batch}`)
             .then(response => {
                 if (!response.ok) {
@@ -3294,7 +3147,6 @@
             })
             .then(goodsNames => {
                 printListContainer.innerHTML = '';
-
                 if (goodsNames.length === 0) {
                     printListContainer.innerHTML = `
                         <div class="loading">
@@ -3304,7 +3156,6 @@
                     `;
                     return;
                 }
-
                 goodsNames.forEach((name, index) => {
                     const item = document.createElement('div');
                     item.className = 'print-item';
@@ -3325,21 +3176,17 @@
                 `;
             });
     }
-
     function closePrintModal() {
         const modal = document.getElementById('print-modal');
         modal.classList.remove('active');
     }
-
     function completeOrder(qqNumber, batch) {
         if (!confirm(`确定要完成QQ号码为${qqNumber}，批次为${batch}的订单吗？`)) {
             return;
         }
-
         const targetButton = event.target;
         const originalClass = targetButton.className;
         targetButton.className = 'fas fa-spinner fa-spin';
-
         fetch(`/admin/complete?qqNumber=${qqNumber}&batch=${batch}`)
             .then(response => {
                 if (response.ok) {
@@ -3351,7 +3198,6 @@
             .then(result => {
                 if (result === 'ok') {
                     alert('订单已完成！');
-                    // 重新加载数据（根据当前状态）
                     if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
                         searchOrders(currentSearchKeyword);
                     } else {
@@ -3367,7 +3213,6 @@
                 targetButton.className = originalClass;
             });
     }
-
     function loadCarts() {
         const tableBody = document.getElementById('carts-table-body');
         tableBody.innerHTML = `
@@ -3416,7 +3261,6 @@
                             statusText = '未知';
                             statusClass = 'pending';
                     }
-
                     row.innerHTML = `
                         <td>${cart.id}</td>
                         <td>${cart.qqNumber}</td>
@@ -3428,7 +3272,6 @@
                             <i class="fas fa-trash" title="删除购物车" onclick="deleteCart('${cart.id}')"></i>
                         </td>
                     `;
-
                     tableBody.appendChild(row);
                 });
             })
@@ -3444,17 +3287,13 @@
                 `;
             });
     }
-
-    // 删除购物车函数
     function deleteCart(cartId) {
         if (!confirm(`确定要删除购物车记录 ${cartId} 吗？此操作不可恢复。`)) {
             return;
         }
-
         const targetButton = event.target;
         const originalClass = targetButton.className;
         targetButton.className = 'fas fa-spinner fa-spin';
-
         fetch(`/admin/deletecart?cartId=${cartId}`)
             .then(response => {
                 if (response.ok) {
@@ -3466,7 +3305,6 @@
             .then(result => {
                 if (result === 'ok') {
                     alert('购物车删除成功！');
-                    // 重新加载数据（根据当前状态）
                     if (currentSearchSection === 'user-carts' && currentSearchKeyword) {
                         searchCarts(currentSearchKeyword);
                     } else {
@@ -3482,8 +3320,6 @@
                 targetButton.className = originalClass;
             });
     }
-
-    // 加载用户数据（支持分页）
     function loadUsers(page) {
         const usersContainer = document.getElementById('users-list-container');
         usersContainer.innerHTML = `
@@ -3492,10 +3328,7 @@
                 <p>正在加载用户数据...</p>
             </div>
         `;
-
-        // 更新当前页码
         currentPage = page || 1;
-
         fetch(`/admin/allinfo?page=${currentPage}`)
             .then(response => {
                 if (!response.ok) {
@@ -3504,20 +3337,14 @@
                 return response.json();
             })
             .then(data => {
-                // 从新的响应结构中获取数据
                 usersData = data.users || [];
                 currentPage = data.currentPage || 1;
                 totalPages = data.totalPages || 1;
                 totalCount = data.totalCount || 0;
-
-                // 更新分页信息显示
                 document.getElementById('total-count').textContent = totalCount.toLocaleString();
                 document.getElementById('current-page').textContent = currentPage;
                 document.getElementById('total-pages').textContent = totalPages;
-
-                // 显示分页信息
                 document.getElementById('pagination-info').style.display = 'flex';
-
                 displayUsers();
             })
             .catch(error => {
@@ -3531,13 +3358,10 @@
                 `;
             });
     }
-
     function displayUsers() {
         const usersContainer = document.getElementById('users-list-container');
         const paginationContainer = document.getElementById('pagination-container');
-
         usersContainer.innerHTML = '';
-
         if (usersData.length === 0) {
             usersContainer.innerHTML = `
                 <div class="loading" style="grid-column: 1 / -1;">
@@ -3548,16 +3372,14 @@
             paginationContainer.innerHTML = '';
             return;
         }
-
         usersData.forEach((user, index) => {
             const userCard = document.createElement('div');
             let cardClass = 'user-card';
             if (user.vip === 1) cardClass += ' vip';
             if (user.black === 1) cardClass += ' blacklist';
+            if (user.overseas === 1) cardClass += ' overseas';
             userCard.className = cardClass;
-
             const dropdownId = `dropdown-${user.qqNumber}-${index}`;
-
             let tagsHTML = '';
             if (user.vip === 1) {
                 tagsHTML += '<span class="user-tag vip"><i class="fas fa-crown"></i> VIP</span>';
@@ -3565,7 +3387,9 @@
             if (user.black === 1) {
                 tagsHTML += '<span class="user-tag blacklist"><i class="fas fa-ban"></i> 黑名单</span>';
             }
-
+            if (user.overseas === 1) {
+                tagsHTML += '<span class="user-tag overseas"><i class="fas fa-globe"></i> 海外用户</span>';
+            }
             userCard.innerHTML = `
                 <div class="user-card-header">
                     <div class="user-card-info">
@@ -3596,6 +3420,14 @@
                                 <div class="dropdown-item blacklist-remove ${user.black !== 1 ? 'disabled' : ''}" onclick="setUserVip('${user.qqNumber}', 4, this)">
                                     <i class="fas fa-check-circle"></i>
                                     <span>移除黑名单</span>
+                                </div>
+                                <div class="dropdown-item overseas-add ${user.overseas === 1 ? 'disabled' : ''}" onclick="setUserVip('${user.qqNumber}', 5, this)">
+                                    <i class="fas fa-globe"></i>
+                                    <span>设为海外用户</span>
+                                </div>
+                                <div class="dropdown-item overseas-remove ${user.overseas !== 1 ? 'disabled' : ''}" onclick="setUserVip('${user.qqNumber}', 6, this)">
+                                    <i class="fas fa-times-circle"></i>
+                                    <span>移除海外用户</span>
                                 </div>
                             </div>
                         </div>
@@ -3636,21 +3468,15 @@
                     </div>
                 </div>
             `;
-
             usersContainer.appendChild(userCard);
         });
-
         generatePagination(paginationContainer, totalPages, currentPage);
     }
-
     function generatePagination(container, totalPages, currentPage) {
         container.innerHTML = '';
-
-        // 如果只有一页，不显示分页
         if (totalPages <= 1) {
             return;
         }
-
         const prevButton = document.createElement('button');
         prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
         prevButton.disabled = currentPage === 1;
@@ -3660,16 +3486,11 @@
             }
         });
         container.appendChild(prevButton);
-
-        // 计算显示的页码范围
         let startPage = Math.max(1, currentPage - 2);
         let endPage = Math.min(totalPages, startPage + 4);
-
-        // 调整起始页以确保显示5个页码（如果有足够页面）
         if (endPage - startPage < 4) {
             startPage = Math.max(1, endPage - 4);
         }
-
         for (let i = startPage; i <= endPage; i++) {
             const pageButton = document.createElement('button');
             pageButton.textContent = i;
@@ -3679,7 +3500,6 @@
             });
             container.appendChild(pageButton);
         }
-
         const nextButton = document.createElement('button');
         nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
         nextButton.disabled = currentPage === totalPages;
@@ -3690,29 +3510,25 @@
         });
         container.appendChild(nextButton);
     }
-
     function setUserVip(qqNumber, s, element) {
         if (element.classList.contains('disabled')) {
             return;
         }
-
         closeAllDropdowns();
-
         let actionName = '';
         switch(s) {
             case 1: actionName = '设为VIP'; break;
             case 2: actionName = '移除VIP'; break;
             case 3: actionName = '设为黑名单'; break;
             case 4: actionName = '移除黑名单'; break;
+            case 5: actionName = '设为海外用户'; break;
+            case 6: actionName = '移除海外用户'; break;
         }
-
         if (!confirm(`确定要对用户 ${qqNumber} 执行"${actionName}"操作吗？`)) {
             return;
         }
-
         const originalHTML = element.innerHTML;
         element.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
         fetch(`/admin/setvip?qqNumber=${qqNumber}&s=${s}`)
             .then(response => {
                 if (response.ok) {
@@ -3724,7 +3540,6 @@
             .then(result => {
                 if (result === 'ok') {
                     alert('操作成功！');
-                    // 重新加载数据（根据当前状态）
                     if (currentSearchSection === 'user-details' && currentSearchKeyword) {
                         searchUser(currentSearchKeyword);
                     } else {
@@ -3740,39 +3555,32 @@
                 element.innerHTML = originalHTML;
             });
     }
-
     function showRegisterModal() {
         const modal = document.getElementById('register-modal');
         const qqInput = document.getElementById('register-qq');
         const message = document.getElementById('register-message');
-
         qqInput.value = '';
         message.innerHTML = '';
         modal.classList.add('active');
         qqInput.focus();
     }
-
     function closeRegisterModal() {
         const modal = document.getElementById('register-modal');
         modal.classList.remove('active');
     }
-
     function confirmRegister() {
         const qqInput = document.getElementById('register-qq');
         const qqNumber = qqInput.value.trim();
         const message = document.getElementById('register-message');
-
         if (!qqNumber) {
             message.innerHTML = '<span style="color: var(--warning);">请输入QQ号码</span>';
             return;
         }
-
         const confirmBtn = document.getElementById('confirm-register');
         const originalText = confirmBtn.innerHTML;
         confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 注册中...';
         confirmBtn.disabled = true;
         message.innerHTML = '';
-
         fetch(`/admin/reg?qqNumber=${qqNumber}`)
             .then(response => {
                 if (response.ok) {
@@ -3801,17 +3609,14 @@
                 confirmBtn.disabled = false;
             });
     }
-
     function clearInvalidUsers() {
         if (!confirm('确定要清除无效用户吗？此操作不可恢复。')) {
             return;
         }
-
         const clearBtn = document.getElementById('clear-users');
         const originalText = clearBtn.innerHTML;
         clearBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 清除中...';
         clearBtn.disabled = true;
-
         fetch('/admin/clearuser')
             .then(response => {
                 if (response.ok) {
@@ -3823,7 +3628,6 @@
             .then(result => {
                 if (result === 'ok') {
                     alert('清除无效用户成功！');
-                    // 重新加载数据（根据当前状态）
                     if (currentSearchSection === 'user-details' && currentSearchKeyword) {
                         searchUser(currentSearchKeyword);
                     } else {
@@ -3840,6 +3644,63 @@
             .finally(() => {
                 clearBtn.innerHTML = originalText;
                 clearBtn.disabled = false;
+            });
+    }
+    function showEditPriceModal(qqNumber, batch) {
+        const modal = document.getElementById('edit-price-modal');
+        const qqInput = document.getElementById('edit-qq-number');
+        const batchInput = document.getElementById('edit-batch');
+        const amountInput = document.getElementById('edit-amount');
+        qqInput.value = qqNumber;
+        batchInput.value = batch;
+        amountInput.value = '';
+        modal.classList.add('active');
+        amountInput.focus();
+    }
+    function closeEditPriceModal() {
+        const modal = document.getElementById('edit-price-modal');
+        modal.classList.remove('active');
+    }
+    function confirmEditPrice() {
+        const qqNumber = document.getElementById('edit-qq-number').value;
+        const batch = document.getElementById('edit-batch').value;
+        const amount = document.getElementById('edit-amount').value;
+        if (!qqNumber || !batch || !amount || amount <= 0) {
+            alert('请输入有效的价格金额');
+            return;
+        }
+        const confirmBtn = document.getElementById('confirm-edit-price');
+        const originalText = confirmBtn.innerHTML;
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 修改中...';
+        confirmBtn.disabled = true;
+        fetch(`/admin/edit?qqNumber=${qqNumber}&batch=${batch}&amount=${amount}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('修改价格失败');
+                }
+            })
+            .then(result => {
+                if (result === 'ok') {
+                    alert('订单价格修改成功！');
+                    closeEditPriceModal();
+                    if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
+                        searchOrders(currentSearchKeyword);
+                    } else {
+                        loadOrders();
+                    }
+                } else {
+                    throw new Error('修改价格失败');
+                }
+            })
+            .catch(error => {
+                console.error('修改价格失败:', error);
+                alert('修改价格失败: ' + error.message);
+            })
+            .finally(() => {
+                confirmBtn.innerHTML = originalText;
+                confirmBtn.disabled = false;
             });
     }
 </script>

@@ -72,7 +72,6 @@
             box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
         }
 
-        /* 新添加的"最近更新"按钮样式 */
         .update-link {
             background: #3498db;
             border-color: #3498db;
@@ -85,15 +84,14 @@
             box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
         }
 
-        /* 新添加的"用户须知"按钮样式 */
         .notice-link {
-            background: #f39c12; /* 橙色 */
+            background: #f39c12;
             border-color: #f39c12;
             color: white;
         }
 
         .notice-link:hover {
-            background: #e67e22; /* 悬停时稍深的橙色 */
+            background: #e67e22;
             border-color: #e67e22;
             box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
         }
@@ -104,7 +102,7 @@
             padding-bottom: 20px;
             border-bottom: 1px solid #eaeaea;
             position: relative;
-            padding-top: 60px; /* 为导航栏留出空间 */
+            padding-top: 60px;
         }
 
         h1 {
@@ -201,7 +199,6 @@
             margin: 20px 0;
         }
 
-        /* 浮层样式 */
         .overlay {
             position: fixed;
             top: 0;
@@ -421,11 +418,10 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/all.min.css">
 </head>
 <body>
 
-<!-- 协议浮层 -->
 <div class="overlay" id="agreementOverlay">
     <div class="agreement-modal">
         <div class="modal-header">
@@ -461,7 +457,6 @@
 </div>
 
 <script>
-    // 获取文件夹数据并渲染
     fetch('/user/showfolders')
         .then(response => {
             if (!response.ok) {
@@ -471,17 +466,12 @@
         })
         .then(data => {
             const folderContainer = document.getElementById('folder-container');
-
-            // 清除加载提示
             folderContainer.innerHTML = '';
 
-            // 检查是否需要显示协议浮层
             if (data.loginNumber !== undefined && data.loginNumber < 3) {
-                // 显示协议浮层
                 document.getElementById('agreementOverlay').classList.add('active');
             }
 
-            // 获取文件夹列表
             const folderList = data.folderList || [];
 
             if (folderList.length === 0) {
@@ -501,8 +491,13 @@
                 `;
 
                 folderCard.addEventListener('click', function() {
-                    // 跳转到文件夹详情页面
-                    window.location.href = `user/images?type=${encodeURIComponent(folder.name)}`;
+                    let encodedType;
+                    if (folder.name.includes('+')) {
+                        encodedType = encodeURIComponent(encodeURIComponent(folder.name));
+                    } else {
+                        encodedType = encodeURIComponent(folder.name);
+                    }
+                    window.location.href = `user/images?type=${encodedType}`;
                 });
 
                 folderContainer.appendChild(folderCard);
@@ -514,22 +509,18 @@
                 '<div class="error">加载文件夹数据失败，请稍后再试！</div>';
         });
 
-    // 关闭浮层功能
     const closeOverlay = () => {
         document.getElementById('agreementOverlay').classList.remove('active');
     };
 
-    // 为关闭按钮添加事件监听
     document.getElementById('closeOverlayBtn').addEventListener('click', closeOverlay);
 
-    // 点击浮层背景也可以关闭浮层
     document.getElementById('agreementOverlay').addEventListener('click', function(e) {
         if (e.target === this) {
             closeOverlay();
         }
     });
 
-    // 按ESC键也可以关闭浮层
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeOverlay();

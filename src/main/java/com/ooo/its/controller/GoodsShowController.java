@@ -128,5 +128,10 @@ public class GoodsShowController {
     public String UpdatePage(){
         return "update.html";
     }
+
+    @GetMapping("/user/unzip")
+    public String UnzipPage(){
+        return "unzip.html";
+    }
 }
 

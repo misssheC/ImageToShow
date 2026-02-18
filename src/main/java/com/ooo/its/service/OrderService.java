@@ -53,6 +53,9 @@ public class OrderService {
         return orderRep.findByQqNumberAndState(qq,state);
     }
 
+    public List<Order> FindHandleDataByBatch(String qq,int state,int batch){
+        return orderRep.findByQqNumberAndStateAndBatch(qq, state, batch);
+    }
     public List<Order> PrintOrders(String qq , int batch){
         return orderRep.findByQqNumberAndBatch(qq,batch);
     }

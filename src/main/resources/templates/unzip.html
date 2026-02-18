@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>解压文件教程 · 全平台指南（含样例图）</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+    body {
+      background: #f5f7fa;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+    .app {
+      max-width: 680px;
+      width: 100%;
+      background: white;
+      border-radius: 32px 32px 24px 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      overflow: hidden;
+      padding: 24px 20px 36px;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #1e293b;
+      border-left: 6px solid #3b82f6;
+      padding-left: 18px;
+    }
+    h1 span {
+      background: #eef2ff;
+      font-size: 0.9rem;
+      padding: 4px 12px;
+      border-radius: 40px;
+      color: #2563eb;
+      font-weight: 500;
+      margin-left: 8px;
+    }
+    .section-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #334155;
+      margin: 20px 0 12px 0;
+    }
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 14px;
+      margin: 24px 0 16px;
+    }
+    .option-card {
+      background: white;
+      border: 1px solid #e9eef2;
+      border-radius: 24px;
+      padding: 20px 8px;
+      text-align: center;
+      font-weight: 550;
+      font-size: 1.05rem;
+      color: #1e293b;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+      transition: all 0.2s;
+      cursor: pointer;
+      backdrop-filter: blur(2px);
+      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .option-card:hover {
+      border-color: #3b82f6;
+      background: #f8fafc;
+      transform: scale(1.01);
+      box-shadow: 0 10px 20px rgba(59,130,246,0.1);
+    }
+    .option-card:active {
+      background: #e6edf8;
+    }
+    .badge-icon {
+      font-size: 2rem;
+      margin-bottom: 4px;
+    }
+    .fail-card {
+      border-color: #fde68a;
+      background: #fffbeb;
+      color: #92400e;
+    }
+    .fail-card .badge-icon {
+      font-size: 1.9rem;
+    }
+    .hidden {
+      display: none !important;
+    }
+    .tutorial-panel {
+      animation: fadeSlide 0.3s ease;
+      margin-top: 16px;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0.6; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .back-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .back-btn {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: #2563eb;
+      cursor: pointer;
+      padding: 8px 12px 8px 8px;
+      border-radius: 40px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f0f4fe;
+      transition: 0.15s;
+    }
+    .back-btn:hover {
+      background: #dbeafe;
+    }
+    .back-btn span {
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+    .tutorial-title {
+      font-size: 1.7rem;
+      font-weight: 620;
+      color: #0f172a;
+      margin-bottom: 16px;
+      padding-bottom: 6px;
+      border-bottom: 3px solid #e2e8f0;
+    }
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .step-item {
+      background: #ffffff;
+      border-radius: 28px;
+      padding: 22px 18px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.03);
+      border: 1px solid #edf2f7;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .step-number {
+      background: #3b82f6;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      box-shadow: 0 6px 12px rgba(59,130,246,0.25);
+    }
+    .step-headline {
+      font-size: 1.3rem;
+      font-weight: 620;
+      color: #0b1e33;
+    }
+    .step-desc {
+      color: #334155;
+      margin-bottom: 16px;
+      font-size: 1rem;
+      line-height: 1.5;
+      padding-left: 6px;
+    }
+    .image-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin: 20px 0 8px;
+      align-items: flex-start;   /* 容器顶部对齐，防止强制拉伸 */
+    }
+    .img-placeholder {
+      background: linear-gradient(145deg, #f1f5f9, #e6ecf3);
+      border: 2px dashed #a0c0e0;
+      border-radius: 22px;
+      min-width: 140px;
+      flex: 1 1 160px;
+      min-height: 140px;         /* 至少保留140px高度，内容少时不塌陷 */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #1e293b;
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-align: center;
+      padding: 8px;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+      line-height: 1.4;
+      gap: 2px;
+      overflow: hidden;          /* 防止极端情况溢出 */
+    }
+    .sample-icon {
+      font-size: 1.6rem;
+      margin-bottom: 2px;
+    }
+    .sample-text {
+      background: rgba(255,255,255,0.6);
+      padding: 2px 8px;
+      border-radius: 30px;
+      color: #0c4a6e;
+      font-weight: 500;
+      font-size: 0.75rem;
+    }
+    .sample-badge {
+      background: #3b82f6;
+      color: white;
+      border-radius: 20px;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+      margin-top: 4px;
+    }
+    /* 图片样式：适应容器，完整显示 */
+    .img-placeholder img {
+      max-width: 100%;
+      max-height: 180px;          /* 根据视觉效果调整，足够大但不会过高 */
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 12px;
+      display: block;
+    }
+    .download-btn-area {
+      margin: 18px 0 8px;
+    }
+    .download-btn {
+      background: #1e293b;
+      border: none;
+      color: white;
+      padding: 16px 24px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1.15rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 10px 18px rgba(0,20,50,0.15);
+      cursor: pointer;
+      transition: 0.2s;
+      border: 1px solid rgba(255,255,255,0.1);
+      width: auto;
+      min-width: 220px;
+      text-decoration: none;
+    }
+    .download-btn:hover {
+      background: #0f172a;
+      transform: scale(1.02);
+      box-shadow: 0 18px 25px -8px #1e293b;
+    }
+    .download-btn.special {
+      background: #2563eb;
+    }
+    .download-btn.special:hover {
+      background: #1d4ed8;
+    }
+    .footnote {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-top: 24px;
+      text-align: center;
+      border-top: 1px solid #dee6ed;
+      padding-top: 18px;
+    }
+    /* 图片放大模态框样式 */
+    #lightbox-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 2000;
+      display: none;               /* 默认隐藏 */
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      transition: opacity 0.2s;
+    }
+    #lightbox-modal span {
+      position: absolute;
+      top: 20px;
+      right: 35px;
+      color: white;
+      font-size: 45px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 2001;
+    }
+    #lightbox-modal span:hover {
+      color: #ccc;
+    }
+    #lightbox-img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 16px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+      object-fit: contain;
+      background: #111;
+    }
+    #lightbox-caption {
+      color: #fff;
+      margin-top: 20px;
+      font-size: 1.3rem;
+      background: rgba(30,30,30,0.8);
+      padding: 10px 28px;
+      border-radius: 50px;
+      max-width: 80%;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <h1>📚 解压文件教程 <span>全平台</span></h1>
+
+  <div id="optionsView">
+    <div class="section-title">✳️ 选择你的设备</div>
+    <div class="option-grid">
+      <div class="option-card" id="optAndroid">
+        <span class="badge-icon">📱🤖</span>
+        我的安卓/鸿蒙4.2及以下的手机
+      </div>
+      <div class="option-card" id="optIos">
+        <span class="badge-icon">📱🍎</span>
+        我是苹果手机
+      </div>
+      <div class="option-card" id="optHarmony">
+        <span class="badge-icon">📱✨</span>
+        我的鸿蒙5.0以上的手机
+      </div>
+      <div class="option-card" id="optPc">
+        <span class="badge-icon">💻🖥️</span>
+        我是电脑
+      </div>
+    </div>
+    <div class="section-title" style="margin-top: 8px;">⚠️ 遇到问题</div>
+    <div class="option-grid" style="grid-template-columns:1fr;">
+      <div class="option-card fail-card" id="optDownloadFail">
+        <span class="badge-icon">🔁❌</span>
+        下载失败解决办法
+      </div>
+    </div>
+    <div style="background: #f8fafc; border-radius: 28px; padding: 18px; margin-top: 24px; color: #475569; font-size:0.95rem; border:1px solid #eef2f6;">
+      ⚡ 点击上方选项，查看详细图文步骤。每个教程都包含「下载软件」按钮，可快速获取解压工具。
+    </div>
+  </div>
+
+  <div id="tutorialsContainer">
+    <div id="tutorialAndroid" class="tutorial-panel hidden">
+      <div class="back-row">
+        <button class="back-btn"><span>←</span> 返回</button>
+      </div>
+      <div class="tutorial-title">🤖 安卓/鸿蒙4.2以下及手机 · 解压教程(图片可点击放大查看)</div>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">1</span><span class="step-headline">安装解压软件</span></div>
+          <div class="step-desc">推荐使用 ZArchiver (专业免费) 或 解压专家。点击下方按钮下载。</div>
+          <div class="download-btn-area">
+            <a class="download-btn special" href="/software/zarchiver.apk" download>📥 下载 ZArchiver APK</a>
+          </div>
+          <div class="image-row">
+            <div class="img-placeholder"><img src="/img/aa.png" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/ab.png" alt="解压步骤示意"></div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">2</span><span class="step-headline">找到压缩包</span></div>
+          <div class="step-desc">下载完成后，打开手机自带的文件管理器或者ZArchiver，找到目录Android->data->com.tencent.mobileqq->Tencent->QQfile_recv</div>
+          <div class="image-row">
+            <div class="img-placeholder"><img src="/img/ac.jpg" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/ad.jpg" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/ae.jpg" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/af.jpg" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/ag.jpg" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/ah.jpg" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/ai.jpg" alt="解压步骤示意"></div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">3</span><span class="step-headline">一键解压</span></div>
+          <div class="step-desc">打开ZArchiver,依次打开上面所说的文件位置(如果权限不足，请把压缩包移动到其他文件夹，例如Download)，点击压缩包，点击“解压到当前文件夹”,输入密码即可解压</div>
+          <div class="image-row">
+            <div class="img-placeholder"><img src="/img/aj.jpg" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/ak.jpg" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/al.jpg" alt="解压步骤示意"></div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">4</span><span class="step-headline">分卷解压文件</span></div>
+          <div class="step-desc">如果是分卷压缩的文件，需要分卷解压，只需要把所有的分卷文件(后缀.001 .002 .003 ...)放到同一个文件夹中，然后解压后缀为001的文件即可全部解压</div>
+
+        </div>
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">5</span><span class="step-headline">分卷解压文件</span></div>
+          <div class="step-desc">视频无法播放请使用MX-Player播放器播放</div>
+          <div class="download-btn-area">
+            <a class="download-btn special" href="/software/MX_Player.apk" download>📥 下载 MX-Player APK</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- iOS 教程 -->
+    <div id="tutorialIos" class="tutorial-panel hidden">
+      <div class="back-row">
+        <button class="back-btn"><span>←</span> 返回</button>
+      </div>
+      <div class="tutorial-title">🍎 苹果 iPhone · 解压教程</div>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">1</span><span class="step-headline">下载解压App</span></div>
+          <div class="step-desc">App Store 搜索「iZip」或「解压专家」获取。</div>
+          <div class="image-row">
+            <div class="img-placeholder"><img src="/img/am.png" alt="解压步骤示意"></div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">2</span><span class="step-headline">找到压缩文件</span></div>
+          <div class="step-desc">在QQ上找到“我的文件”。</div>
+          <div class="image-row">
+            <div class="img-placeholder"><img src="/img/an.jpg" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/ao.jpg" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/ap.jpg" alt="解压步骤示意"></div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">3</span><span class="step-headline">解压并查看</span></div>
+          <div class="step-desc">使用“解压专家解压”。</div>
+          <div class="image-row">
+            <div class="img-placeholder"><img src="/img/aq.jpg" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/ar.png" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/as.jpg" alt="解压步骤示意"></div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">4</span><span class="step-headline">分卷解压文件</span></div>
+          <div class="step-desc">如果是分卷压缩的文件，需要分卷解压，只需要把所有的分卷文件(后缀.001 .002 .003 ...)放到同一个文件夹中，然后解压后缀为001的文件即可全部解压</div>
+
+        </div>
+      </div>
+    </div>
+    <!-- 鸿蒙教程 -->
+    <div id="tutorialHarmony" class="tutorial-panel hidden">
+      <div class="back-row">
+        <button class="back-btn"><span>←</span> 返回</button>
+      </div>
+      <div class="tutorial-title">✨ 鸿蒙 HarmonyOS · 解压教程</div>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">1</span><span class="step-headline">解压工具</span></div>
+          <div class="step-desc">鸿蒙推荐鸿蒙5.0以上自带的解压缩工具,或者使用「ZArchiver」鸿蒙版。</div>
+          </div>
+
+        </div>
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">2</span><span class="step-headline">找到文件位置</span></div>
+          <div class="step-desc">打开文件管理器，定位到ZIP包所在的文件夹，QQ下载的文件一般在Download文件夹中。</div>
+
+        </div>
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">3</span><span class="step-headline">选择解压项</span></div>
+          <div class="step-desc">长按ZIP包文件，选择“解压”或“提取”选项（具体名称可能因不同文件管理器而异）。</div>
+
+        </div>
+      <div class="step-item">
+        <div class="step-header"><span class="step-number">4</span><span class="step-headline">开始解压</span></div>
+        <div class="step-desc">选择解压目标文件夹，点击确认开始解压</div>
+
+      </div>
+      <div class="step-item">
+        <div class="step-header"><span class="step-number">5</span><span class="step-headline">分卷解压文件</span></div>
+        <div class="step-desc">如果是分卷压缩的文件，需要分卷解压，只需要把所有的分卷文件(后缀.001 .002 .003 ...)放到同一个文件夹中，然后解压后缀为001的文件即可全部解压</div>
+
+      </div>
+      </div>
+    </div>
+    <!-- 电脑教程 -->
+    <div id="tutorialPc" class="tutorial-panel hidden">
+      <div class="back-row">
+        <button class="back-btn"><span>←</span> 返回</button>
+      </div>
+      <div class="tutorial-title">💻 电脑 (Windows / Mac) · 解压教程</div>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">1</span><span class="step-headline">安装解压软件</span></div>
+          <div class="step-desc">Windows推荐7-Zip；Mac自带解压功能，双击文件输入密码即可解压</div>
+          <div class="download-btn-area">
+            <a class="download-btn special" href="/software/7z-x64.exe" download>⬇️ 下载 7z</a>
+          </div>
+          <div class="image-row">
+            <div class="img-placeholder"><img src="/img/c0.png" alt="解压步骤示意"></div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">2</span><span class="step-headline">下载文件</span></div>
+          <div class="step-desc">右键文件点击“另存为”下载到某个位置（例如桌面或下载文件夹中）</div>
+          <div class="image-row">
+            <div class="img-placeholder"><img src="/img/c1.png" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/c2.png" alt="解压步骤示意"></div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">3</span><span class="step-headline">解压文件</span></div>
+          <div class="step-desc">找到下载好的文件，右键如图所示</div>
+          <div class="image-row">
+            <div class="img-placeholder"><img src="/img/c5.png" alt="解压步骤示意"></div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">4</span><span class="step-headline">分卷解压文件</span></div>
+          <div class="step-desc">如果是分卷压缩的文件，需要分卷解压，只需要把所有的分卷文件(后缀.001 .002 .003 ...)放到同一个文件夹中，然后解压后缀为001的文件即可全部解压(如果看不到后缀，在资源管理器中打开“显示文件后缀名”)</div>
+          <div class="step-desc">如图1:按下【Win＋E】键或者点击任务栏上的文件夹图标来打开文件资源管理器；
+            点击左上角的【查看】选项卡；
+            在【查看】选项卡的【显示/隐藏】组中，勾选【文件名扩展名】选项；或者如图2:有时候我们无法查看文件后缀名，可能是因为其扩展名被隐藏了。如何让文件显示后缀格式？可以按照下列步骤：
+
+            打开任意一个文件夹，在顶部菜单栏中点击【查看】；
+            点击上部选项框的【选项】，切换至【查看】选项卡；
+            在【高级设置】列表中，找到并取消勾选【隐藏已知文件类型的扩展名】选项。</div>
+          <div class="image-row">
+            <div class="img-placeholder"><img src="/img/c3.png" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/c4.png" alt="解压步骤示意"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="tutorialDownloadFail" class="tutorial-panel hidden">
+      <div class="back-row">
+        <button class="back-btn"><span>←</span> 返回</button>
+      </div>
+      <div class="tutorial-title">🔁 下载失败 · 通用解决办法</div>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-header"><span class="step-number">1</span><span class="step-headline">清除缓存，重新下载</span></div>
+          <div class="step-desc">清除QQ缓存，重新下载文件</div>
+          <div class="image-row">
+            <div class="img-placeholder"><img src="/img/d1.jpg" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/d2.jpg" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/d3.jpg" alt="解压步骤示意"></div>
+            <div class="img-placeholder"><img src="/img/d4.jpg" alt="解压步骤示意"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="lightbox-modal" onclick="this.style.display='none'">
+    <span>&times;</span>
+    <img id="lightbox-img" src="" alt="放大图">
+    <p id="lightbox-caption"></p>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const optionsView = document.getElementById('optionsView');
+    const tutorials = document.querySelectorAll('.tutorial-panel');
+    const optAndroid = document.getElementById('optAndroid');
+    const optIos = document.getElementById('optIos');
+    const optHarmony = document.getElementById('optHarmony');
+    const optPc = document.getElementById('optPc');
+    const optDownloadFail = document.getElementById('optDownloadFail');
+    const tutorialAndroid = document.getElementById('tutorialAndroid');
+    const tutorialIos = document.getElementById('tutorialIos');
+    const tutorialHarmony = document.getElementById('tutorialHarmony');
+    const tutorialPc = document.getElementById('tutorialPc');
+    const tutorialDownloadFail = document.getElementById('tutorialDownloadFail');
+
+    function hideAllTutorials() {
+      tutorials.forEach(t => t.classList.add('hidden'));
+    }
+
+    function showOptionsOnly() {
+      optionsView.classList.remove('hidden');
+      hideAllTutorials();
+    }
+
+    function showTutorial(tutorialElement) {
+      optionsView.classList.add('hidden');
+      hideAllTutorials();
+      tutorialElement.classList.remove('hidden');
+    }
+
+    optAndroid.addEventListener('click', () => showTutorial(tutorialAndroid));
+    optIos.addEventListener('click', () => showTutorial(tutorialIos));
+    optHarmony.addEventListener('click', () => showTutorial(tutorialHarmony));
+    optPc.addEventListener('click', () => showTutorial(tutorialPc));
+    optDownloadFail.addEventListener('click', () => showTutorial(tutorialDownloadFail));
+
+    const backButtons = document.querySelectorAll('.back-btn');
+    backButtons.forEach(btn => {
+      btn.addEventListener('click', showOptionsOnly);
+    });
+    const modal = document.getElementById('lightbox-modal');
+    const modalImg = document.getElementById('lightbox-img');
+    const modalCaption = document.getElementById('lightbox-caption');
+    const closeBtn = modal.querySelector('span');
+    closeBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      modal.style.display = 'none';
+    });
+
+    modalImg.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+
+    const placeholders = document.querySelectorAll('.img-placeholder');
+    placeholders.forEach(placeholder => {
+      placeholder.addEventListener('click', function(e) {
+        e.stopPropagation();
+        let imgSrc = '';
+        const innerImg = this.querySelector('img');
+        if (innerImg && innerImg.src) {
+          imgSrc = innerImg.src;
+        } else {
+          imgSrc = 'https://picsum.photos/800/600?random=1&grayscale';
+        }
+        let captionText = '';
+        const textNodes = [...this.childNodes].filter(node => node.nodeType === 3); // 文本节点
+        textNodes.forEach(node => {
+          const text = node.textContent.trim();
+          if (text) captionText += text + ' ';
+        });
+        const spans = this.querySelectorAll('span, .sample-text, .sample-badge, div');
+        spans.forEach(span => {
+          const text = span.textContent.trim();
+          if (text) captionText += text + ' ';
+        });
+        captionText = captionText.trim() || '解压步骤示例';
+        modalImg.src = imgSrc;
+        modalCaption.textContent = captionText;
+        modalImg.onerror = function() {
+          this.src = 'https://picsum.photos/800/600?grayscale&random=2';
+          modalCaption.textContent = captionText + ' (示例图)';
+        };
+        modal.style.display = 'flex';
+      });
+    });
+  })();
+</script>
+</body>
+</html>

@@ -19,14 +19,17 @@ public class User {
     private int black;
     @Column(name = "publicity")
     private int publicity;
+    @Column(name = "overseas")
+    private int overseas;
     public User() {}
-    public User(String qqnumber, String password,int state,int vip,int black,int publicity) {
+    public User(String qqnumber, String password,int state,int vip,int black,int publicity,int overseas) {
         this.qqNumber = qqnumber;
         this.password = password;
         this.state = state;
         this.black = black;
         this.vip = vip;
         this.publicity = publicity;
+        this.overseas = overseas;
     }
     public String getPassword() {
         return password;
@@ -74,5 +77,12 @@ public class User {
 
     public void setPublicity(int publicity) {
         this.publicity = publicity;
+    }
+
+    public int getOverseas(){
+        return overseas;
+    }
+    public void setOverseas(int overseas){
+        this.overseas = overseas;
     }
 }

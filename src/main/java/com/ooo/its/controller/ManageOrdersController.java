@@ -99,10 +99,21 @@ public class ManageOrdersController {
         else
             return ResponseEntity.status(401).body("error");
     }
+    @GetMapping("/admin/edit")
+    public ResponseEntity<?> Edit(@RequestParam String qqNumber,
+                                  @RequestParam int batch,
+                                  @RequestParam int amount){
+        Record record = recordService.FindUnPayOrder(qqNumber,batch,0);
+        record.setAmount(amount);
+        if(recordService.SaveRecord(record))
+            return ResponseEntity.ok("ok");
+        else
+            return ResponseEntity.status(401).body("no");
+    }
 
     @GetMapping("/admin/complete")
     public ResponseEntity<?> CompleteOrder(@RequestParam String qqNumber,@RequestParam int batch){
-        List<Order> orders = orderService.FindHandleData(qqNumber,1);
+        List<Order> orders = orderService.FindHandleDataByBatch(qqNumber,1,batch);
         for (Order o : orders){
             o.setState(2);
             orderService.SaveOrder(o);
@@ -203,6 +214,7 @@ public class ManageOrdersController {
             userMap.put("region", userInfo.getRegion());
             userMap.put("vip", userInfoService.getVipStatus(userInfo.getQqNumber()));
             userMap.put("black", userInfoService.getBlackStatus(userInfo.getQqNumber()));
+            userMap.put("overseas", userInfoService.getOverseasStatus(userInfo.getQqNumber()));
 
             result.add(userMap);
         }

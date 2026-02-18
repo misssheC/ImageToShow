@@ -24,8 +24,9 @@ public class SearchController {
     @GetMapping("/admin/searchOrder")
     @ResponseBody
     public List<Map<String, Object>> SearchOrders(@RequestParam String qq,
-                                                  @RequestParam int state) {
-        List<Order> orders = searchService.SearchOrderByQQ(qq,state);
+                                                  @RequestParam int state,
+                                                  @RequestParam(defaultValue = "1") int page) {
+        List<Order> orders = searchService.SearchOrderByQQ(qq,state,page);
         List<Map<String, Object>> result = new ArrayList<>();
 
         for (Order o : orders) {
@@ -71,24 +72,27 @@ public class SearchController {
 
     @GetMapping("/admin/searchHistory")
     @ResponseBody
-    public List<Record> SearchHistory(@RequestParam String qq){
-        return searchService.SearchRecordByQQ(qq);
+    public List<Record> SearchHistory(@RequestParam String qq,
+                                      @RequestParam(defaultValue = "1") int page){
+        return searchService.SearchRecordByQQ(qq,page);
     }
 
 
     @GetMapping("/admin/searchLog")
     @ResponseBody
     public List<Log> SearchLog(@RequestParam String qq,
-                               @RequestParam int type){
-        return searchService.SearchLogByUser(qq,type);
+                               @RequestParam int type,
+                               @RequestParam(defaultValue = "1") int page){
+        return searchService.SearchLogByUser(qq,type,page);
     }
 
 
     @GetMapping("/admin/searchCart")
     @ResponseBody
     public List<Cart> SearchCart(@RequestParam String qq,
-                                 @RequestParam int state){
-        return searchService.SearchCartByQQ(qq,state);
+                                 @RequestParam int state,
+                                 @RequestParam(defaultValue = "1") int page){
+        return searchService.SearchCartByQQ(qq,state,page);
     }
 
 }

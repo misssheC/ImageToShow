@@ -49,7 +49,7 @@ public class UserInfoService {
     }
 
     public Page<UserInfo> ShowAllUserInfo(int page) {
-            Pageable pageable = PageRequest.of(page - 1, 50, Sort.by(Sort.Direction.DESC, "lastTime"));
+            Pageable pageable = PageRequest.of(page - 1, 51, Sort.by(Sort.Direction.DESC, "lastTime"));
             return userInfoRep.findAllByOrderByLastTimeDesc(pageable);
     }
 
@@ -62,7 +62,7 @@ public class UserInfoService {
     }
 
     public List<UserInfo> Ranking() {
-        return userInfoRep.findAllByOrderByLumpSumDesc();
+        return userInfoRep.findAllByLumpSumNotOrderByLumpSumDesc(0);
     }
 
     public boolean RegisterUserInfo(String qq) {
@@ -115,6 +115,11 @@ public class UserInfoService {
     public int getBlackStatus(String qq){
         Optional<User> user = userRepository.findByQqNumber(qq);
         return user.map(User::getBlack).orElse(0);
+    }
+
+    public int getOverseasStatus(String qq){
+        Optional<User> user = userRepository.findByQqNumber(qq);
+        return user.map(User::getOverseas).orElse(0);
     }
     public int getLoginNumber(String qq){
         Optional<UserInfo> userInfo = userInfoRep.findByQqNumber(qq);

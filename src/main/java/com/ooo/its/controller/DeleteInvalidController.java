@@ -26,11 +26,13 @@ public class DeleteInvalidController {
     @GetMapping("/admin/deleteorder")
     public ResponseEntity<?> DeleteOrder(@RequestParam String orderId,
                                          @RequestParam String qq,
-                                         @RequestParam String goodsId){
+                                         @RequestParam String goodsId,
+                                         @RequestParam int batch){
+
         Long oid = Long.parseLong(orderId);
         Long gid = Long.parseLong(goodsId);
 
-        boolean r = deleteService.DeleteOrderByAdmin(oid,qq,gid);
+        boolean r = deleteService.DeleteOrderByAdmin(oid,qq,gid,batch);
         if (r)
             return ResponseEntity.ok("ok");
         else

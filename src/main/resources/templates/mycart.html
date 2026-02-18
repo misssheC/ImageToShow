@@ -126,6 +126,7 @@
         .actions {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .action-btn {
@@ -136,6 +137,7 @@
             cursor: pointer;
             font-size: 13px;
             transition: all 0.2s;
+            white-space: nowrap;
         }
 
         .action-btn:hover {
@@ -152,6 +154,36 @@
         }
 
         .delete-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* 以后再买按钮样式 */
+        .later-btn {
+            color: #3498db;
+            border-color: #3498db;
+        }
+
+        .later-btn:hover {
+            background-color: #ebf5fb;
+        }
+
+        .later-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* 新增：再加一个按钮样式 */
+        .add-one-btn {
+            color: #27ae60;
+            border-color: #27ae60;
+        }
+
+        .add-one-btn:hover {
+            background-color: #eafaf1;
+        }
+
+        .add-one-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
@@ -197,7 +229,7 @@
             cursor: not-allowed;
         }
 
-        /* 新增：去支付按钮样式 */
+        /* 去支付按钮样式 */
         .checkout-btn.pay {
             background-color: #1abc9c;
         }
@@ -253,6 +285,10 @@
 
         .notification.error {
             background-color: #e74c3c;
+        }
+
+        .notification.info {
+            background-color: #3498db;
         }
 
         /* 图片预览模态框样式 */
@@ -348,6 +384,35 @@
             font-size: 16px;
         }
 
+        /* 状态标签样式 */
+        .status-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .status-tag.ordered {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .status-tag.not-ordered {
+            background-color: #fff3e0;
+            color: #ef6c00;
+            border: 1px solid #ffcc80;
+        }
+
+        .status-tag.pending-payment {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #bbdefb;
+        }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .cart-header {
@@ -391,6 +456,10 @@
                 color: #666;
             }
 
+            .actions {
+                flex-wrap: wrap;
+            }
+
             .cart-footer {
                 flex-direction: column;
                 gap: 20px;
@@ -411,6 +480,13 @@
                 width: 40px;
                 height: 40px;
                 font-size: 20px;
+            }
+
+            /* 移动端状态标签调整 */
+            .status-tag {
+                padding: 3px 8px;
+                font-size: 11px;
+                min-width: 50px;
             }
         }
     </style>
@@ -483,7 +559,7 @@
         try {
             const response = await fetch('/user/showme', {
                 method: 'GET',
-                credentials: 'include' // 确保发送session信息
+                credentials: 'include'
             });
 
             if (!response.ok) {
@@ -569,6 +645,102 @@
         window.location.href = '/user/pay';
     }
 
+    // 以后再买 - 撤销订单，放回购物车
+    async function buyLater(goodsId, cartItemElement) {
+        if (!confirm('确定要撤销该订单，放回购物车以后购买吗？')) {
+            return;
+        }
+
+        // 获取按钮并禁用
+        const laterBtn = cartItemElement.querySelector('.later-btn');
+        const originalText = laterBtn.textContent;
+        laterBtn.disabled = true;
+        laterBtn.textContent = '处理中...';
+
+        try {
+            const response = await fetch(`/user/cancel?goodsId=${goodsId}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                // 重新加载购物车数据
+                const cartData = await fetchCartData();
+                renderCartItems(cartData);
+                showNotification('已成功撤销订单，商品已放回购物车', 'success');
+            } else {
+                const errorText = await response.text();
+                console.error('撤销订单失败:', errorText);
+
+                // 恢复按钮状态
+                laterBtn.disabled = false;
+                laterBtn.textContent = originalText;
+
+                if (response.status === 401) {
+                    showNotification('用户未登录，请重新登录', 'error');
+                } else {
+                    showNotification('撤销订单失败，请重试', 'error');
+                }
+            }
+        } catch (error) {
+            console.error('撤销订单失败:', error);
+
+            // 恢复按钮状态
+            laterBtn.disabled = false;
+            laterBtn.textContent = originalText;
+
+            showNotification('网络错误，请检查连接后重试', 'error');
+        }
+    }
+
+    // 再加一个 - 重新下单
+    async function addOneMore(goodsId, cartItemElement) {
+        if (!confirm('确定要再加一个此商品吗？')) {
+            return;
+        }
+
+        // 获取按钮并禁用
+        const addOneBtn = cartItemElement.querySelector('.add-one-btn');
+        const originalText = addOneBtn.textContent;
+        addOneBtn.disabled = true;
+        addOneBtn.textContent = '处理中...';
+
+        try {
+            const response = await fetch(`/user/addone?goodsId=${goodsId}`, {
+                method: 'GET',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                // 重新加载购物车数据
+                const cartData = await fetchCartData();
+                renderCartItems(cartData);
+                showNotification('已成功添加', 'success');
+            } else {
+                const errorText = await response.text();
+                console.error('添加商品失败:', errorText);
+
+                // 恢复按钮状态
+                addOneBtn.disabled = false;
+                addOneBtn.textContent = originalText;
+
+                if (response.status === 401) {
+                    showNotification('用户未登录，请重新登录', 'error');
+                } else {
+                    showNotification('添加商品失败，请重试', 'error');
+                }
+            }
+        } catch (error) {
+            console.error('添加商品失败:', error);
+
+            // 恢复按钮状态
+            addOneBtn.disabled = false;
+            addOneBtn.textContent = originalText;
+
+            showNotification('网络错误，请检查连接后重试', 'error');
+        }
+    }
+
     function formatDate(dateString) {
         const date = new Date(dateString);
         return date.toLocaleDateString('zh-CN') + ' ' + date.toLocaleTimeString('zh-CN', {
@@ -577,13 +749,54 @@
         });
     }
 
-    // 根据状态码获取状态文本
-    function getStateText(state) {
+    // 根据状态码获取状态标签HTML
+    function getStateHtml(state) {
+        let tagClass, tagText;
+
         switch(state) {
-            case 0: return '预备';
-            case 1: return '待处理';
-            case 2: return '待付款';
+            case 0:
+                tagClass = 'not-ordered';
+                tagText = '未下单';
+                break;
+            case 1:
+                tagClass = 'ordered';
+                tagText = '已下单';
+                break;
+            case 2:
+                tagClass = 'pending-payment';
+                tagText = '待付款';
+                break;
+            default:
+                tagClass = 'not-ordered';
+                tagText = '未知';
         }
+
+        return `<span class="status-tag ${tagClass}">${tagText}</span>`;
+    }
+
+    // 根据状态获取操作按钮HTML
+    function getActionButtonsHtml(cart, index) {
+        let buttons = '';
+
+        // 删除按钮始终显示
+        buttons += `<button class="action-btn delete-btn" onclick="removeFromCart(${cart.id}, ${cart.goodsId})">删除</button>`;
+
+        // 根据状态显示不同的按钮
+        switch(cart.state) {
+            case 0: // 未下单
+                // 未下单状态显示"再加一个"按钮
+                buttons += `<button class="action-btn add-one-btn" onclick="addOneMore(${cart.goodsId}, this.closest('.cart-item'))">再加这个</button>`;
+                break;
+            case 1: // 已下单
+                // 已下单状态显示"以后再买"按钮
+                buttons += `<button class="action-btn later-btn" onclick="buyLater(${cart.goodsId}, this.closest('.cart-item'))">以后再买</button>`;
+                break;
+            case 2: // 待付款
+                // 待付款状态可以显示其他按钮，如果需要
+                break;
+        }
+
+        return buttons;
     }
 
     // 全局变量用于图片预览
@@ -649,37 +862,37 @@
         const checkoutBtn = document.getElementById('checkout-btn');
         currentCartItems = cartData.cartItems || [];
 
+        // 更新购物车数量
+        document.getElementById('total-count').textContent = cartData.totalCount || currentCartItems.length;
+
         // 更新结算/支付按钮状态
         if (currentCartItems.length === 0) {
             checkoutBtn.disabled = true;
             checkoutBtn.textContent = '去结算';
             checkoutBtn.classList.remove('pay');
-        } else {
-            checkoutBtn.disabled = false;
-
-            // 检查是否所有状态都是1
-            const allState1 = currentCartItems.every(item => item.cart.state === 1);
-
-            if (allState1) {
-                checkoutBtn.textContent = '去支付';
-                checkoutBtn.classList.add('pay');
-            } else {
-                checkoutBtn.textContent = '去结算';
-                checkoutBtn.classList.remove('pay');
-            }
-        }
-
-        if (currentCartItems.length === 0) {
             cartItemsContainer.innerHTML = `
-                    <div class="empty-cart">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7 18C5.9 18 5.01 18.9 5.01 20C5.01 21.1 5.9 22 7 22C8.1 22 9 21.1 9 20C9 18.9 8.1 18 7 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5.48C20.96 5.34 21 5.17 21 5C21 4.45 20.55 4 20 4H5.21L4.27 2H1ZM17 18C15.9 18 15.01 18.9 15.01 20C15.01 21.1 15.9 22 17 22C18.1 22 19 21.1 19 20C19 18.9 18.1 18 17 18Z" fill="#CCCCCC"/>
-                        </svg>
-                        <p>购物车是空的，快去添加吧！</p>
-                    </div>
-                `;
+                <div class="empty-cart">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 18C5.9 18 5.01 18.9 5.01 20C5.01 21.1 5.9 22 7 22C8.1 22 9 21.1 9 20C9 18.9 8.1 18 7 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5.48C20.96 5.34 21 5.17 21 5C21 4.45 20.55 4 20 4H5.21L4.27 2H1ZM17 18C15.9 18 15.01 18.9 15.01 20C15.01 21.1 15.9 22 17 22C18.1 22 19 21.1 19 20C19 18.9 18.1 18 17 18Z" fill="#CCCCCC"/>
+                    </svg>
+                    <p>购物车是空的，快去添加吧！</p>
+                </div>
+            `;
             return;
         }
+
+        // 检查是否存在已下单（状态为1）的商品
+        const hasOrderedItems = currentCartItems.some(item => item.cart.state === 1);
+
+        if (hasOrderedItems) {
+            checkoutBtn.textContent = '去支付';
+            checkoutBtn.classList.add('pay');
+        } else {
+            checkoutBtn.textContent = '去结算';
+            checkoutBtn.classList.remove('pay');
+        }
+
+        checkoutBtn.disabled = false;
 
         let itemsHTML = '';
 
@@ -689,38 +902,35 @@
             const goodsName = item.goodsName || '';
 
             itemsHTML += `
-                    <div class="cart-item" data-cart-id="${cart.id}" data-goods-id="${cart.goodsId}">
-                        <div class="item-info">
-                            <div class="item-image" onclick="openImageModal('${goodsImageUrl}', ${cart.goodsId}, ${index})">
-                                ${goodsImageUrl ?
+                <div class="cart-item" data-cart-id="${cart.id}" data-goods-id="${cart.goodsId}">
+                    <div class="item-info">
+                        <div class="item-image" onclick="openImageModal('${goodsImageUrl}', ${cart.goodsId}, ${index})">
+                            ${goodsImageUrl ?
                 `<img src="${goodsImageUrl}" alt="图片" onerror="this.style.display='none'; this.parentNode.innerHTML='图片加载失败';">` :
                 '暂无图片'
             }
-                            </div>
-                            <div class="item-details">
-                                <h3>${goodsName}</h3>
-                                <p>ID: ${cart.goodsId}</p>
-                            </div>
                         </div>
-                        <div class="goods-id">${cart.goodsId}</div>
-                        <div class="state">${getStateText(cart.state)}</div>
-                        <div class="time">${formatDate(cart.time)}</div>
-                        <div class="actions">
-                            <button class="action-btn delete-btn" onclick="removeFromCart(${cart.id}, ${cart.goodsId})">删除</button>
+                        <div class="item-details">
+                            <h3>${goodsName}</h3>
+                            <p>ID: ${cart.goodsId}</p>
                         </div>
                     </div>
-                `;
+                    <div class="goods-id">${cart.goodsId}</div>
+                    <div class="state">${getStateHtml(cart.state)}</div>
+                    <div class="time">${formatDate(cart.time)}</div>
+                    <div class="actions">
+                        ${getActionButtonsHtml(cart, index)}
+                    </div>
+                </div>
+            `;
         });
 
         cartItemsContainer.innerHTML = itemsHTML;
-
-        // 更新购物车数量
-        document.getElementById('total-count').textContent = cartData.totalCount || currentCartItems.length;
     }
 
     // 删除购物车
     async function removeFromCart(cartId, goodsId) {
-        if (!confirm('确定要从购物车中删除此吗？')) {
+        if (!confirm('确定要从购物车中删除此商品吗？')) {
             return;
         }
 
@@ -800,10 +1010,10 @@
             renderCartItems(cartData);
         } catch (error) {
             document.getElementById('cart-items').innerHTML = `
-                    <div class="error-message">
-                        加载购物车数据失败，请刷新页面重试
-                    </div>
-                `;
+                <div class="error-message">
+                    加载购物车数据失败，请刷新页面重试
+                </div>
+            `;
             console.error('加载购物车数据失败:', error);
         }
 

@@ -16,7 +16,7 @@ public interface UserInfoRep extends JpaRepository<UserInfo, Long> {
 
     Page<UserInfo> findAllByOrderByLastTimeDesc(Pageable pageable);
 
-    List<UserInfo> findAllByOrderByLumpSumDesc();
+    List<UserInfo> findAllByLumpSumNotOrderByLumpSumDesc(Integer zero);
 
     @Query("SELECT COALESCE(SUM(r.lumpSum), 0) FROM UserInfo r")
     int sumTotalLumpSum();

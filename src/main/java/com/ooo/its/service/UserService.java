@@ -90,6 +90,9 @@ public class UserService {
             if (u.get().getVip() == 1) {
                 result = 2;
             }
+            if (u.get().getOverseas() == 1) {
+                result = 3;
+            }
         }
         return result;
     }
@@ -104,6 +107,7 @@ public class UserService {
         if (u.isEmpty()) {
             return false;
         }
+        System.out.println(s);
         User user = u.get();
         switch (s) {
             case 1:
@@ -121,6 +125,14 @@ public class UserService {
             case 4:
                 if (user.getBlack() == 0) return false;
                 user.setBlack(0);
+                break;
+            case 5:
+                if(user.getOverseas() == 1) return false;
+                user.setOverseas(1);
+                break;
+            case 6:
+                if(user.getOverseas() == 0) return false;
+                user.setOverseas(0);
                 break;
             default:
                 return false;
