@@ -42,6 +42,7 @@
                 max-height: none;
             }
         }
+
         .modal {
             display: none;
             position: fixed;
@@ -97,22 +98,11 @@
         .btn-add:hover { background-color: #45a049; }
         .btn-remove:hover { background-color: #d32f2f; }
         .btn-close:hover { background-color: #333; }
-
-        .cart-notice {
-            display: none;
-            text-align: center;
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #f5f5f5;
-            border-radius: 5px;
-        }
     </style>
 </head>
 <body>
 
 <h1>预览图</h1>
-
-<div class="cart-notice" id="cartNotice">购物车为空</div>
 
 <div class="image-container" id="imageContainer"></div>
 
@@ -194,7 +184,6 @@
             .then(response => {
                 if (response.ok) {
                     cartItems.push({ id: currentId, name: goodsName });
-                    updateCartNotice();
                     document.getElementById('addToCart').style.display = 'none';
                     document.getElementById('removeFromCart').style.display = 'block';
                 } else {
@@ -218,7 +207,6 @@
                     const index = cartItems.findIndex(item => item.id === currentId);
                     if (index !== -1) {
                         cartItems.splice(index, 1);
-                        updateCartNotice();
                         document.getElementById('addToCart').style.display = 'block';
                         document.getElementById('removeFromCart').style.display = 'none';
                         alert(`"${goodsName}" 已从购物车移除`);
@@ -231,13 +219,6 @@
                 console.error('移除购物车失败:', error);
                 alert('移除购物车失败，请稍后再试');
             });
-    }
-
-    function updateCartNotice() {
-        const cartNotice = document.getElementById('cartNotice');
-        cartNotice.textContent = cartItems.length === 0
-            ? '购物车为空'
-            : `购物车中有 ${cartItems.length} 个`;
     }
 
     window.onload = function() {

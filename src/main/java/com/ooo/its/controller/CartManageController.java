@@ -22,12 +22,15 @@ public class CartManageController {
     private OrderService orderService;
     @Autowired
     private RecordRep recordRep;
+    @Autowired
+    private AnalysisService analysisService;
     @GetMapping("/user/add")
     public ResponseEntity<?> AddGoods(@RequestParam("goodsID")Long goods,HttpSession session){
         String qqNumber = (String) session.getAttribute("qqNumber");
         logService.SaveLog(qqNumber,"用户加入 <span style='color:red'>"+goodsService.FindGoodsName(goods)+"</span> 到购物车",4);
         if(qqNumber != null) {
             cartService.AddToCart(qqNumber, goods);
+            analysisService.AddNewStatistics();
             return ResponseEntity.ok("ok");
         }
         else
@@ -37,35 +40,39 @@ public class CartManageController {
     @GetMapping("/user/remove")
     public ResponseEntity<?> RemoveGoods(@RequestParam("goodsID")Long goods,HttpSession session){
         String qqNumber = (String) session.getAttribute("qqNumber");
-        logService.SaveLog(qqNumber,"用户移除 <span style='color:red'>"+goodsService.FindGoodsName(goods)+"</span> 从购物车",5);
-        if(qqNumber != null) {
-            boolean d = orderService.DeleteOrder(qqNumber,goods);
-            if(d) {
-                cartService.RemoveFromCart(qqNumber, goods);
-                return ResponseEntity.ok("ok");
-            }
-            else
-                return ResponseEntity.status(401).body("删除失败");
+        if (cartService.IsClinch(qqNumber,goods)) {
+            if (qqNumber != null) {
+                boolean d = orderService.DeleteOrder(qqNumber, goods);
+                if (d) {
+                    cartService.RemoveFromCart(qqNumber, goods);
+                    logService.SaveLog(qqNumber, "用户移除 <span style='color:red'>" + goodsService.FindGoodsName(goods) + "</span> 从购物车", 5);
+                    return ResponseEntity.ok("ok");
+                } else
+                    return ResponseEntity.status(401).body("删除失败");
+            } else
+                return ResponseEntity.status(401).body("用户未登录");
         }
         else
-            return ResponseEntity.status(401).body("用户未登录");
+            return ResponseEntity.status(401).body("删除失败");
     }
 
     @GetMapping("/user/cancel")
     public ResponseEntity<?> Cancellation(@RequestParam("goodsId")Long goods,HttpSession session){
         String qqNumber = (String) session.getAttribute("qqNumber");
-        logService.SaveLog(qqNumber,"用户撤销了 <span style='color:red'>"+goodsService.FindGoodsName(goods)+"</span> 从购物车",5);
-        if(qqNumber != null){
-            boolean c = orderService.DeleteOrder(qqNumber,goods);
-            if(c){
-                cartService.ChangeState(qqNumber,goods,0);
-                return ResponseEntity.ok("ok");
-            }
-            else
-                return ResponseEntity.status(401).body("撤回失败");
+        if(cartService.IsClinch(qqNumber,goods)) {
+            if (qqNumber != null) {
+                boolean c = orderService.DeleteOrder(qqNumber, goods);
+                if (c) {
+                    cartService.ChangeState(qqNumber, goods, 0);
+                    logService.SaveLog(qqNumber, "用户撤销了 <span style='color:red'>" + goodsService.FindGoodsName(goods) + "</span> 从购物车", 5);
+                    return ResponseEntity.ok("ok");
+                } else
+                    return ResponseEntity.status(401).body("撤回失败");
+            } else
+                return ResponseEntity.status(401).body("用户未登录");
         }
         else
-            return ResponseEntity.status(401).body("用户未登录");
+            return ResponseEntity.status(401).body("撤回失败");
     }
 
     @GetMapping("/user/addone")

@@ -30,7 +30,8 @@ public class LoginController {
     private LogService logService;
     @Autowired
     private DeviceDetectionService deviceDetectionService;
-
+    @Autowired
+    private AnalysisService analysisService;
     @GetMapping("/login")
     public String showLoginPage(Model model) {
         return "login";
@@ -72,16 +73,19 @@ public class LoginController {
                 if (regionMatch)
                     logMsg += "登录异常，登录地点发生变更！";
                 logMsg += " IP:" + ipAddress + " 地区:" + region + " 登录设备："+ device;
+                analysisService.LoginStatistics(qqNumber);
                 logService.SaveLog(qqNumber, logMsg, 1);
                 return "redirect:/folders";
             } else {
                 logService.SaveLog(qqNumber, "登录失败：地区不符合要求 " + " 地区:" + region + " 登录设备："+ device, 0);
+                analysisService.LoginErrorStatistics(1);
                 return "redirect:/login?error=" + URLEncoder.encode("请关闭VPN 退出浏览器等待几秒重新进入", StandardCharsets.UTF_8);
             }
 
         }
         else {
             logService.SaveLog(qqNumber, "登录失败：账号或密码错误 " + " 地区:" + region + " 登录设备："+ device, 0);
+            analysisService.LoginErrorStatistics(0);
             return "redirect:/login?error=" + URLEncoder.encode("账号不存在或密码错误或登录设备发生变更,请返回到原设备登录", StandardCharsets.UTF_8);
         }
     }

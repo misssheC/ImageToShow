@@ -31,6 +31,8 @@ public class ManageOrdersController {
     UserService userService;
     @Autowired
     LogService logService;
+    @Autowired
+    AnalysisService analysisService;
 
     @GetMapping("/admin/allOrders")
     @ResponseBody
@@ -59,10 +61,10 @@ public class ManageOrdersController {
 
     @GetMapping("/admin/allcart")
     @ResponseBody
-    public List<Cart> ShowAllCarts(){
-        return cartService.ShowAll();
+    public Page<Cart> showAllCartsPage(@RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "200") int size) {
+        return cartService.showAllPage(page, size);
     }
-
     @GetMapping("/admin/allinfo")
     @ResponseBody
     public Map<String, Object> ShowAllInfo(@RequestParam(defaultValue = "1") int page) {
@@ -91,6 +93,7 @@ public class ManageOrdersController {
         for(Order order : orders) {
             order.setState(1);
             orderService.SaveOrder(order);
+            cartService.ChangeState(qqNumber,order.getGoodsId(),2);
             sum++;
         }
         boolean result = recordService.RecordTransaction(qqNumber,amount,sum,batch);
@@ -125,8 +128,10 @@ public class ManageOrdersController {
         record.setIsPay(1);
         userInfoService.RecordAboutUser(qqNumber,amount,quantity);
         cartService.ClearCart(qqNumber);
-        if(recordService.SaveRecord(record))
+        if(recordService.SaveRecord(record)) {
+            analysisService.IncomeStatistics(amount);
             return ResponseEntity.ok("ok");
+        }
         else
             return ResponseEntity.status(401).body("no");
     }

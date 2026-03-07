@@ -173,7 +173,7 @@
             cursor: not-allowed;
         }
 
-        /* 新增：再加一个按钮样式 */
+        /* 再加一个按钮样式 */
         .add-one-btn {
             color: #27ae60;
             border-color: #27ae60;
@@ -407,7 +407,8 @@
             border: 1px solid #ffcc80;
         }
 
-        .status-tag.pending-payment {
+        /* 已定价状态样式 */
+        .status-tag.priced {
             background-color: #e3f2fd;
             color: #1565c0;
             border: 1px solid #bbdefb;
@@ -574,7 +575,7 @@
         }
     }
 
-    // 结算购物车
+    // 结算购物车（仅针对状态0的商品）
     async function checkoutCart() {
         const checkoutBtn = document.getElementById('checkout-btn');
 
@@ -622,11 +623,21 @@
         } finally {
             // 恢复结算按钮状态
             checkoutBtn.disabled = false;
-            checkoutBtn.textContent = '去结算';
+            // 注意：恢复文本时需要根据当前可支付状态重新判断，但renderCartItems会在成功时重新调用，所以这里简单恢复，随后会被重新渲染覆盖
+            // 但如果失败，需要根据当前状态重新设置按钮文字；我们暂时恢复为默认，但为了准确，可以在失败后重新获取一次数据？
+            // 简单处理：重新获取数据更新按钮状态
+            try {
+                const cartData = await fetchCartData();
+                renderCartItems(cartData);
+            } catch (e) {
+                // 如果再次失败，按钮保持“去结算”并启用
+                checkoutBtn.textContent = '去结算';
+                checkoutBtn.classList.remove('pay');
+            }
         }
     }
 
-    // 跳转到支付页面
+    // 跳转到支付页面（针对状态1和2的商品）
     function goToPayPage() {
         // 检查购物车是否为空
         if (currentCartItems.length === 0) {
@@ -634,10 +645,10 @@
             return;
         }
 
-        // 检查是否有可以支付的（状态为1的）
-        const canPayItems = currentCartItems.filter(item => item.cart.state === 1);
+        // 检查是否有可以支付的（状态为1或2的）--- 修改点：加入状态2
+        const canPayItems = currentCartItems.filter(item => item.cart.state === 1 || item.cart.state === 2);
         if (canPayItems.length === 0) {
-            showNotification('没有可以支付的', 'error');
+            showNotification('没有可以支付的商品（需要已下单或已定价）', 'error');
             return;
         }
 
@@ -645,7 +656,7 @@
         window.location.href = '/user/pay';
     }
 
-    // 以后再买 - 撤销订单，放回购物车
+    // 以后再买 - 撤销订单，放回购物车 (状态1 -> 状态0)
     async function buyLater(goodsId, cartItemElement) {
         if (!confirm('确定要撤销该订单，放回购物车以后购买吗？')) {
             return;
@@ -693,7 +704,7 @@
         }
     }
 
-    // 再加一个 - 重新下单
+    // 再加一个 - 重新下单 (状态0 -> 新增购物车项)
     async function addOneMore(goodsId, cartItemElement) {
         if (!confirm('确定要再加一个此商品吗？')) {
             return;
@@ -763,8 +774,8 @@
                 tagText = '已下单';
                 break;
             case 2:
-                tagClass = 'pending-payment';
-                tagText = '待付款';
+                tagClass = 'priced';
+                tagText = '已定价';
                 break;
             default:
                 tagClass = 'not-ordered';
@@ -778,8 +789,10 @@
     function getActionButtonsHtml(cart, index) {
         let buttons = '';
 
-        // 删除按钮始终显示
-        buttons += `<button class="action-btn delete-btn" onclick="removeFromCart(${cart.id}, ${cart.goodsId})">删除</button>`;
+        // 状态2的商品不允许任何操作（不显示删除按钮，也没有以后再买/再加一个，符合需求）
+        if (cart.state !== 2) {
+            buttons += `<button class="action-btn delete-btn" onclick="removeFromCart(${cart.id}, ${cart.goodsId})">删除</button>`;
+        }
 
         // 根据状态显示不同的按钮
         switch(cart.state) {
@@ -791,8 +804,8 @@
                 // 已下单状态显示"以后再买"按钮
                 buttons += `<button class="action-btn later-btn" onclick="buyLater(${cart.goodsId}, this.closest('.cart-item'))">以后再买</button>`;
                 break;
-            case 2: // 待付款
-                // 待付款状态可以显示其他按钮，如果需要
+            case 2:
+                // 已定价状态不显示任何额外操作按钮
                 break;
         }
 
@@ -864,6 +877,15 @@
 
         // 更新购物车数量
         document.getElementById('total-count').textContent = cartData.totalCount || currentCartItems.length;
+        const hasPayableItems = currentCartItems.some(item => item.cart.state === 1 || item.cart.state === 2);
+
+        if (hasPayableItems) {
+            checkoutBtn.textContent = '去支付';
+            checkoutBtn.classList.add('pay');
+        } else {
+            checkoutBtn.textContent = '去结算';
+            checkoutBtn.classList.remove('pay');
+        }
 
         // 更新结算/支付按钮状态
         if (currentCartItems.length === 0) {
@@ -879,17 +901,6 @@
                 </div>
             `;
             return;
-        }
-
-        // 检查是否存在已下单（状态为1）的商品
-        const hasOrderedItems = currentCartItems.some(item => item.cart.state === 1);
-
-        if (hasOrderedItems) {
-            checkoutBtn.textContent = '去支付';
-            checkoutBtn.classList.add('pay');
-        } else {
-            checkoutBtn.textContent = '去结算';
-            checkoutBtn.classList.remove('pay');
         }
 
         checkoutBtn.disabled = false;
@@ -927,8 +938,6 @@
 
         cartItemsContainer.innerHTML = itemsHTML;
     }
-
-    // 删除购物车
     async function removeFromCart(cartId, goodsId) {
         if (!confirm('确定要从购物车中删除此商品吗？')) {
             return;

@@ -18,5 +18,7 @@ public interface LogRep extends JpaRepository<Log,Long> {
     List<Log> findByUserAndTypeOrderByTimeDesc(String qq,int type,Pageable pageable);
     List<Log> findByTypeOrderByTimeDesc(int type,Pageable pageable);
 
+    List<Log> findByUserAndTypeAndTimeBetween(String qq ,int type ,Date start, Date end);
+    List<Log> findByTypeAndTimeBetween(int type,Date s,Date e);
 
 }

@@ -26,6 +26,8 @@ public class GoodsShowController {
     private LogService logService;
     @Autowired
     private UserInfoService userInfoService;
+    @Autowired
+    private AnalysisService analysisService;
     @GetMapping("/user/showfolders")
     @ResponseBody
     public Map<String, Object> getFolders(HttpSession session) {
@@ -44,6 +46,7 @@ public class GoodsShowController {
     public ResponseEntity<List<Map<String, String>>> getImagesByType(@RequestParam("type") String folderType, HttpSession session) {
         String qq = (String) session.getAttribute("qqNumber");
         logService.SaveLog(qq,"查看了文件夹 <span style='color:blue'>"+folderType+"</span>",2);
+        analysisService.ViewStatistics();
         List<Goods> images = goodsService.getGoodsByFolder(folderType);
         List<Map<String, String>> result = new ArrayList<>();
         for (Goods goods : images) {
@@ -62,6 +65,7 @@ public class GoodsShowController {
     public void GoodsClick(@RequestParam Long goodsId,HttpSession session){
         goodsService.IncreaseClick(goodsId);
         String qq = (String) session.getAttribute("qqNumber");
+        analysisService.ViewStatistics();
         logService.SaveLog(qq,"查看了预览 <span style='color:red'>"+goodsService.FindGoodsName(goodsId)+"</span>",3);
     }
 

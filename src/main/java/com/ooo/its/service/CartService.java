@@ -3,6 +3,10 @@ package com.ooo.its.service;
 import com.ooo.its.entity.Cart;
 import com.ooo.its.repository.CartRep;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -52,16 +56,20 @@ public class CartService {
         }
     }
 
-    public List<Cart> ShowAll(){
-        return cartRep.findAllByOrderByIdDesc();
+    public Page<Cart> showAllPage(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        return cartRep.findAll(pageable);
     }
 
     public boolean ClearCart(String qq){
-        cartRep.deleteByQqNumberAndState(qq,1);
+        cartRep.deleteByQqNumberAndState(qq,2);
         return true;
     }
 
     public Cart GetCartId(String qq,Long goodId){
         return cartRep.findByQqNumberAndGoodsId(qq,goodId);
+    }
+    public boolean IsClinch(String qq , Long goods){
+        return cartRep.findByQqNumberAndGoodsId(qq, goods).getState() != 2;
     }
 }
