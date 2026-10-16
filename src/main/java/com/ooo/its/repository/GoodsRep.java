@@ -14,4 +14,5 @@ public interface GoodsRep extends JpaRepository<Goods,Long> {
     List<Goods> findAllOrderByBuyDesc();
 
     List<Goods> findAllByUpdateGreaterThanAndDeleteEquals(Date updateTime, int deleteFlag);
+    Goods findByName(String name);
 }

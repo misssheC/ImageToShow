@@ -27,8 +27,10 @@ public class Goods {
 
     @Column(name = "is_deleted")
     private int delete;
+    @Column(name = "file_location")
+    private String file_location;
     public Goods() {}
-    public Goods(Long id,String goodsName, String parentFolder,int click ,int buy,String url,Date update,int delete) {
+    public Goods(Long id,String goodsName, String parentFolder,int click ,int buy,String url,Date update,int delete,String file_location) {
         this.id = id;
         this.name = goodsName;
         this.parentFolder = parentFolder;
@@ -37,6 +39,7 @@ public class Goods {
         this.url = url;
         this.update = update;
         this.delete = delete;
+        this.file_location = file_location;
     }
 
     public Long getId() {
@@ -101,5 +104,13 @@ public class Goods {
 
     public void setDelete(int delete) {
         this.delete = delete;
+    }
+
+    public String getFile_location() {
+        return file_location;
+    }
+
+    public void setFile_location(String file_location) {
+        this.file_location = file_location;
     }
 }

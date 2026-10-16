@@ -5,10 +5,7 @@ import com.ooo.its.repository.GoodsRep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +26,9 @@ public class GoodsService {
     public  List<Goods> getGoodsByFolder(String p){
         return goodsRep.findByParentFolderAndDeleteOrderByUpdateDesc(p,0);
     }
-
+    public Goods FindGoodsByName(String name){
+        return goodsRep.findByName(name);
+    }
     public boolean IncreaseClick(Long goodid){
         Goods goods = goodsRep.findById(goodid).orElse(null);
         assert goods != null;
@@ -39,11 +38,11 @@ public class GoodsService {
     }
 
     public String FindImageUrl(Long id){
-        return goodsRep.findById(id).orElse(null).getUrl();
+        return Objects.requireNonNull(goodsRep.findById(id).orElse(null)).getUrl();
     }
 
     public String FindGoodsName(Long id){
-        return goodsRep.findById(id).orElse(null).getName();
+        return Objects.requireNonNull(goodsRep.findById(id).orElse(null)).getName();
     }
 
     public boolean IncreaseBuy(Long goodid){
@@ -64,6 +63,10 @@ public class GoodsService {
 
 
     public String ViewPicture(Long id){
-        return goodsRep.findById(id).orElse(null).getUrl();
+        return Objects.requireNonNull(goodsRep.findById(id).orElse(null)).getUrl();
+    }
+
+    public String FileLocation(Long id){
+        return Objects.requireNonNull(goodsRep.findById(id).orElse(null)).getFile_location();
     }
 }

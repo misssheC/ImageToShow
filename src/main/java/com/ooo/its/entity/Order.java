@@ -20,14 +20,21 @@ public class Order {
     private int state;
     @Column(name = "batch")
     private int batch;
+    @Column(name = "is_load")
+    private int is_load = 0;
+
+    @Column(name = "is_ship")
+    private int is_ship = 0;
     public Order(){}
-    public Order(Long id,String qqNumber,Date date,Long goodsId,int state,int batch){
+    public Order(Long id,String qqNumber,Date date,Long goodsId,int state,int batch,int is_load,int is_ship){
         this.id = id;
         this.qqNumber = qqNumber;
         this.date = date;
         this.goodsId = goodsId;
         this.state = state;
         this.batch = batch;
+        this.is_load = is_load;
+        this.is_ship = is_ship;
     }
 
     public Long getId() {
@@ -76,5 +83,21 @@ public class Order {
 
     public void setBatch(int batch) {
         this.batch = batch;
+    }
+
+    public int getIs_load() {
+        return is_load;
+    }
+
+    public void setIs_load(int is_load) {
+        this.is_load = is_load;
+    }
+
+    public int getIs_ship() {
+        return is_ship;
+    }
+
+    public void setIs_ship(int is_ship) {
+        this.is_ship = is_ship;
     }
 }

@@ -1,10 +1,7 @@
 package com.ooo.its.controller;
 import com.ooo.its.entity.Cart;
 import com.ooo.its.repository.RecordRep;
-import com.ooo.its.service.CartService;
-import com.ooo.its.service.GoodsService;
-import com.ooo.its.service.LogService;
-import com.ooo.its.service.OrderService;
+import com.ooo.its.service.*;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +17,19 @@ import java.util.Map;
 @Controller
 public class UserCartController {
     @Autowired
-    CartService cartService;
+    private CartService cartService;
     @Autowired
-    GoodsService goodsService;
+    private GoodsService goodsService;
     @Autowired
-    OrderService orderService;
+    private OrderService orderService;
     @Autowired
-    RecordRep recordRep;
+    private RecordRep recordRep;
     @Autowired
-    LogService logService;
+    private LogService logService;
+    @Autowired
+    private QqService qqService;
+    @Autowired
+    private PassWordService passWordService;
 
 
     @GetMapping("/user/showme")
@@ -48,7 +49,8 @@ public class UserCartController {
             cartItem.put("goodsName" , goodsService.FindGoodsName(cart.getGoodsId()));
             cartData.add(cartItem);
         }
-
+        String key = passWordService.GetLastKey(qq);
+        result.put("key", key == null ? "暂无密码" : key);
         result.put("cartItems", cartData);
         result.put("totalCount", cartData.size());
 
@@ -67,6 +69,7 @@ public class UserCartController {
         logService.SaveLog(qq,"用户提交了订单",7);
         int batch = recordRep.findMaxBatchByQq(qq) + 1;
         Long gid;
+        int count = 0;
         List<Cart> cartList = cartService.ShowMyCart(qq);
         //System.out.println(qq);
         for(Cart cart : cartList) {
@@ -74,10 +77,12 @@ public class UserCartController {
                 gid = cart.getGoodsId();
                 orderService.CreateOrder(qq, cart, batch);
                 cartService.ChangeState(qq, gid, 1);
+                count++;
             }
             else
                 continue;
         }
+        qqService.sendOrderMessage(qq,batch,count);
         return ResponseEntity.ok("ok");
 
     }

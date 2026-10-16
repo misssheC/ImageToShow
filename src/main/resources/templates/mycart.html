@@ -39,6 +39,137 @@
             font-weight: 600;
         }
 
+        /* 头部左侧布局 */
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* 查看密码按钮 */
+        .password-wrap {
+            position: relative;
+        }
+
+        .view-password-btn {
+            padding: 8px 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            white-space: nowrap;
+        }
+
+        .view-password-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(102, 126, 234, 0.45);
+        }
+
+        .view-password-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 密码浮层 */
+        .password-popover {
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 0;
+            min-width: 240px;
+            background: #fff;
+            border-radius: 16px;
+            padding: 18px 22px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+            border: 1px solid #eef0f4;
+            opacity: 0;
+            transform: translateY(-10px) scale(0.95);
+            transform-origin: top left;
+            pointer-events: none;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+            min-width: 240px;
+            width: max-content;
+            max-width: 90vw;
+        }
+
+        .password-popover.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        /* 浮层小箭头 */
+        .password-popover::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 24px;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            transform: rotate(45deg);
+            border-left: 1px solid #eef0f4;
+            border-top: 1px solid #eef0f4;
+            border-radius: 3px 0 0 0;
+        }
+
+        .password-title {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .password-value-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .password-value {
+            flex: 1;
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            letter-spacing: 2px;
+            font-family: 'Courier New', Consolas, monospace;
+            white-space: nowrap;
+            overflow-x: auto;
+            user-select: all;
+        }
+
+        .copy-btn {
+            padding: 6px 14px;
+            background: #f2f4f8;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover {
+            background: #e6e9f0;
+        }
+
+        .copy-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .copy-btn.copied {
+            background: #d4edda;
+            color: #155724;
+        }
+
         .user-info {
             display: flex;
             align-items: center;
@@ -416,6 +547,17 @@
 
         /* 响应式设计 */
         @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .header-left {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
             .cart-header {
                 display: none;
             }
@@ -489,13 +631,30 @@
                 font-size: 11px;
                 min-width: 50px;
             }
+
+            /* 移动端浮层宽度 */
+            .password-popover {
+                min-width: 200px;
+            }
         }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <h1>我的购物车</h1>
+        <div class="header-left">
+            <div class="password-wrap">
+                <button class="view-password-btn" id="view-password-btn">🔑 查看密码</button>
+                <div class="password-popover" id="password-popover">
+                    <div class="password-title">当前密码</div>
+                    <div class="password-value-row">
+                        <span class="password-value" id="password-value">—</span>
+                        <button class="copy-btn" id="copy-password-btn">复制</button>
+                    </div>
+                </div>
+            </div>
+            <h1>我的购物车</h1>
+        </div>
         <div class="user-info">
             <span>QQ号：</span>
             <span id="qq-number">加载中...</span>
@@ -539,11 +698,10 @@
     </div>
 </div>
 
-<!-- 通知提示 -->
 <div id="notification" class="notification"></div>
 
 <script>
-    // 显示通知
+    let cachedPassword = null;
     function showNotification(message, type) {
         const notification = document.getElementById('notification');
         notification.textContent = message;
@@ -554,8 +712,6 @@
             notification.classList.remove('show');
         }, 3000);
     }
-
-    // 从后端API获取购物车数据
     async function fetchCartData() {
         try {
             const response = await fetch('/user/showme', {
@@ -568,6 +724,12 @@
             }
 
             const cartData = await response.json();
+
+            // 缓存后端返回的 key
+            cachedPassword = (cartData.key && String(cartData.key).trim())
+                ? String(cartData.key).trim()
+                : '暂无密码';
+
             return cartData;
         } catch (error) {
             console.error('获取购物车数据失败:', error);
@@ -575,7 +737,6 @@
         }
     }
 
-    // 结算购物车（仅针对状态0的商品）
     async function checkoutCart() {
         const checkoutBtn = document.getElementById('checkout-btn');
 
@@ -623,14 +784,10 @@
         } finally {
             // 恢复结算按钮状态
             checkoutBtn.disabled = false;
-            // 注意：恢复文本时需要根据当前可支付状态重新判断，但renderCartItems会在成功时重新调用，所以这里简单恢复，随后会被重新渲染覆盖
-            // 但如果失败，需要根据当前状态重新设置按钮文字；我们暂时恢复为默认，但为了准确，可以在失败后重新获取一次数据？
-            // 简单处理：重新获取数据更新按钮状态
             try {
                 const cartData = await fetchCartData();
                 renderCartItems(cartData);
             } catch (e) {
-                // 如果再次失败，按钮保持“去结算”并启用
                 checkoutBtn.textContent = '去结算';
                 checkoutBtn.classList.remove('pay');
             }
@@ -639,20 +796,17 @@
 
     // 跳转到支付页面（针对状态1和2的商品）
     function goToPayPage() {
-        // 检查购物车是否为空
         if (currentCartItems.length === 0) {
             showNotification('购物车为空，无法支付', 'error');
             return;
         }
 
-        // 检查是否有可以支付的（状态为1或2的）--- 修改点：加入状态2
         const canPayItems = currentCartItems.filter(item => item.cart.state === 1 || item.cart.state === 2);
         if (canPayItems.length === 0) {
             showNotification('没有可以支付的商品（需要已下单或已定价）', 'error');
             return;
         }
 
-        // 跳转到支付页面
         window.location.href = '/user/pay';
     }
 
@@ -662,7 +816,6 @@
             return;
         }
 
-        // 获取按钮并禁用
         const laterBtn = cartItemElement.querySelector('.later-btn');
         const originalText = laterBtn.textContent;
         laterBtn.disabled = true;
@@ -675,7 +828,6 @@
             });
 
             if (response.ok) {
-                // 重新加载购物车数据
                 const cartData = await fetchCartData();
                 renderCartItems(cartData);
                 showNotification('已成功撤销订单，商品已放回购物车', 'success');
@@ -683,7 +835,6 @@
                 const errorText = await response.text();
                 console.error('撤销订单失败:', errorText);
 
-                // 恢复按钮状态
                 laterBtn.disabled = false;
                 laterBtn.textContent = originalText;
 
@@ -696,7 +847,6 @@
         } catch (error) {
             console.error('撤销订单失败:', error);
 
-            // 恢复按钮状态
             laterBtn.disabled = false;
             laterBtn.textContent = originalText;
 
@@ -710,7 +860,6 @@
             return;
         }
 
-        // 获取按钮并禁用
         const addOneBtn = cartItemElement.querySelector('.add-one-btn');
         const originalText = addOneBtn.textContent;
         addOneBtn.disabled = true;
@@ -723,7 +872,6 @@
             });
 
             if (response.ok) {
-                // 重新加载购物车数据
                 const cartData = await fetchCartData();
                 renderCartItems(cartData);
                 showNotification('已成功添加', 'success');
@@ -731,7 +879,6 @@
                 const errorText = await response.text();
                 console.error('添加商品失败:', errorText);
 
-                // 恢复按钮状态
                 addOneBtn.disabled = false;
                 addOneBtn.textContent = originalText;
 
@@ -744,7 +891,6 @@
         } catch (error) {
             console.error('添加商品失败:', error);
 
-            // 恢复按钮状态
             addOneBtn.disabled = false;
             addOneBtn.textContent = originalText;
 
@@ -789,23 +935,18 @@
     function getActionButtonsHtml(cart, index) {
         let buttons = '';
 
-        // 状态2的商品不允许任何操作（不显示删除按钮，也没有以后再买/再加一个，符合需求）
         if (cart.state !== 2) {
             buttons += `<button class="action-btn delete-btn" onclick="removeFromCart(${cart.id}, ${cart.goodsId})">删除</button>`;
         }
 
-        // 根据状态显示不同的按钮
         switch(cart.state) {
-            case 0: // 未下单
-                // 未下单状态显示"再加一个"按钮
+            case 0:
                 buttons += `<button class="action-btn add-one-btn" onclick="addOneMore(${cart.goodsId}, this.closest('.cart-item'))">再加这个</button>`;
                 break;
-            case 1: // 已下单
-                // 已下单状态显示"以后再买"按钮
+            case 1:
                 buttons += `<button class="action-btn later-btn" onclick="buyLater(${cart.goodsId}, this.closest('.cart-item'))">以后再买</button>`;
                 break;
             case 2:
-                // 已定价状态不显示任何额外操作按钮
                 break;
         }
 
@@ -831,14 +972,14 @@
         totalImagesSpan.textContent = currentCartItems.length;
 
         modal.classList.add('show');
-        document.body.style.overflow = 'hidden'; // 防止背景滚动
+        document.body.style.overflow = 'hidden';
     }
 
     // 关闭图片预览
     function closeImageModal() {
         const modal = document.getElementById('image-modal');
         modal.classList.remove('show');
-        document.body.style.overflow = ''; // 恢复背景滚动
+        document.body.style.overflow = '';
     }
 
     // 切换到上一张图片
@@ -875,7 +1016,6 @@
         const checkoutBtn = document.getElementById('checkout-btn');
         currentCartItems = cartData.cartItems || [];
 
-        // 更新购物车数量
         document.getElementById('total-count').textContent = cartData.totalCount || currentCartItems.length;
         const hasPayableItems = currentCartItems.some(item => item.cart.state === 1 || item.cart.state === 2);
 
@@ -887,7 +1027,6 @@
             checkoutBtn.classList.remove('pay');
         }
 
-        // 更新结算/支付按钮状态
         if (currentCartItems.length === 0) {
             checkoutBtn.disabled = true;
             checkoutBtn.textContent = '去结算';
@@ -938,6 +1077,7 @@
 
         cartItemsContainer.innerHTML = itemsHTML;
     }
+
     async function removeFromCart(cartId, goodsId) {
         if (!confirm('确定要从购物车中删除此商品吗？')) {
             return;
@@ -946,12 +1086,10 @@
         const cartItem = document.querySelector(`[data-cart-id="${cartId}"]`);
         if (!cartItem) return;
 
-        // 禁用删除按钮
         const deleteBtn = cartItem.querySelector('.delete-btn');
         deleteBtn.disabled = true;
         deleteBtn.textContent = '删除中...';
 
-        // 添加删除中样式
         cartItem.classList.add('removing');
 
         try {
@@ -961,7 +1099,6 @@
             });
 
             if (response.ok) {
-                // 重新加载购物车数据
                 const cartData = await fetchCartData();
                 renderCartItems(cartData);
 
@@ -970,7 +1107,6 @@
                 const errorText = await response.text();
                 console.error('删除失败:', errorText);
 
-                // 恢复按钮状态
                 deleteBtn.disabled = false;
                 deleteBtn.textContent = '删除';
                 cartItem.classList.remove('removing');
@@ -984,7 +1120,6 @@
         } catch (error) {
             console.error('删除失败:', error);
 
-            // 恢复按钮状态
             deleteBtn.disabled = false;
             deleteBtn.textContent = '删除';
             cartItem.classList.remove('removing');
@@ -997,7 +1132,6 @@
     function handleCheckout() {
         const checkoutBtn = document.getElementById('checkout-btn');
 
-        // 根据按钮的类名判断是结算还是支付
         if (checkoutBtn.classList.contains('pay')) {
             goToPayPage();
         } else {
@@ -1036,21 +1170,17 @@
         const prevBtn = document.querySelector('.prev-btn');
         const nextBtn = document.querySelector('.next-btn');
 
-        // 点击关闭按钮关闭模态框
         closeBtn.addEventListener('click', closeImageModal);
 
-        // 点击模态框背景关闭模态框
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
                 closeImageModal();
             }
         });
 
-        // 绑定导航按钮事件
         prevBtn.addEventListener('click', prevImage);
         nextBtn.addEventListener('click', nextImage);
 
-        // 键盘导航
         document.addEventListener('keydown', function(e) {
             if (modal.classList.contains('show')) {
                 if (e.key === 'Escape') {
@@ -1063,6 +1193,85 @@
             }
         });
     });
+
+    // ===== 查看密码浮层 =====
+    (function () {
+        const viewPasswordBtn = document.getElementById('view-password-btn');
+        const passwordPopover = document.getElementById('password-popover');
+        const passwordValueEl = document.getElementById('password-value');
+        const copyPasswordBtn = document.getElementById('copy-password-btn');
+        viewPasswordBtn.addEventListener('click', async function (e) {
+            e.stopPropagation();
+            if (passwordPopover.classList.contains('show')) {
+                passwordPopover.classList.remove('show');
+                return;
+            }
+
+            passwordPopover.classList.add('show');
+            if (cachedPassword === null) {
+                passwordValueEl.textContent = '加载中...';
+                copyPasswordBtn.disabled = true;
+                try {
+                    await fetchCartData();
+                    passwordValueEl.textContent = cachedPassword;
+                } catch (err) {
+                    passwordValueEl.textContent = '获取失败';
+                } finally {
+                    copyPasswordBtn.disabled = false;
+                }
+            } else {
+                passwordValueEl.textContent = cachedPassword;
+            }
+        });
+        copyPasswordBtn.addEventListener('click', async function (e) {
+            e.stopPropagation();
+            const text = passwordValueEl.textContent;
+            if (!text || text === '加载中...' || text === '获取失败' || text === '暂无密码' || text === '—') {
+                return;
+            }
+
+            const markCopied = () => {
+                copyPasswordBtn.textContent = '已复制';
+                copyPasswordBtn.classList.add('copied');
+                setTimeout(() => {
+                    copyPasswordBtn.textContent = '复制';
+                    copyPasswordBtn.classList.remove('copied');
+                }, 1500);
+            };
+
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                    markCopied();
+                } else {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    markCopied();
+                }
+            } catch (err) {
+                console.error('复制失败:', err);
+                showNotification('复制失败，请手动选择复制', 'error');
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!passwordPopover.contains(e.target) && e.target !== viewPasswordBtn) {
+                passwordPopover.classList.remove('show');
+            }
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                passwordPopover.classList.remove('show');
+            }
+        });
+    })();
 </script>
 </body>
 </html>

@@ -2343,22 +2343,37 @@
                     let actionButtons = '';
                     if (order.status === '0') {
                         actionButtons = `
-                            <i class="fas fa-tag" title="定价" onclick="showPriceModal('${order.qqNumber}')"></i>
-                            <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
-                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}', ${order.batch})"></i>
-                        `;
+        <i class="fas fa-tag" title="定价" onclick="showPriceModal('${order.qqNumber}')"></i>
+        <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
+        <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}', ${order.batch})"></i>
+    `;
                     } else if (order.status === '1') {
+                        let loadBtn = '';
+                        if (order.isLoad == 1) {
+                            if (order.isShip == 1) {
+                                loadBtn = `<i class="fas fa-truck" title="已发货" style="color: var(--success);"></i>`;
+                            } else {
+                                loadBtn = `<i class="fas fa-paper-plane" title="发货" onclick="shipOrder('${order.qqNumber}', ${order.batch}, this)"></i>`;
+                            }
+                        } else {
+                            loadBtn = `<i class="fas fa-box" title="备货" onclick="loadOrder('${order.qqNumber}', ${order.batch}, this)"></i>`;
+                        }
+                        const completeBtn = (order.isLoad == 1 && order.isShip == 1)
+                            ? `<i class="fas fa-check-circle" title="完成订单" onclick="completeOrder('${order.qqNumber}', ${order.batch})"></i>`
+                            : '';
+
                         actionButtons = `
-                            <i class="fas fa-pencil-alt" title="修改价格" onclick="showEditPriceModal('${order.qqNumber}', ${order.batch})"></i>
-                            <i class="fas fa-check-circle" title="完成订单" onclick="completeOrder('${order.qqNumber}', ${order.batch})"></i>
-                            <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
-                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}', ${order.batch})"></i>
-                        `;
+        ${loadBtn}
+        <i class="fas fa-pencil-alt" title="修改价格" onclick="showEditPriceModal('${order.qqNumber}', ${order.batch})"></i>
+        ${completeBtn}
+        <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
+        <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}', ${order.batch})"></i>
+    `;
                     } else {
                         actionButtons = `
-                            <i class="fas fa-check-circle" title="已完成" style="color: var(--success);"></i>
-                            <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
-                        `;
+        <i class="fas fa-check-circle" title="已完成" style="color: var(--success);"></i>
+        <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
+    `;
                     }
 
                     row.innerHTML = `
@@ -3083,22 +3098,37 @@
                     let actionButtons = '';
                     if (order.status === '0') {
                         actionButtons = `
-                            <i class="fas fa-tag" title="定价" onclick="showPriceModal('${order.qqNumber}')"></i>
-                            <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
-                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}', ${order.batch})"></i>
-                        `;
+        <i class="fas fa-tag" title="定价" onclick="showPriceModal('${order.qqNumber}')"></i>
+        <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
+        <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}', ${order.batch})"></i>
+    `;
                     } else if (order.status === '1') {
+                        let loadBtn = '';
+                        if (order.isLoad == 1) {
+                            if (order.isShip == 1) {
+                                loadBtn = `<i class="fas fa-truck" title="已发货" style="color: var(--success);"></i>`;
+                            } else {
+                                loadBtn = `<i class="fas fa-paper-plane" title="发货" onclick="shipOrder('${order.qqNumber}', ${order.batch}, this)"></i>`;
+                            }
+                        } else {
+                            loadBtn = `<i class="fas fa-box" title="备货" onclick="loadOrder('${order.qqNumber}', ${order.batch}, this)"></i>`;
+                        }
+                        const completeBtn = (order.isLoad == 1 && order.isShip == 1)
+                            ? `<i class="fas fa-check-circle" title="完成订单" onclick="completeOrder('${order.qqNumber}', ${order.batch})"></i>`
+                            : '';
+
                         actionButtons = `
-                            <i class="fas fa-pencil-alt" title="修改价格" onclick="showEditPriceModal('${order.qqNumber}', ${order.batch})"></i>
-                            <i class="fas fa-check-circle" title="完成订单" onclick="completeOrder('${order.qqNumber}', ${order.batch})"></i>
-                            <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
-                            <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}', ${order.batch})"></i>
-                        `;
+        ${loadBtn}
+        <i class="fas fa-pencil-alt" title="修改价格" onclick="showEditPriceModal('${order.qqNumber}', ${order.batch})"></i>
+        ${completeBtn}
+        <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
+        <i class="fas fa-trash" title="删除订单" onclick="deleteOrder('${order.id}', '${order.qqNumber}', '${order.goodsId}', ${order.batch})"></i>
+    `;
                     } else {
                         actionButtons = `
-                            <i class="fas fa-check-circle" title="已完成" style="color: var(--success);"></i>
-                            <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
-                        `;
+        <i class="fas fa-check-circle" title="已完成" style="color: var(--success);"></i>
+        <i class="fas fa-print" title="打印订单" onclick="printOrder('${order.qqNumber}', ${order.batch})"></i>
+    `;
                     }
 
                     row.innerHTML = `
@@ -4107,6 +4137,59 @@
             .finally(() => {
                 clearBtn.innerHTML = originalText;
                 clearBtn.disabled = false;
+            });
+    }
+    function loadOrder(qqNumber, batch, button) {
+        if (!confirm(`确定要为 QQ ${qqNumber}、批次 ${batch} 进行备货吗？`)) {
+            return;
+        }
+
+        const originalClass = button.className;
+        button.className = 'fas fa-spinner fa-spin'; // 转圈动画
+
+        fetch(`/admin/load?qqNumber=${qqNumber}&batch=${batch}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('备货请求失败（HTTP ' + response.status + '）');
+                }
+                return response.text();
+            })
+            .then(result => {
+                alert('备货成功：' + result);
+                // 刷新当前显示的订单列表
+                if (currentSearchSection === 'user-orders' && currentSearchKeyword) {
+                    searchOrders(currentSearchKeyword);
+                } else {
+                    loadOrders();
+                }
+            })
+            .catch(error => {
+                console.error('备货失败:', error);
+                alert('备货失败: ' + error.message);
+                button.className = originalClass; // 恢复图标
+            });
+    }
+    function shipOrder(qqNumber, batch, el) {
+        if (!confirm(`确认发货？\nQQ：${qqNumber}\n批次：${batch}`)) return;
+
+        // 防重复点击
+        if (el) el.style.pointerEvents = 'none';
+
+        fetch(`/admin/ship?qqNumber=${encodeURIComponent(qqNumber)}&batch=${batch}`)
+            .then(res => {
+                if (!res.ok) throw new Error('发货请求失败');
+                return res.json();
+            })
+            .then(data => {
+                alert('发货任务已提交');
+                loadOrders();
+            })
+            .catch(err => {
+                console.error(err);
+                alert('发货失败：' + err.message);
+            })
+            .finally(() => {
+                if (el) el.style.pointerEvents = '';
             });
     }
 

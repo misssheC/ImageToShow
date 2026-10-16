@@ -28,6 +28,7 @@ public interface OrderRep extends JpaRepository<Order,Long> {
     List<Order> findAllByQqNumberOrderByIdDesc(String qq,Pageable pageable);
 
     List<Order> findAllByStateOrderByIdDesc(int state,Pageable pageable);
+    Order findByQqNumberAndBatchAndGoodsId(String qq,int batch,Long goodid);
     @Modifying
     @Transactional
     void deleteByQqNumberAndGoodsIdAndState(String qqNumber, Long goodsId,int s);
